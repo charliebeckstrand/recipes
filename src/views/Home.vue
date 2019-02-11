@@ -13,37 +13,63 @@
                 <input type="text" class="form-control" placeholder="Search" v-model="search">
             </div>
 
-            <div class="list-group">
-                <router-link :to="{name: 'view-recipe', params: {recipe_id: recipe['.key']}}" class="list-group-item list-group-item-action" v-for="(recipe, recipeIndex) in filteredRecipes">
-                    <div class="d-flex align-items-center">
-                        <div class="d-flex img-thumbnail">
-                            <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
-                        </div>
-                        <div class="d-flex flex-lg-row flex-column align-items-center ml-2 w-100">
-                            <h5 class="m-0 text-capitalize mr-lg-0 mr-auto">{{recipe.name}}</h5>
-
-                            <div class="d-flex flex-lg-column mr-lg-0 mr-auto ml-lg-auto ml-0 text-right">
-                                <div>
-                                    <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
-                                </div>
-                                <div class="ml-lg-0 ml-1">
-                                    <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+            <template v-if="loadingRecipes">
+                <content-placeholders>
+                    <content-placeholders-text :lines="5" />
+                </content-placeholders>
+            </template>
+            <template v-else>
+                <template v-if="user">
+                    <div class="mb-3">
+                        <router-link :to="{name: 'create-recipe'}" class="btn btn-outline-success">
+                            Create Recipe
+                        </router-link>
+                    </div>
+                </template>
+                <div class="list-group" v-if="filteredRecipes && filteredRecipes.length">
+                    <router-link :to="{name: 'view-recipe', params: {recipe_id: recipe['.key']}}" class="list-group-item list-group-item-action" v-for="(recipe, recipeIndex) in filteredRecipes">
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex img-thumbnail" v-if="recipe.thumbnail">
+                                <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
+                            </div>
+                            <div class="d-flex img-thumbnail" v-else>
+                                <img src="http://placehold.it/500x500/e9ecef/e9ecef" class="img-fluid rounded my-auto">
+                            </div>
+                            <div class="ml-3">
+                                <h6 class="m-0 text-capitalize mr-lg-0 mr-auto">{{recipe.name}}</h6>
+                                <div class="d-flex">
+                                    <div>
+                                        <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                    </div>
+                                    <div class="ml-1" v-if="recipe.total_time">
+                                        <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="d-flex ml-auto" v-if="user">
+                                <button type="button" class="btn btn-sm btn-outline-primary">
+                                    <font-awesome-icon :icon="['fas', 'edit']" />
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger ml-1">
+                                    <font-awesome-icon :icon="['fas', 'trash']" />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </router-link>
-            </div>
-
+                    </router-link>
+                </div>
+                <div class="alert bg-danger text-white" v-else>
+                    0 recipes
+                </div>
+            </template>
         </div>
     </div>
 </template>
 
 <script>
+import firebase from 'firebase/app';
+
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
-
-import { db } from '@/main';
 
 export default {
     name: "home",
@@ -53,22 +79,30 @@ export default {
     data() {
         return {
             recipes: [],
-            search: null
+
+            search: null,
+
+            loadingRecipes: false
         }
     },
     firestore() {
         return {
-            recipes: db.collection('recipes'),
+            recipes: firebase.firestore().collection('recipes'),
         }
     },
     watch: {
-        recipes(recipes) {
-            _.forEach(recipes, recipe => {
+        filteredRecipes(recipes) {
+            this.loadingRecipes = true;
 
-            });
+            if(recipes && recipes.length) {
+                this.loadingRecipes = false;
+            }
         }
     },
     computed: {
+        user() {
+            return this.$store.state.user;
+        },
         filteredRecipes() {
             var filteredRecipes = [];
             if(this.search) {
@@ -89,7 +123,7 @@ export default {
                     } else {
                         return searchMatch;
                     }
-    			});
+                });
             } else {
                 filteredRecipes = this.recipes;
             }

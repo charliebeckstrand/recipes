@@ -35,7 +35,6 @@
 
 <script>
 import firebase from 'firebase/app';
-import 'firebase/auth';
 
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
@@ -49,11 +48,9 @@ export default {
         return {
             email: null,
             password: null,
-
-            loggingIn: false,
-
             error: null,
 
+            loggingIn: false,
             invalidEmail: false,
             invalidPassword: false
         }
@@ -64,10 +61,12 @@ export default {
 
             firebase.auth().signInWithEmailAndPassword(this.email, this.password).then((user) => {
                 this.loggingIn = false;
-                this.$router.replace('/recipes');
+
+                this.$router.replace('/');
             }).catch((error) => {
-                this.loggingIn = false;
                 this.error = error;
+
+                this.loggingIn = false;
 
                 if(error.code == "auth/user-not-found") {
                     this.invalidEmail = true;
