@@ -27,18 +27,6 @@ const router = new Router({
             }
         },
         {
-            path: "/recipes",
-            name: "recipes",
-            meta: {
-                requiresAuth: true
-            },
-            // route level code-splitting
-            // this generates a separate chunk (recipes.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () =>
-            import(/* webpackChunkName: "recipes" */ "./views/Recipes.vue")
-        },
-        {
             path: "/recipes/create",
             name: "create-recipe",
             meta: {

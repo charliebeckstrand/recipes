@@ -27,10 +27,15 @@
                                 <img :src="recipe.thumbnail" class="img-fluid rounded my-auto" height="auto">
                             </a>
                         </div>
-                        <div :class="{'ml-3': recipe.thumbnail}">
-                            <h4 class="text-md-left text-center" :class="{'mb-1': recipe.description || recipe.types && recipe.types.length}">
+                        <div class="mb-md-0 mb-3" v-else>
+                            <div class="img-thumbnail">
+                                <img src="http://placehold.it/500x500/e9ecef/e9ecef" class="img-fluid rounded my-auto" height="auto">
+                            </div>
+                        </div>
+                        <div class="ml-md-3 ml-0">
+                            <h5 :class="{'mb-1': recipe.description || recipe.types && recipe.types.length || recipe.total_time}">
                                 <span class="text-capitalize">{{recipe.name}}</span>
-                            </h4>
+                            </h5>
 
                             <p class="text-muted text-lg-left text-justify m-0" :class="{'mb-1': recipe.types && recipe.types.length}">
                                 {{recipe.description}}
@@ -39,13 +44,23 @@
                             <div>
                                 <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
                             </div>
+
+                            <!-- <div class="d-flex">
+                                <div>
+                                    <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                </div>
+                                <div class="ml-1" v-if="recipe.total_time">
+                                    <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                </div>
+                            </div> -->
+
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="mb-lg-3 mb-1" :class="{'col-lg-4': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.prep_time && (!recipe.cook_time || !recipe.total_time)}" v-if="recipe.prep_time">
                             <div class="card">
-                                <h5 class="card-header text-uppercase">Prep Time</h5>
+                                <h6 class="card-header text-uppercase">Prep Time</h6>
                                 <div class="card-body">
                                     <p class="card-text">
                                         <span class="badge" :class="{'badge-success': recipe.prep_time < 10, 'badge-warning': recipe.prep_time >= 10 && recipe.prep_time < 30, 'badge-danger': recipe.prep_time >= 30}">
@@ -57,7 +72,7 @@
                         </div>
                         <div class="mb-lg-3 mb-1" :class="{'col-lg-4 pl-lg-0': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.cook_time && (!recipe.prep_time || !recipe.total_time)}" v-if="recipe.cook_time">
                             <div class="card">
-                                <h5 class="card-header text-uppercase">Cook Time</h5>
+                                <h6 class="card-header text-uppercase">Cook Time</h6>
                                 <div class="card-body">
                                     <p class="card-text">
                                         <span class="badge" :class="{'badge-success': recipe.cook_time < 10, 'badge-warning': recipe.cook_time >= 10 && recipe.cook_time < 30, 'badge-danger': recipe.cook_time >= 30}">
@@ -69,7 +84,7 @@
                         </div>
                         <div class="mb-3" :class="{'col-lg-4 pl-lg-0': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.total_time && (!recipe.prep_time || !recipe.cook_time)}" v-if="recipe.total_time">
                             <div class="card">
-                                <h5 class="card-header text-uppercase">Total Time</h5>
+                                <h6 class="card-header text-uppercase">Total Time</h6>
                                 <div class="card-body">
                                     <p class="card-text">
                                         <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">
@@ -81,18 +96,18 @@
                         </div>
                     </div>
 
-                    <ul class="nav nav-tabs text-uppercase mb-3" v-if="recipe.ingredients || recipe.instructions || recipe.nutrition">
+                    <ul class="nav nav-tabs mb-3" v-if="recipe.ingredients || recipe.instructions || recipe.nutrition">
                         <li class="nav-item d-block text-lg-left text-center" v-if="recipe.ingredients && recipe.ingredients.length">
-                            <a class="nav-link font-weight-bold" :class="{'active': showIngredientsTab}" href="#" @click.prevent="toggleIngredientsTab()">
+                            <a class="nav-link" :class="{'active': showIngredientsTab}" href="#" @click.prevent="toggleIngredientsTab()">
                                 Ingredients
                             </a>
                         </li>
-                        <li class="nav-item d-block text-lg-left text-center font-weight-bold" v-if="recipe.instructions && recipe.instructions.length">
+                        <li class="nav-item d-block text-lg-left text-center" v-if="recipe.instructions && recipe.instructions.length">
                             <a class="nav-link" :class="{'active': showInstructionsTab}" href="#" @click.prevent="toggleInstructionsTab()">
                                 Instructions
                             </a>
                         </li>
-                        <li class="nav-item d-block text-lg-left text-center font-weight-bold" v-if="recipe.nutrition">
+                        <li class="nav-item d-block text-lg-left text-center" v-if="recipe.nutrition">
                             <a class="nav-link" :class="{'active': showNutritionTab}" href="#" @click.prevent="toggleNutrutionTab()">
                                 Nutrition
                             </a>
@@ -175,16 +190,17 @@
 </template>
 
 <script>
+import firebase from 'firebase/app';
+
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
-
-import { db } from '@/main';
 
 export default {
     name: "view-recipe",
     components: {
         Navbar
     },
+    props: ['recipe_id'],
     data() {
         return {
             recipe: {},
@@ -196,13 +212,18 @@ export default {
             showNutritionTab: false
         }
     },
-    props: ['recipe_id'],
+    computed: {
+        user() {
+            return this.$store.state.user;
+        }
+    },
     methods: {
         getRecipe() {
             this.loadingRecipe = true;
-            let ref = db.collection('recipes').doc(this.recipe_id)
-            ref.get()
-            .then(snapshot => {
+
+            let ref = firebase.firestore().collection('recipes').doc(this.recipe_id);
+
+            ref.get().then(snapshot => {
                 if (snapshot.exists) {
                     this.recipe = snapshot.data();
 
@@ -236,6 +257,12 @@ export default {
 };
 </script>
 
+<style scoped>
+/* .form-control:disabled, .form-control[readonly] {
+    background-color: #FFFFFF;
+} */
+</style>
+
 <style lang="scss">
 .img-thumbnail {
     height: 75px;
@@ -245,6 +272,9 @@ export default {
     content: ", ";
 }
 @media(max-width: 768px) {
+    .nav-tabs {
+        border-bottom: 0;
+    }
     .nav-tabs .nav-item {
         width: 100%;
     }

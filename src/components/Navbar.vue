@@ -25,46 +25,31 @@
 </template>
 
 <script>
-import Vue from 'vue';
-
 import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
-
-import Gravatar from 'vue-gravatar';
-
-// @ is an alias to /src
-// import user from '@/user.js';
-
-Vue.component('v-gravatar', Gravatar);
 
 export default {
     name: "Navbar",
     data() {
         return {
-            showDropdownMenu: false,
-            user: {},
-            firebase: firebase
+            showDropdownMenu: false
         }
     },
+    computed: {
+        user() {
+			return this.$store.state.user;
+		}
+    },
     methods: {
+        toggleDropdownMenu() {
+            this.showDropdownMenu = !this.showDropdownMenu;
+        },
         logOut() {
             firebase.auth().signOut().then(() => {
                 this.$router.replace("login");
             });
-        },
-        toggleDropdownMenu() {
-            this.showDropdownMenu = !this.showDropdownMenu;
         }
     },
     mounted() {
-        firebase.auth().onAuthStateChanged((user) => {
-            if(user) {
-                this.user = user;
-            } else {
-                this.user = null;
-            }
-        });
     }
 };
 </script>

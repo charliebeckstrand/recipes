@@ -9,8 +9,20 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 import VueTippy from 'vue-tippy';
-import lodash from 'lodash';
+import Lodash from 'lodash';
 import VueLodash from 'vue-lodash';
+import VueContentPlaceholders from 'vue-content-placeholders';
+
+// Font Awesome
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '@/assets/css/app.css';
+
+let app;
 
 // Initialize Firebase
 firebase.initializeApp({
@@ -22,10 +34,7 @@ firebase.initializeApp({
     messagingSenderId: "727385991229"
 });
 
-export const db = firebase.firestore();
-
-let app
-firebase.auth().onAuthStateChanged(() => {
+firebase.auth().onAuthStateChanged((user) => {
     if(!app) {
         app = new Vue({
         router,
@@ -33,27 +42,22 @@ firebase.auth().onAuthStateChanged(() => {
         render: h => h(App)
         }).$mount("#app");
     }
+    if(user) {
+        store.commit('setUser', user);
+    } else {
+        store.commit('setUser', null);
+    }
 });
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'vue-multiselect/dist/vue-multiselect.min.css';
-import '@/assets/css/app.css';
-
-// Font Awesome
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { far } from '@fortawesome/free-regular-svg-icons';
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-
-import VueContentPlaceholders from 'vue-content-placeholders';
-
+export const auth = firebase.auth();
+export const db = firebase.firestore();
 
 // add fonts to library
 library.add(far, fas);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-Vue.use(VueFirestore, VueTippy, VueLodash, lodash);
+Vue.use(VueFirestore, VueTippy, VueLodash, Lodash);
 Vue.use(VueContentPlaceholders);
 
 // config
