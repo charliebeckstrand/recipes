@@ -2,7 +2,7 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-transparent p-0 mb-3">
             <router-link :to="{name: 'home'}" class="navbar-brand">
-                <img src="https://image.flaticon.com/icons/svg/45/45332.svg" width="60" height="60" alt="Logo">
+                <img src="https://image.flaticon.com/icons/svg/45/45332.svg" width="50" height="50" alt="Logo">
             </router-link>
 
             <ul class="navbar-nav ml-auto">
@@ -68,3 +68,7 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+
+</style>

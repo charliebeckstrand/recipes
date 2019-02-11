@@ -39,7 +39,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 import '@/assets/css/app.css';
 
-// config
-Vue.config.productionTip = false;
+// Font Awesome
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+import VueContentPlaceholders from 'vue-content-placeholders';
+
+
+// add fonts to library
+library.add(far, fas);
+
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(VueFirestore, VueTippy, VueLodash, lodash);
+Vue.use(VueContentPlaceholders);
+
+// config
+Vue.config.productionTip = false;

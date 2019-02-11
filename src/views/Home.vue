@@ -21,7 +21,7 @@
                         </div>
                         <div class="ml-2 text-capitalize">{{recipe.name}}</div>
                         <div class="ml-auto text-right">
-                            <span class="badge d-md-inline-block d-block" :class="{'badge-warning': type == 'breakfast', 'badge-success': type == 'lunch', 'badge-danger': type == 'dinner'}" v-for="type in recipe.types">{{type}}</span>
+                            <span class="badge badge-secondary d-md-inline-block d-block" v-for="type in recipe.types">{{type}}</span>
                         </div>
                     </div>
                 </router-link>
@@ -93,8 +93,8 @@ export default {
 
 <style scoped>
 .img-thumbnail {
-    height: 60px;
-    width: 60px;
+    height: 50px;
+    width: 50px;
 }
 .badge + .badge {
     margin-top: .25rem;
