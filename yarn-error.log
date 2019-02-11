@@ -1,30 +1,30 @@
 Arguments: 
-  /usr/local/Cellar/node/11.5.0/bin/node /usr/local/Cellar/yarn/1.9.4/libexec/bin/yarn.js add free-solid-svg-icons
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js install
 
 PATH: 
-  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+  C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\ProgramData\chocolatey\bin;C:\Program Files\nodejs\;C:\Go\bin;C:\Program Files (x86)\Yarn\bin\;C:\Users\Stephen\AppData\Local\Programs\Python\Python37\Scripts\;C:\Users\Stephen\AppData\Local\Programs\Python\Python37\;C:\Users\Stephen\AppData\Local\Microsoft\WindowsApps;C:\Users\Stephen\AppData\Local\atom\bin;C:\Users\Stephen\AppData\Local\GitHubDesktop\bin;C:\Users\Stephen\AppData\Roaming\npm;C:\Users\Stephen\go\bin;C:\Users\Stephen\AppData\Local\Yarn\bin
 
 Yarn version: 
-  1.9.4
+  1.13.0
 
 Node version: 
-  11.5.0
+  10.14.1
 
 Platform: 
-  darwin x64
+  win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/free-solid-svg-icons: Not found
-      at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.9.4/libexec/lib/cli.js:64202:18)
-      at Request.self.callback (/usr/local/Cellar/yarn/1.9.4/libexec/lib/cli.js:137468:22)
-      at Request.emit (events.js:189:13)
-      at Request.<anonymous> (/usr/local/Cellar/yarn/1.9.4/libexec/lib/cli.js:138440:10)
-      at Request.emit (events.js:189:13)
-      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.9.4/libexec/lib/cli.js:138362:12)
-      at Object.onceWrapper (events.js:277:13)
-      at IncomingMessage.emit (events.js:194:15)
-      at endReadableNT (_stream_readable.js:1129:12)
-      at process.internalTickCallback (internal/process/next_tick.js:72:19)
+  Error: https://npm.fontawesome.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.7.1.tgz: Request failed "401 Unauthorized"
+      at ResponseError.ExtendableBuiltin (C:\Program Files (x86)\Yarn\lib\cli.js:702:66)
+      at new ResponseError (C:\Program Files (x86)\Yarn\lib\cli.js:808:124)
+      at Request.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:65434:16)
+      at Request.emit (events.js:182:13)
+      at Request.module.exports.Request.onRequestResponse (C:\Program Files (x86)\Yarn\lib\cli.js:130274:10)
+      at ClientRequest.emit (events.js:187:15)
+      at HTTPParser.parserOnIncomingClient (_http_client.js:555:21)
+      at HTTPParser.parserOnHeadersComplete (_http_common.js:109:17)
+      at TLSSocket.socketOnData (_http_client.js:441:20)
+      at TLSSocket.emit (events.js:182:13)
 
 npm manifest: 
   {
@@ -38,12 +38,15 @@ npm manifest:
     },
     "dependencies": {
       "@fortawesome/fontawesome-svg-core": "^1.2.14",
+      "@fortawesome/free-regular-svg-icons": "^5.7.1",
+      "@fortawesome/free-solid-svg-icons": "^5.7.1",
       "@fortawesome/vue-fontawesome": "^0.1.5",
       "bootstrap": "^4.2.1",
       "firebase": "^5.8.2",
       "lodash": "^4.17.11",
       "promise-polyfill": "^8.1.0",
       "vue": "^2.5.22",
+      "vue-content-placeholders": "^0.2.1",
       "vue-firestore": "^0.3.16",
       "vue-gravatar": "^1.3.0",
       "vue-lodash": "^2.0.0",
@@ -805,6 +808,18 @@ Lockfile:
   "@fortawesome/fontawesome-svg-core@^1.2.14":
     version "1.2.14"
     resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-1.2.14.tgz#48fde5fbfa223cffd5fac9c0402cfbe87605a7d0"
+    dependencies:
+      "@fortawesome/fontawesome-common-types" "^0.2.14"
+  
+  "@fortawesome/free-regular-svg-icons@^5.7.1":
+    version "5.7.1"
+    resolved "https://npm.fontawesome.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.7.1.tgz#eab182769eef910f961ed4c3a581ebd9934b4b38"
+    dependencies:
+      "@fortawesome/fontawesome-common-types" "^0.2.14"
+  
+  "@fortawesome/free-solid-svg-icons@^5.7.1":
+    version "5.7.1"
+    resolved "https://npm.fontawesome.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.7.1.tgz#df41b8643383862a2af93456e7129e5ffc0fb7ae"
     dependencies:
       "@fortawesome/fontawesome-common-types" "^0.2.14"
   
@@ -7321,6 +7336,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-0.0.4.tgz#5d7ea45bbef9e4a6ff65f95438e0a87c357d5a73"
     dependencies:
       indexof "0.0.1"
+  
+  vue-content-placeholders@^0.2.1:
+    version "0.2.1"
+    resolved "https://registry.yarnpkg.com/vue-content-placeholders/-/vue-content-placeholders-0.2.1.tgz#5876bda4577c80ff6d396fb33b2dbbf8b8cc140f"
   
   vue-eslint-parser@^2.0.3:
     version "2.0.3"
