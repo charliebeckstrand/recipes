@@ -4,22 +4,27 @@
             <div class="col-lg-3 col-md-6 col-sm-8 mx-sm-auto mx-3 my-auto">
                 <div class="d-flex">
                     <div class="mx-auto mb-3">
-                        <img src="https://image.flaticon.com/icons/svg/45/45332.svg" width="75" height="75" alt="Logo">
+                        <!-- <router-link: :to="{name: 'home'}">
+                            <img src="/assets/45332.svg" width="75" height="75" alt="Logo">
+                        </router-link> -->
+                        <a href="/">
+                            <img src="@/assets/45332.svg" width="75" height="75" alt="Logo">
+                        </a>
                     </div>
                 </div>
 
-                <div class="alert bg-danger text-white rounded-0" v-if="invalidEmailorPassword">
+                <div class="alert bg-danger text-white rounded-0" v-if="invalidEmail || invalidPassword">
                     {{error.message}}
                 </div>
 
                 <form @submit.prevent="signInWithEmailAndPassword()">
                     <div class="form-group">
-                        <input type="email" class="form-control rounded-0" :class="{'is-invalid': invalidEmailorPassword}" placeholder="Email" v-model="email" @input="invalidEmailorPassword = false">
+                        <input type="email" class="form-control rounded-0" :class="{'is-invalid': invalidEmail}" placeholder="Email" v-model="email" @input="invalidEmail = false" autofocus>
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control rounded-0" :class="{'is-invalid': invalidEmailorPassword}" placeholder="Password" v-model="password" @input="invalidEmailorPassword = false">
+                        <input type="password" class="form-control rounded-0" :class="{'is-invalid': invalidPassword}" placeholder="Password" v-model="password" @input="invalidPassword = false">
                     </div>
-                    <button type="submit" class="btn btn-block btn-dark text-uppercase rounded-0" :disabled="!email || !password || loggingIn">
+                    <button type="submit" class="btn btn-block text-uppercase rounded-0" :class="{'btn-dark': email && password, 'btn-light': !email || !password}" :disabled="!email || !password || loggingIn">
                         Login
                     </button>
                 </form>
@@ -29,13 +34,14 @@
 </template>
 
 <script>
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
 
 export default {
-    name: "home",
+    name: "login",
     components: {
         Navbar
     },
@@ -47,7 +53,9 @@ export default {
             loggingIn: false,
 
             error: null,
-            invalidEmailorPassword: false
+
+            invalidEmail: false,
+            invalidPassword: false
         }
     },
     methods: {
@@ -60,7 +68,13 @@ export default {
             }).catch((error) => {
                 this.loggingIn = false;
                 this.error = error;
-                this.invalidEmailorPassword = true;
+
+                if(error.code == "auth/user-not-found") {
+                    this.invalidEmail = true;
+                }
+                if(error.code == "auth/wrong-password") {
+                    this.invalidPassword = true;
+                }
             });
         }
     }

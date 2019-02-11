@@ -10,9 +10,13 @@
   "dependencies": {
     "bootstrap": "^4.2.1",
     "firebase": "^5.8.2",
+    "lodash": "^4.17.11",
     "promise-polyfill": "^8.1.0",
     "vue": "^2.5.22",
+    "vue-firestore": "^0.3.16",
     "vue-gravatar": "^1.3.0",
+    "vue-lodash": "^2.0.0",
+    "vue-multiselect": "^2.1.3",
     "vue-router": "^3.0.1",
     "vue-tippy": "^2.1.0",
     "vuefire": "^1.4.5",

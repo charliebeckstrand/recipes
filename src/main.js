@@ -3,10 +3,14 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
-import firebase from 'firebase';
-import VueTippy from 'vue-tippy';
+import VueFirestore from 'vue-firestore';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 
-let app = '';
+import VueTippy from 'vue-tippy';
+import lodash from 'lodash';
+import VueLodash from 'vue-lodash';
 
 // Initialize Firebase
 firebase.initializeApp({
@@ -18,6 +22,9 @@ firebase.initializeApp({
     messagingSenderId: "727385991229"
 });
 
+export const db = firebase.firestore();
+
+let app
 firebase.auth().onAuthStateChanged(() => {
     if(!app) {
         app = new Vue({
@@ -28,11 +35,11 @@ firebase.auth().onAuthStateChanged(() => {
     }
 });
 
-// node_modules
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'vue-multiselect/dist/vue-multiselect.min.css';
+import '@/assets/css/app.css';
 
 // config
 Vue.config.productionTip = false;
 
-//
-Vue.use(VueTippy);
+Vue.use(VueFirestore, VueTippy, VueLodash, lodash);

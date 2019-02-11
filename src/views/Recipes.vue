@@ -3,17 +3,17 @@
         <div class="container">
             <Navbar />
 
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center mb-3">
                 <div>
-                    <router-link :to="{name: 'createRecipe'}" class="btn btn-outline-success rounded-0">
+                    <router-link :to="{name: 'create-recipe'}" class="btn btn-outline-success rounded-0">
                         Create Recipe
                     </router-link>
                 </div>
-                <div class="ml-lg-auto ml-1">
+                <!-- <div class="ml-lg-auto ml-1">
                     <button type="button" class="btn btn-outline-primary rounded-0">
                         Filter
                     </button>
-                </div>
+                </div> -->
             </div>
 
             <div class="list-group" v-if="recipes && recipes.length">

@@ -1,0 +1,7 @@
+.badge {
+	font-size: 100%;
+}
+
+.badge + .badge {
+	margin-left: .25rem;
+}

@@ -1,24 +1,24 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-transparent px-0">
-            <a class="navbar-brand" href="#">
-                <img src="https://image.flaticon.com/icons/svg/45/45332.svg" width="50" height="50" alt="Logo">
-            </a>
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent p-0 mb-3">
+            <router-link :to="{name: 'home'}" class="navbar-brand">
+                <img src="https://image.flaticon.com/icons/svg/45/45332.svg" width="60" height="60" alt="Logo">
+            </router-link>
 
             <ul class="navbar-nav ml-auto">
-                <!-- <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" @click.prevent="toggleDropdownMenu()">
-                        {{user.email}}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right p-0 rounded-0" :class="{'show': showDropdownMenu}">
-                        <a class="dropdown-item py-2 text-center" href="#" @click.prevent="logOut()">Log Out</a>
+                <li class="nav-item" v-if="user">
+                    {{user.email}}
+                    <div class="text-right">
+                        <a class="text-danger rounded-0" href="#" @click.prevent="logOut()">
+                            Log Out
+                        </a>
                     </div>
-                </li> -->
-                <li class="nav-item">
-                    <a class="nav-link" href="#" @click.prevent="logOut()">
-                        Log Out
-                    </a>
                 </li>
+                <!-- <li class="nav-item" v-else>
+                    <router-link :to="{name: 'login'}" class="btn btn-outline-primary rounded-0">
+                        Log In
+                    </router-link>
+                </li> -->
             </ul>
         </nav>
     </div>
@@ -26,7 +26,11 @@
 
 <script>
 import Vue from 'vue';
-import firebase from 'firebase';
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
 import Gravatar from 'vue-gravatar';
 
 // @ is an alias to /src
@@ -57,17 +61,10 @@ export default {
         firebase.auth().onAuthStateChanged((user) => {
             if(user) {
                 this.user = user;
+            } else {
+                this.user = null;
             }
         });
     }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-.dropdown-item.active, .dropdown-item:active {
-    color: inherit;
-    text-decoration: none;
-    background-color: inherit;
-}
-</style>

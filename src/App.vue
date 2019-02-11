@@ -9,8 +9,8 @@ html,
 body {
     height: 100%;
 }
-.container > * + * {
-    margin-top: 1rem;
+body {
+    padding: 1rem;
 }
 #app {
     height: 100%;
