@@ -15,9 +15,16 @@ import VueContentPlaceholders from 'vue-content-placeholders';
 
 // Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { far } from '@fortawesome/free-regular-svg-icons';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+import { dom } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/pro-solid-svg-icons';
+import { far } from '@fortawesome/pro-regular-svg-icons';
+import { fal } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+// add fonts to library
+library.add(far, fas, fal);
+
+dom.watch() // This will kick of the initial replacement of i to svg tags and configure a MutationObserver
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@/assets/css/app.css';
@@ -51,9 +58,6 @@ firebase.auth().onAuthStateChanged((user) => {
 
 export const auth = firebase.auth();
 export const db = firebase.firestore();
-
-// add fonts to library
-library.add(far, fas);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
