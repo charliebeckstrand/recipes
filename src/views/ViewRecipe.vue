@@ -67,7 +67,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="form-group ml-lg-2 ml-0">
+                            <div class="form-group ml-2">
                                 <label class="mb-0" for="cook-time">Cook Time</label>
                                 <div>
                                     <span class="badge" :class="{'badge-success': recipe.cook_time < 10, 'badge-warning': recipe.cook_time >= 10 && recipe.cook_time < 30, 'badge-danger': recipe.cook_time >= 30}">
@@ -75,7 +75,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="form-group ml-lg-2 ml-0">
+                            <div class="form-group ml-2">
                                 <label class="mb-0" for="total-time">Total Time</label>
                                 <div>
                                     <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">

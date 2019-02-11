@@ -9,10 +9,6 @@
                 </ol>
             </nav>
 
-            <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Search" v-model="search">
-            </div>
-
             <template v-if="loadingRecipes">
                 <content-placeholders>
                     <content-placeholders-text :lines="5" />
@@ -26,6 +22,11 @@
                         </router-link>
                     </div>
                 </template>
+
+                <div class="mb-3" v-if="recipes && recipes.length">
+                    <input type="text" class="form-control" placeholder="Search" v-model="search">
+                </div>
+
                 <div class="list-group" v-if="filteredRecipes && filteredRecipes.length">
                     <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}" class="list-group-item list-group-item-action" v-for="(recipe, recipeIndex) in filteredRecipes">
                         <div class="d-flex align-items-center">
@@ -57,7 +58,10 @@
                         </div>
                     </router-link>
                 </div>
-                <div class="alert bg-danger text-white" v-else>
+                <div class="alert bg-warning text-white" v-if="!filteredRecipes || filteredRecipes && !filteredRecipes.length">
+                    0 recipes match your search
+                </div>
+                <div class="alert bg-danger text-white" v-if="!recipes || recipes && !recipes.length">
                     0 recipes
                 </div>
             </template>
@@ -82,7 +86,7 @@ export default {
 
             search: null,
 
-            loadingRecipes: false
+            loadingRecipes: true
         }
     },
     firestore() {
@@ -92,8 +96,6 @@ export default {
     },
     watch: {
         filteredRecipes(recipes) {
-            this.loadingRecipes = true;
-
             if(recipes && recipes.length) {
                 this.loadingRecipes = false;
             }
