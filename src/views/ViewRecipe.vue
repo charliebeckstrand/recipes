@@ -33,9 +33,9 @@
                             </div>
                         </div>
                         <div class="ml-md-3 ml-0">
-                            <h5 :class="{'mb-1': recipe.description || recipe.types && recipe.types.length || recipe.total_time}">
+                            <h4 :class="{'mb-1': recipe.description || recipe.types && recipe.types.length || recipe.total_time}">
                                 <span class="text-capitalize">{{recipe.name}}</span>
-                            </h5>
+                            </h4>
 
                             <p class="text-muted text-lg-left text-justify m-0" :class="{'mb-1': recipe.types && recipe.types.length}">
                                 {{recipe.description}}
@@ -60,7 +60,7 @@
                     <div class="row">
                         <div class="mb-lg-3 mb-1" :class="{'col-lg-4': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.prep_time && (!recipe.cook_time || !recipe.total_time)}" v-if="recipe.prep_time">
                             <div class="card">
-                                <h6 class="card-header text-uppercase">Prep Time</h6>
+                                <h5 class="card-header text-uppercase">Prep Time</h5>
                                 <div class="card-body">
                                     <p class="card-text">
                                         <span class="badge" :class="{'badge-success': recipe.prep_time < 10, 'badge-warning': recipe.prep_time >= 10 && recipe.prep_time < 30, 'badge-danger': recipe.prep_time >= 30}">
@@ -72,7 +72,7 @@
                         </div>
                         <div class="mb-lg-3 mb-1" :class="{'col-lg-4 pl-lg-0': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.cook_time && (!recipe.prep_time || !recipe.total_time)}" v-if="recipe.cook_time">
                             <div class="card">
-                                <h6 class="card-header text-uppercase">Cook Time</h6>
+                                <h5 class="card-header text-uppercase">Cook Time</h5>
                                 <div class="card-body">
                                     <p class="card-text">
                                         <span class="badge" :class="{'badge-success': recipe.cook_time < 10, 'badge-warning': recipe.cook_time >= 10 && recipe.cook_time < 30, 'badge-danger': recipe.cook_time >= 30}">
@@ -84,7 +84,7 @@
                         </div>
                         <div class="mb-3" :class="{'col-lg-4 pl-lg-0': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.total_time && (!recipe.prep_time || !recipe.cook_time)}" v-if="recipe.total_time">
                             <div class="card">
-                                <h6 class="card-header text-uppercase">Total Time</h6>
+                                <h5 class="card-header text-uppercase">Total Time</h5>
                                 <div class="card-body">
                                     <p class="card-text">
                                         <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">
@@ -200,7 +200,7 @@ export default {
     components: {
         Navbar
     },
-    props: ['recipe_id'],
+    props: ['recipe_key'],
     data() {
         return {
             recipe: {},
@@ -221,7 +221,7 @@ export default {
         getRecipe() {
             this.loadingRecipe = true;
 
-            let ref = firebase.firestore().collection('recipes').doc(this.recipe_id);
+            let ref = firebase.firestore().collection('recipes').doc(this.recipe_key);
 
             ref.get().then(snapshot => {
                 if (snapshot.exists) {

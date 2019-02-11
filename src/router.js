@@ -36,10 +36,23 @@ const router = new Router({
             // this generates a separate chunk (create-recipe.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: () =>
-            import(/* webpackChunkName: "create-recipe" */ "./views/CreateRecipe.vue")
+            import(/* webpackChunkName: "create-recipe" */ "./views/ManageRecipe.vue")
         },
         {
-            path: "/:recipe_id",
+            path: "/recipes/edit/:recipe_key",
+            name: "edit-recipe",
+            props: true,
+            meta: {
+                requiresAuth: true
+            },
+            // route level code-splitting
+            // this generates a separate chunk (create-recipe.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () =>
+            import(/* webpackChunkName: "create-recipe" */ "./views/ManageRecipe.vue")
+        },
+        {
+            path: "/:recipe_key",
             name: "view-recipe",
             props: true,
             // route level code-splitting

@@ -5,3 +5,7 @@
 .badge + .badge {
 	margin-left: .25rem;
 }
+
+.selectize-control.multi .selectize-input > div {
+	border-radius: 4px;
+}

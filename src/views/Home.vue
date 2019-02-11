@@ -27,7 +27,7 @@
                     </div>
                 </template>
                 <div class="list-group" v-if="filteredRecipes && filteredRecipes.length">
-                    <router-link :to="{name: 'view-recipe', params: {recipe_id: recipe['.key']}}" class="list-group-item list-group-item-action" v-for="(recipe, recipeIndex) in filteredRecipes">
+                    <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}" class="list-group-item list-group-item-action" v-for="(recipe, recipeIndex) in filteredRecipes">
                         <div class="d-flex align-items-center">
                             <div class="d-flex img-thumbnail" v-if="recipe.thumbnail">
                                 <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
@@ -47,11 +47,11 @@
                                 </div>
                             </div>
                             <div class="d-flex ml-auto" v-if="user">
-                                <button type="button" class="btn btn-sm btn-outline-primary">
-                                    <font-awesome-icon :icon="['fas', 'edit']" />
-                                </button>
+                                <router-link :to="{name: 'edit-recipe', params: {recipe_key: recipe['.key']}}" class="btn btn-sm btn-outline-primary">
+                                    <font-awesome-icon :icon="['far', 'edit']" />
+                                </router-link>
                                 <button type="button" class="btn btn-sm btn-outline-danger ml-1">
-                                    <font-awesome-icon :icon="['fas', 'trash']" />
+                                    <font-awesome-icon :icon="['far', 'trash']" />
                                 </button>
                             </div>
                         </div>
