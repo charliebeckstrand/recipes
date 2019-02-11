@@ -34,75 +34,65 @@
                             <v-selectize v-model="recipe.types" :options="types" multiple />
                         </div>
 
-                        <div class="card mb-3">
-                            <h5 class="card-header">Ingredients</h5>
-                            <div class="list-group list-group-flush">
-                                <div class="list-group-item" v-for="(ingredient, ingredientIndex) in recipe.ingredients" v-if="(recipe.ingredients && recipe.ingredients.length)">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend" v-if="ingredient.amount">
-                                            <span class="input-group-text">Amount</span>
-                                        </div>
-                                        <input type="text" class="form-control col-4" placeholder="Amount" v-model="ingredient.amount">
-                                        <div class="input-group-prepend" v-if="ingredient.measurement">
-                                            <span class="input-group-text">Measurement</span>
-                                        </div>
-                                        <select class="custom-select col-4" v-model="ingredient.measurement">
-                                            <option value="" selected disabled>Select Measurement</option>
-                                            <option value="1">Cup</option>
-                                            <option value="2">Tbsp</option>
-                                            <option value="3">Tsp</option>
-                                            <option value="4">oz</option>
-                                            <option value="5">Whole</option>
-                                            <option value="6">Half</option>
-                                            <option value="7">Quarter</option>
-                                            <option value="8">Pinch</option>
-                                            <option value="9">Dash</option>
-                                        </select>
-                                        <div class="input-group-prepend" v-if="ingredient.ingredient">
-                                            <span class="input-group-text">Ingredient</span>
-                                        </div>
-                                        <input type="text" class="form-control col-4" placeholder="Ingredient" v-model="ingredient.ingredient">
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-outline-danger" @click.prevent="removeIngredient(ingredientIndex)">
-                                                -
-                                            </button>
-                                        </div>
+                        <div class="form-group mb-2">
+                            <label for="ingredients">Ingredients</label>
+                            <div :class="{'mt-1': ingredientIndex !== 0}" v-for="(ingredient, ingredientIndex) in recipe.ingredients" v-if="(recipe.ingredients && recipe.ingredients.length)">
+                                <div class="input-group">
+                                    <!-- <div class="input-group-prepend" v-if="ingredient.amount">
+                                        <span class="input-group-text">Amount</span>
+                                    </div> -->
+                                    <input type="text" class="form-control col-4" placeholder="Amount" v-model="ingredient.amount">
+                                    <!-- <div class="input-group-prepend" v-if="ingredient.measurement">
+                                        <span class="input-group-text">Measurement</span>
+                                    </div> -->
+                                    <select class="custom-select col-4" v-model="ingredient.measurement">
+                                        <option value="" selected disabled>Select Measurement</option>
+                                        <option :value="measurement.measurement" v-for="measurement in measurements">{{measurement.measurement}}</option>
+                                    </select>
+                                    <!-- <div class="input-group-prepend" v-if="ingredient.ingredient">
+                                        <span class="input-group-text">Ingredient</span>
+                                    </div> -->
+                                    <input type="text" class="form-control col-4" placeholder="Ingredient" v-model="ingredient.ingredient">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-danger" @click.prevent="removeIngredient(ingredientIndex)">
+                                            -
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="list-group-item list-group-item-danger" v-if="!recipe.ingredients || recipe.ingredients && !recipe.ingredients.length">
-                                    0 ingredients added
-                                </div>
                             </div>
-                            <div class="card-footer">
-                                <button type="button" class="btn btn-outline-primary" @click.prevent="addIngredient()">
-                                    Add Ingredient
-                                </button>
+                            <div class="alert bg-danger text-white" v-if="!recipe.ingredients || recipe.ingredients && !recipe.ingredients.length">
+                                0 ingredients added
                             </div>
                         </div>
 
-                        <div class="card mb-3">
-                            <h5 class="card-header">Instructions</h5>
-                            <div class="list-group list-group-flush">
-                                <div class="list-group-item" v-for="(instruction, instructionIndex) in recipe.instructions" v-if="recipe.instructions && recipe.instructions.length">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Step {{instructionIndex + 1}}</span>
-                                        </div>
-                                        <textarea class="form-control" placeholder="Instruction" rows="3" v-model="instruction.instruction" />
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-outline-danger" @click.prevent="removeInstrution(instructionIndex)">-</button>
-                                        </div>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-sm btn-outline-primary" @click.prevent="addIngredient()">
+                                Add Ingredient
+                            </button>
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label for="instructions">Instructions</label>
+                            <div :class="{'mt-1': instructionIndex !== 0}" v-for="(instruction, instructionIndex) in recipe.instructions" v-if="recipe.instructions && recipe.instructions.length">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Step {{instructionIndex + 1}}</span>
+                                    </div>
+                                    <textarea class="form-control" placeholder="Instruction" rows="3" v-model="instruction.instruction" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-danger" @click.prevent="removeInstrution(instructionIndex)">-</button>
                                     </div>
                                 </div>
-                                <div class="list-group-item list-group-item-danger" v-if="!recipe.instructions || recipe.instructions && !recipe.instructions.length">
-                                    0 instructions added
-                                </div>
                             </div>
-                            <div class="card-footer">
-                                <button type="button" class="btn btn-outline-primary" @click.prevent="addInstruction()">
-                                    Add Instruction
-                                </button>
+                            <div class="alert bg-danger text-white" v-if="!recipe.instructions || recipe.instructions && !recipe.instructions.length">
+                                0 instructions added
                             </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-sm btn-outline-primary" @click.prevent="addInstruction()">
+                                Add Instruction
+                            </button>
                         </div>
 
                         <div class="form-group">
@@ -118,37 +108,36 @@
                             <input type="number" min="1" class="form-control" v-model="recipe.total_time">
                         </div>
 
-                        <div class="card mb-3">
-                            <h5 class="card-header">Nutrition Facts</h5>
-                            <div class="list-group list-group-flush">
-                                <div class="list-group-item" v-for="(fact, nutritionIndex) in recipe.nutrition" v-if="recipe.nutrition && recipe.nutrition.length">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend" v-if="fact.fact">
-                                            <span class="input-group-text">Fact</span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
-                                        <div class="input-group-prepend" v-if="fact.amount">
-                                            <span class="input-group-text">Amount</span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-outline-danger" @click.prevent="removeNutrition(nutritionIndex)">-</button>
-                                        </div>
+                        <div class="form-group mb-2">
+                            <label for="nutrition-facts">Nutrition Facts</label>
+                            <div :class="{'mt-1': nutritionIndex !== 0}" v-for="(fact, nutritionIndex) in recipe.nutrition" v-if="recipe.nutrition && recipe.nutrition.length">
+                                <div class="input-group">
+                                    <!-- <div class="input-group-prepend" v-if="fact.fact">
+                                        <span class="input-group-text">Fact</span>
+                                    </div> -->
+                                    <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
+                                    <!-- <div class="input-group-prepend" v-if="fact.amount">
+                                        <span class="input-group-text">Amount</span>
+                                    </div> -->
+                                    <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-danger" @click.prevent="removeNutrition(nutritionIndex)">-</button>
                                     </div>
                                 </div>
-                                <div class="list-group-item list-group-item-danger" v-if="!recipe.nutrition || recipe.nutrition && !recipe.nutrition.length">
-                                    0 nutrition facts added
-                                </div>
                             </div>
-                            <div class="card-footer">
-                                <button type="button" class="btn btn-outline-primary" @click.prevent="addNutrition()">
-                                    Add Nutrition Fact
-                                </button>
+                            <div class="alert bg-danger text-white" v-if="!recipe.nutrition || recipe.nutrition && !recipe.nutrition.length">
+                                0 nutrition facts added
                             </div>
                         </div>
 
-                        <button type="submit" class="btn" :class="{'btn-success': !recipe['.key'], 'btn-primary': recipe['.key']}">
-                            <template v-if="!recipe['.key']">Create</template>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-sm btn-outline-primary" @click.prevent="addNutrition()">
+                                Add Nutrition Fact
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn" :class="{'btn-success': !snapshot.id, 'btn-primary': snapshot.id}">
+                            <template v-if="!snapshot.id">Create</template>
                             <template v-else>Edit</template> Recipe
                         </button>
                     </form>
@@ -178,6 +167,38 @@ export default {
         return {
             types: ['breakfast', 'lunch', 'dinner', 'desert', 'snack', 'drink'],
 
+            measurements: [
+                {
+                    measurement: "cup"
+                },
+                {
+                    measurement: "tbsp"
+                },
+                {
+                    measurement: "ssp"
+                },
+                {
+                    measurement: "oz"
+                },
+                {
+                    measurement: "whole"
+                },
+                {
+                    measurement: "half"
+                },
+                {
+                    measurement: "quarter"
+                },
+                {
+                    measurement: "pinch"
+                },
+                {
+                    measurement: "dash"
+                }
+            ],
+
+            snapshot: {},
+
             recipe: {
                 ingredients: [
                     {
@@ -205,6 +226,7 @@ export default {
 
             ref.get().then(snapshot => {
                 if (snapshot.exists) {
+                    this.snapshot = snapshot;
                     this.recipe = snapshot.data();
 
                     this.loadingRecipe = false;
