@@ -21,7 +21,7 @@
             <template v-else>
                 <div class="mb-5 pb-5">
 
-                    <div class="d-flex flex-md-row flex-column my-4 align-items-center">
+                    <div class="d-flex flex-md-row flex-column my-3 align-items-center">
                         <div class="mb-md-0 mb-3" v-if="recipe.thumbnail">
                             <a :href="recipe.thumbnail" class="d-flex img-thumbnail" target="_blank">
                                 <img :src="recipe.thumbnail" class="img-fluid rounded my-auto" height="auto">
@@ -57,7 +57,36 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="d-flex">
+                        <div class="d-flex mx-md-0 mx-auto">
+                            <div class="form-group">
+                                <label class="mb-0" for="prep-time">Prep Time</label>
+                                <div>
+                                    <span class="badge" :class="{'badge-success': recipe.prep_time < 10, 'badge-warning': recipe.prep_time >= 10 && recipe.prep_time < 30, 'badge-danger': recipe.prep_time >= 30}">
+                                        {{recipe.prep_time}} minutes
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group ml-lg-2 ml-0">
+                                <label class="mb-0" for="cook-time">Cook Time</label>
+                                <div>
+                                    <span class="badge" :class="{'badge-success': recipe.cook_time < 10, 'badge-warning': recipe.cook_time >= 10 && recipe.cook_time < 30, 'badge-danger': recipe.cook_time >= 30}">
+                                        {{recipe.cook_time}} minutes
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group ml-lg-2 ml-0">
+                                <label class="mb-0" for="total-time">Total Time</label>
+                                <div>
+                                    <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">
+                                        {{recipe.total_time}} minutes
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row d-none">
                         <div class="mb-lg-3 mb-1" :class="{'col-lg-4': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.prep_time && (!recipe.cook_time || !recipe.total_time)}" v-if="recipe.prep_time">
                             <div class="card">
                                 <h5 class="card-header text-uppercase">Prep Time</h5>
@@ -125,32 +154,14 @@
                         <div class="tab-pane" :class="{'active': showInstructionsTab}" v-if="recipe.instructions && recipe.instructions.length">
                             <div class="list-group">
                                 <div class="list-group-item" v-for="(instruction, instructionIndex) in recipe.instructions">
-                                    {{instructionIndex + 1}}. {{instruction}}
+                                    {{instructionIndex + 1}}. {{instruction.instruction}}
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" :class="{'active': showNutritionTab}" v-if="recipe.nutrition">
+                        <div class="tab-pane" :class="{'active': showNutritionTab}" v-if="recipe.nutrition && recipe.nutrition.length">
                             <div class="list-group">
-                                <div class="list-group-item" v-if="recipe.nutrition.serving_size">
-                                    Serving Size: <strong>{{recipe.nutrition.serving_size}}</strong>
-                                </div>
-                                <div class="list-group-item" v-if="recipe.nutrition.calories">
-                                    Calories: <strong>{{recipe.nutrition.calories}}</strong>
-                                </div>
-                                <div class="list-group-item" v-if="recipe.nutrition.sugar">
-                                    Sugar: <strong>{{recipe.nutrition.sugar}}</strong>
-                                </div>
-                                <div class="list-group-item" v-if="recipe.nutrition.fat">
-                                    Fat: <strong>{{recipe.nutrition.fat}}</strong>
-                                </div>
-                                <div class="list-group-item" v-if="recipe.nutrition.carbohydrates">
-                                    Carbohydrates: <strong>{{recipe.nutrition.carbohydrates}}</strong>
-                                </div>
-                                <div class="list-group-item" v-if="recipe.nutrition.fiber">
-                                    Fiber: <strong>{{recipe.nutrition.fiber}}</strong>
-                                </div>
-                                <div class="list-group-item" v-if="recipe.nutrition.protein">
-                                    Protein: <strong>{{recipe.nutrition.protein}}</strong>
+                                <div class="list-group-item" v-for="fact in recipe.nutrition">
+                                    {{fact.fact}}: <strong>{{fact.amount}}</strong>
                                 </div>
                             </div>
                         </div>
