@@ -19,9 +19,17 @@
                         <div class="d-flex img-thumbnail">
                             <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
                         </div>
-                        <div class="ml-2 text-capitalize">{{recipe.name}}</div>
-                        <div class="ml-auto text-right">
-                            <span class="badge badge-secondary d-md-inline-block d-block" v-for="type in recipe.types">{{type}}</span>
+                        <div class="d-flex flex-lg-row flex-column align-items-center ml-2 w-100">
+                            <h5 class="m-0 text-capitalize mr-lg-0 mr-auto">{{recipe.name}}</h5>
+
+                            <div class="d-flex flex-lg-column mr-lg-0 mr-auto ml-lg-auto ml-0 text-right">
+                                <div>
+                                    <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                </div>
+                                <div class="ml-lg-0 ml-1">
+                                    <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </router-link>
