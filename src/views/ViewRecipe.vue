@@ -113,7 +113,7 @@
                         <div class="tab-pane" :class="{'active': showIngredientsTab}" v-if="recipe.ingredients && recipe.ingredients.length">
                             <div class="list-group">
                                 <div class="list-group-item" v-for="ingredient in recipe.ingredients">
-                                    <em>{{ingredient.amount}} {{ingredient.measurement}} </em> <strong>{{ingredient.ingredient}}</strong>
+                                    <em>{{ingredient.amount}} {{ingredient.measurement}} </em> <u>{{ingredient.ingredient}}</u>
                                 </div>
                             </div>
                         </div>

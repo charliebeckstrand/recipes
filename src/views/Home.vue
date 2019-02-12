@@ -54,9 +54,9 @@
                                 <router-link :to="{name: 'edit-recipe', params: {recipe_key: recipe['.key']}}" class="btn btn-sm btn-outline-primary">
                                     <font-awesome-icon :icon="['far', 'edit']" />
                                 </router-link>
-                                <button type="button" class="btn btn-sm btn-outline-danger ml-1">
+                                <!-- <button type="button" class="btn btn-sm btn-outline-danger ml-1" @click.prevent="deleteRecipe(recipe)">
                                     <font-awesome-icon :icon="['far', 'trash']" />
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </router-link>
@@ -133,6 +133,24 @@ export default {
                 filteredRecipes = this.recipes;
             }
             return filteredRecipes;
+        }
+    },
+    methods: {
+        deleteRecipe(recipe) {
+            this.$swal({
+				html: 'Are you sure you want to delete this recipe?',
+				showCancelButton: true,
+				confirmButtonText: 'Delete Recipe',
+				confirmButtonClass: 'btn btn-danger',
+				cancelButtonText: 'Cancel',
+				cancelButtonClass: 'btn btn-light',
+				buttonsStyling: false,
+				reverseButtons: true
+			}).then((willDeleteRecipe) => {
+				if (willDeleteRecipe.value) {
+                    firebase.firestore().collection('recipes').doc(recipe['.key']).delete();
+                }
+            });
         }
     }
 };

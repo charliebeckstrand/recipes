@@ -28,6 +28,7 @@
     "vue-lodash": "^2.0.0",
     "vue-multiselect": "^2.1.3",
     "vue-router": "^3.0.1",
+    "vue-sweetalert2": "^1.6.4",
     "vue-tippy": "^2.1.0",
     "vuefire": "^1.4.5",
     "vuex": "^3.0.1"

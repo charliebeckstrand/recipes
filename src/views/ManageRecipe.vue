@@ -23,11 +23,11 @@
             </template>
             <template v-else>
                 <div class="mb-5 pb-5">
-                    <form @submit.prevent="saveRecipe()">
+                    <form @submit.prevent="saveRecipe(recipe)">
 
                         <div class="form-group">
                             <label for="title">Name</label>
-                            <input type="text" class="form-control" v-model="recipe.name">
+                            <input type="text" class="form-control" :class="{'is-invalid': underValidation && !recipe.name}" v-model="recipe.name">
                         </div>
 
                         <div class="form-group">
@@ -45,12 +45,12 @@
                             <div :class="{'mt-1': ingredientIndex !== 0}" v-for="(ingredient, ingredientIndex) in recipe.ingredients" v-if="(recipe.ingredients && recipe.ingredients.length)">
                                 <!-- desktop -->
                                 <div class="input-group d-lg-flex d-none">
-                                    <input type="text" class="form-control col-4" placeholder="Amount" v-model="ingredient.amount">
-                                    <select class="custom-select col-4" v-model="ingredient.measurement">
+                                    <input type="text" class="form-control col-4" :class="{'is-invalid': underValidation && !ingredient.amount}" placeholder="Amount" v-model="ingredient.amount">
+                                    <select class="custom-select col-4" :class="{'is-invalid': underValidation && !ingredient.measurement}" v-model="ingredient.measurement">
                                         <option value="" selected disabled>Measurement</option>
                                         <option :value="measurement.measurement" v-for="measurement in measurements">{{measurement.measurement}}</option>
                                     </select>
-                                    <input type="text" class="form-control col-4" placeholder="Ingredient" v-model="ingredient.ingredient">
+                                    <input type="text" class="form-control col-4" :class="{'is-invalid': underValidation && !ingredient.ingredient}" placeholder="Ingredient" v-model="ingredient.ingredient">
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-danger" @click.prevent="removeIngredient(ingredientIndex)">
                                             -
@@ -62,16 +62,16 @@
                                     <div class="card flex-grow-1 card-mobile">
                                         <div class="card-body p-1 bg-light">
                                             <div class="mb-1">
-                                                <input type="text" class="form-control" placeholder="Amount" v-model="ingredient.amount">
+                                                <input type="text" class="form-control" :class="{'is-invalid': underValidation && !ingredient.amount}" placeholder="Amount" v-model="ingredient.amount">
                                             </div>
                                             <div class="mb-1">
-                                                <select class="custom-select" v-model="ingredient.measurement">
+                                                <select class="custom-select" :class="{'is-invalid': underValidation && !ingredient.measurement}" v-model="ingredient.measurement">
                                                     <option value="" selected disabled>Measurement</option>
                                                     <option :value="measurement.measurement" v-for="measurement in measurements">{{measurement.measurement}}</option>
                                                 </select>
                                             </div>
                                             <div>
-                                                <input type="text" class="form-control" placeholder="Ingredient" v-model="ingredient.ingredient">
+                                                <input type="text" class="form-control" :class="{'is-invalid': underValidation && !ingredient.ingredient}" placeholder="Ingredient" v-model="ingredient.ingredient">
                                             </div>
                                         </div>
                                     </div>
@@ -100,7 +100,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Step {{instructionIndex + 1}}</span>
                                     </div>
-                                    <textarea class="form-control" placeholder="Instruction" rows="1" v-model="instruction.instruction" />
+                                    <textarea class="form-control" :class="{'is-invalid': underValidation && !instruction.instruction}" placeholder="Instruction" rows="1" v-model="instruction.instruction" />
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-danger" @click.prevent="removeInstrution(instructionIndex)">-</button>
                                     </div>
@@ -175,10 +175,16 @@
                             </button>
                         </div>
 
-                        <button type="submit" class="btn" :class="{'btn-success': !snapshot.id, 'btn-primary': snapshot.id}">
-                            <template v-if="!snapshot.id">Create</template>
-                            <template v-else>Edit</template> Recipe
-                        </button>
+                        <div class="d-flex">
+                            <button type="submit" class="btn" :class="{'btn-success': !snapshot.id, 'btn-primary': snapshot.id}">
+                                <template v-if="!snapshot.id">Create</template>
+                                <template v-else>Edit</template> Recipe
+                            </button>
+
+                            <button type="submit" class="btn btn-danger ml-auto" @click.prevent="deleteRecipe()">
+                                Delete Recipe
+                            </button>
+                        </div>
                     </form>
                 </div>
             </template>
@@ -249,12 +255,34 @@ export default {
                 instructions: [
                     {}
                 ],
-                nutrition: [
-                    {}
-                ]
+                nutrition: []
             },
 
-            loadingRecipe: false
+            loadingRecipe: false,
+
+            underValidation: false
+        }
+    },
+    computed: {
+        ingredientsHaveValues() {
+            var haveValues = true;
+            _.forEach(this.recipe.ingredients, ingredient => {
+                if(!ingredient.amount || !ingredient.measurement || !ingredient.ingredient) {
+                    haveValues = false;
+                    return false;
+                }
+            });
+            return haveValues;
+        },
+        instructionsHaveValues() {
+            var haveValues = true;
+            _.forEach(this.recipe.instructions, instruction => {
+                if(!instruction.instruction) {
+                    haveValues = false;
+                    return false;
+                }
+            });
+            return haveValues;
         }
     },
     methods: {
@@ -305,9 +333,158 @@ export default {
         removeNutrition(nutritionIndex) {
             this.recipe.nutrition.splice(nutritionIndex, 1);
         },
-        saveRecipe() {
+        saveRecipe(recipe) {
+            var name = null;
+            var description = null;
+            var types = [];
+            var ingredients = [];
+            var instructions = [];
+            var prep_time = null;
+            var cook_time = null;
+            var total_time = null;
+            var nutrition = [];
 
+            if(recipe.name) {
+                name = recipe.name;
+            }
+            if(recipe.description) {
+                description = recipe.description;
+            }
+            if(recipe.types && recipe.types.length) {
+                types = recipe.types;
+            }
+            if(recipe.ingredients && recipe.ingredients.length) {
+                ingredients = recipe.ingredients;
+            }
+            if(recipe.instructions && recipe.instructions.length) {
+                instructions = recipe.instructions;
+            }
+            if(recipe.prep_time) {
+                prep_time = recipe.prep_time;
+            }
+            if(recipe.cook_time) {
+                cook_time = recipe.cook_time;
+            }
+            if(recipe.total_time) {
+                total_time = recipe.total_time;
+            }
+            if(recipe.nutrition && recipe.nutrition.length) {
+                nutrition = recipe.nutrition;
+            }
+
+            if(!this.validateRecipe(recipe)) return;
+
+            if(this.snapshot.id) {
+                firebase.firestore().collection("recipes").doc(this.snapshot.id).set({
+                    name: name,
+                    description: description,
+                    types: types,
+                    ingredients: ingredients,
+                    instructions: instructions,
+                    prep_time: prep_time,
+                    cook_time: cook_time,
+                    total_time: total_time,
+                    nutrition: nutrition
+                })
+                .then(response => {
+                    this.$swal({
+                        toast: true,
+                        title: '',
+                        html: 'Recipe updated',
+                        type: 'success',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                    this.$router.replace('/');
+                })
+                .catch(error => {
+                    this.$swal("Error", error.message, "error");
+                });
+            } else {
+                firebase.firestore().collection("recipes").doc().set({
+                    name: name,
+                    description: description,
+                    types: types,
+                    ingredients: ingredients,
+                    instructions: instructions,
+                    prep_time: prep_time,
+                    cook_time: cook_time,
+                    total_time: total_time,
+                    nutrition: nutrition
+                })
+                .then(response => {
+                    this.$swal({
+                        toast: true,
+                        title: '',
+                        html: 'Recipe created',
+                        type: 'success',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                    this.$router.replace('/');
+                })
+                .catch(error => {
+                    this.$swal("Error", error.message, "error");
+                });
+            }
         },
+        validateRecipe(recipe) {
+            this.underValidation = true;
+
+            var valid = true;
+
+            if(!recipe.name) {
+                valid = false;
+            }
+
+            if(!recipe.ingredients || recipe.ingredients && !recipe.ingredients.length) {
+                valid = false;
+            }
+
+            if(!this.ingredientsHaveValues) {
+                valid = false;
+            }
+
+            if(!recipe.instructions || recipe.instructions && !recipe.instructions.length) {
+                valid = false;
+            }
+
+            if(!this.instructionsHaveValues) {
+                valid = false;
+            }
+
+            return valid;
+        },
+        deleteRecipe() {
+            this.$swal({
+				html: 'Are you sure you want to delete this recipe?',
+				showCancelButton: true,
+				confirmButtonText: 'Delete Recipe',
+				confirmButtonClass: 'btn btn-danger',
+				cancelButtonText: 'Cancel',
+				cancelButtonClass: 'btn btn-light',
+				buttonsStyling: false,
+				reverseButtons: true
+			}).then((willDeleteRecipe) => {
+				if (willDeleteRecipe.value) {
+                    firebase.firestore().collection('recipes').doc(this.snapshot.id).delete();
+
+                    this.$swal({
+                        toast: true,
+                        title: '',
+                        html: 'Recipe deleted',
+                        type: 'success',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+
+                    this.$router.replace('/');
+                }
+            });
+        }
     },
     mounted() {
         if(this.recipe_key) {

@@ -13,6 +13,7 @@ import Lodash from 'lodash';
 import VueLodash from 'vue-lodash';
 import VueContentPlaceholders from 'vue-content-placeholders';
 import Gravatar from 'vue-gravatar';
+import VueSweetalert2 from 'vue-sweetalert2';
 
 // Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -65,6 +66,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(VueFirestore, VueTippy, VueLodash, Lodash);
 Vue.use(VueContentPlaceholders);
+Vue.use(VueSweetalert2);
 
 // config
 Vue.config.productionTip = false;
