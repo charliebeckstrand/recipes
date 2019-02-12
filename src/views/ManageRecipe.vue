@@ -7,7 +7,8 @@
                 <ol class="breadcrumb">
                     <router-link :to="{name: 'home'}" class="breadcrumb-item text-capitalize">Recipes</router-link>
                     <li class="breadcrumb-item text-capitalize active" aria-current="page">
-                        Create Recipe
+                        <template v-if="!snapshot.id">Create Recipe</template>
+                        <template v-else>Edit {{snapshot.id}}</template>
                     </li>
                 </ol>
             </nav>
@@ -25,7 +26,7 @@
                     <form @submit.prevent="saveRecipe()">
 
                         <div class="form-group">
-                            <label for="recipeName">Name</label>
+                            <label for="title">Name</label>
                             <input type="text" class="form-control" v-model="recipe.name">
                         </div>
 
@@ -37,21 +38,13 @@
                         <div class="form-group mb-2">
                             <label for="ingredients">Ingredients</label>
                             <div :class="{'mt-1': ingredientIndex !== 0}" v-for="(ingredient, ingredientIndex) in recipe.ingredients" v-if="(recipe.ingredients && recipe.ingredients.length)">
-                                <div class="input-group">
-                                    <!-- <div class="input-group-prepend" v-if="ingredient.amount">
-                                        <span class="input-group-text">Amount</span>
-                                    </div> -->
+                                <!-- desktop -->
+                                <div class="input-group d-lg-flex d-none">
                                     <input type="text" class="form-control col-4" placeholder="Amount" v-model="ingredient.amount">
-                                    <!-- <div class="input-group-prepend" v-if="ingredient.measurement">
-                                        <span class="input-group-text">Measurement</span>
-                                    </div> -->
                                     <select class="custom-select col-4" v-model="ingredient.measurement">
-                                        <option value="" selected disabled>Select Measurement</option>
+                                        <option value="" selected disabled>Measurement</option>
                                         <option :value="measurement.measurement" v-for="measurement in measurements">{{measurement.measurement}}</option>
                                     </select>
-                                    <!-- <div class="input-group-prepend" v-if="ingredient.ingredient">
-                                        <span class="input-group-text">Ingredient</span>
-                                    </div> -->
                                     <input type="text" class="form-control col-4" placeholder="Ingredient" v-model="ingredient.ingredient">
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-danger" @click.prevent="removeIngredient(ingredientIndex)">
@@ -59,9 +52,33 @@
                                         </button>
                                     </div>
                                 </div>
+                                <!-- mobile -->
+                                <div class="d-flex d-lg-none">
+                                    <div class="card flex-grow-1 card-mobile">
+                                        <div class="card-body p-1 bg-light">
+                                            <div class="mb-1">
+                                                <input type="text" class="form-control" placeholder="Amount" v-model="ingredient.amount">
+                                            </div>
+                                            <div class="mb-1">
+                                                <select class="custom-select" v-model="ingredient.measurement">
+                                                    <option value="" selected disabled>Measurement</option>
+                                                    <option :value="measurement.measurement" v-for="measurement in measurements">{{measurement.measurement}}</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <input type="text" class="form-control" placeholder="Ingredient" v-model="ingredient.ingredient">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <button type="button" class="btn btn-outline-danger remove-item-mobile" @click.prevent="removeIngredient(ingredientIndex)">
+                                            -
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="alert bg-danger text-white" v-if="!recipe.ingredients || recipe.ingredients && !recipe.ingredients.length">
-                                0 ingredients added
+                            <div class="alert bg-danger text-white mb-2" v-if="!recipe.ingredients || recipe.ingredients && !recipe.ingredients.length">
+                                At least one ingredient is required
                             </div>
                         </div>
 
@@ -84,8 +101,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="alert bg-danger text-white" v-if="!recipe.instructions || recipe.instructions && !recipe.instructions.length">
-                                0 instructions added
+                            <div class="alert bg-danger text-white mb-2" v-if="!recipe.instructions || recipe.instructions && !recipe.instructions.length">
+                                At least one instruction step is required
                             </div>
                         </div>
 
@@ -109,24 +126,41 @@
                         </div>
 
                         <div class="form-group mb-2">
-                            <label for="nutrition-facts">Nutrition Facts</label>
-                            <div :class="{'mt-1': nutritionIndex !== 0}" v-for="(fact, nutritionIndex) in recipe.nutrition" v-if="recipe.nutrition && recipe.nutrition.length">
-                                <div class="input-group">
-                                    <!-- <div class="input-group-prepend" v-if="fact.fact">
-                                        <span class="input-group-text">Fact</span>
-                                    </div> -->
-                                    <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
-                                    <!-- <div class="input-group-prepend" v-if="fact.amount">
-                                        <span class="input-group-text">Amount</span>
-                                    </div> -->
-                                    <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-danger" @click.prevent="removeNutrition(nutritionIndex)">-</button>
+                            <div :class="{'mt-1': nutritionIndex !== 0}" v-for="(fact, nutritionIndex) in recipe.nutrition">
+                                <!-- desktop -->
+                                <div class="d-lg-block d-none">
+                                    <label for="nutrition-facts">Nutrition Facts</label>
+                                    <div :class="{'mt-1': nutritionIndex !== 0}" v-for="(fact, nutritionIndex) in recipe.nutrition" v-if="recipe.nutrition && recipe.nutrition.length">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
+                                            <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-danger" @click.prevent="removeNutrition(nutritionIndex)">-</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert bg-warning text-white mb-2" v-if="!recipe.nutrition || recipe.nutrition && !recipe.nutrition.length">
+                                        0 nutrition facts added
                                     </div>
                                 </div>
-                            </div>
-                            <div class="alert bg-danger text-white" v-if="!recipe.nutrition || recipe.nutrition && !recipe.nutrition.length">
-                                0 nutrition facts added
+                                <!-- mobile -->
+                                <div class="d-lg-none d-flex">
+                                    <div class="card flex-grow-1 card-mobile">
+                                        <div class="card-body p-1 bg-light">
+                                            <div class="mb-1">
+                                                <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
+                                            </div>
+                                            <div>
+                                                <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <button type="button" class="btn btn-outline-danger remove-item-mobile" @click.prevent="removeNutrition(nutritionIndex)">
+                                            -
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -277,3 +311,14 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.card-mobile {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.remove-item-mobile {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+</style>

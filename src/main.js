@@ -12,6 +12,7 @@ import VueTippy from 'vue-tippy';
 import Lodash from 'lodash';
 import VueLodash from 'vue-lodash';
 import VueContentPlaceholders from 'vue-content-placeholders';
+import Gravatar from 'vue-gravatar';
 
 // Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -59,6 +60,7 @@ firebase.auth().onAuthStateChanged((user) => {
 export const auth = firebase.auth();
 export const db = firebase.firestore();
 
+Vue.component('v-gravatar', Gravatar);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(VueFirestore, VueTippy, VueLodash, Lodash);

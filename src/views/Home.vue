@@ -47,7 +47,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex ml-auto" v-if="user">
+                            <div class="d-flex ml-auto pl-2" v-if="user">
                                 <router-link :to="{name: 'edit-recipe', params: {recipe_key: recipe['.key']}}" class="btn btn-sm btn-outline-primary">
                                     <font-awesome-icon :icon="['far', 'edit']" />
                                 </router-link>
