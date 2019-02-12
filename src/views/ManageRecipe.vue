@@ -181,7 +181,7 @@
                                 <template v-else>Edit</template> Recipe
                             </button>
 
-                            <button type="submit" class="btn btn-danger ml-auto" @click.prevent="deleteRecipe()">
+                            <button type="submit" class="btn btn-danger ml-auto" @click.prevent="deleteRecipe()" v-if="snapshot.id">
                                 Delete Recipe
                             </button>
                         </div>
