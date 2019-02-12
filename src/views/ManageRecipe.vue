@@ -139,9 +139,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="alert bg-warning text-white mb-2" v-if="!recipe.nutrition || recipe.nutrition && !recipe.nutrition.length">
-                                        0 nutrition facts added
-                                    </div>
                                 </div>
                                 <!-- mobile -->
                                 <div class="d-lg-none d-flex">
@@ -161,6 +158,9 @@
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="alert bg-warning text-white mb-2" v-if="!recipe.nutrition || recipe.nutrition && !recipe.nutrition.length">
+                                0 nutrition facts added
                             </div>
                         </div>
 
@@ -209,7 +209,7 @@ export default {
                     measurement: "tbsp"
                 },
                 {
-                    measurement: "ssp"
+                    measurement: "tsp"
                 },
                 {
                     measurement: "oz"
