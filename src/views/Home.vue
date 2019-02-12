@@ -28,15 +28,12 @@
                 </div>
 
                 <div class="list-group" v-if="filteredRecipes && filteredRecipes.length">
-                    <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}" class="list-group-item list-group-item-action" v-for="(recipe, recipeIndex) in filteredRecipes">
+                    <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}" v-for="(recipe, recipeIndex) in filteredRecipes" class="list-group-item list-group-item-action" :class="{'has-actions': user && user.uid && user.uid == recipe.created_by}">
                         <div class="d-flex align-items-center">
                             <div class="d-sm-flex d-none img-thumbnail" v-if="recipe.thumbnail">
                                 <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
                             </div>
-                            <div class="d-sm-flex d-none img-thumbnail" v-else>
-                                <img src="http://placehold.it/500x500/e9ecef/e9ecef" class="img-fluid rounded my-auto">
-                            </div>
-                            <div class="ml-sm-3 ml-0">
+                            <div :class="{'ml-sm-3 ml-0': recipe.thumbnail, 'mr-3': user && user.uid && user.uid == recipe.created_by}">
                                 <h5 class="mb-1 text-capitalize mr-lg-0 mr-auto">{{recipe.name}}</h5>
 
                                 <p class="text-muted mb-1 d-md-block d-none" v-if="recipe.description">{{recipe.description}}</p>
@@ -50,17 +47,20 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex ml-auto pl-2" v-if="user">
-                                <router-link :to="{name: 'edit-recipe', params: {recipe_key: recipe['.key']}}" class="btn btn-sm btn-outline-primary">
-                                    <font-awesome-icon :icon="['far', 'edit']" />
-                                </router-link>
-                                <!-- <button type="button" class="btn btn-sm btn-outline-danger ml-1" @click.prevent="deleteRecipe(recipe)">
-                                    <font-awesome-icon :icon="['far', 'trash']" />
-                                </button> -->
-                            </div>
+                            <template v-if="user && user.uid && user.uid == recipe.created_by">
+                                <div class="btn-group ml-auto">
+                                    <button type="button" class="edit-recipe-button btn btn-sm btn-outline-primary" :class="{'h-50': recipe.created_by && recipe.created_by == user.uid, 'h-100': !recipe.created_by || recipe.created_by && recipe.created_by !== user.uid}" @click.prevent="editRecipe(recipe)">
+                                        <font-awesome-icon :icon="['far', 'edit']" fixed-width />
+                                    </button>
+                                    <button type="button" class="delete-recipe-button btn btn-sm btn-outline-danger h-50" @click.prevent="deleteRecipe(recipe)">
+                                        <font-awesome-icon :icon="['far', 'trash']" fixed-width />
+                                    </button>
+                                </div>
+                            </template>
                         </div>
                     </router-link>
                 </div>
+
                 <div class="alert bg-warning text-white" v-if="!filteredRecipes || filteredRecipes && !filteredRecipes.length">
                     0 recipes match your search
                 </div>
@@ -130,27 +130,68 @@ export default {
                     }
                 });
             } else {
-                filteredRecipes = this.recipes;
+                filteredRecipes = _.orderBy(this.recipes, 'created');
             }
-            return filteredRecipes;
+            return _.orderBy(filteredRecipes, 'created');
         }
     },
     methods: {
+        editRecipe(recipe) {
+            if(recipe.created_by && recipe.created_by == this.user.uid) {
+                this.$router.push({name: 'edit-recipe', params: {recipe_key: recipe['.key']}});
+            } else if(!recipe.created_by || recipe.created_by !== this.user.uid) {
+                this.$swal({
+                    toast: true,
+                    html: "You do not have priviledges to edit this recipe",
+                    type: "error",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+            }
+        },
         deleteRecipe(recipe) {
-            this.$swal({
-				html: 'Are you sure you want to delete this recipe?',
-				showCancelButton: true,
-				confirmButtonText: 'Delete Recipe',
-				confirmButtonClass: 'btn btn-danger',
-				cancelButtonText: 'Cancel',
-				cancelButtonClass: 'btn btn-light',
-				buttonsStyling: false,
-				reverseButtons: true
-			}).then((willDeleteRecipe) => {
-				if (willDeleteRecipe.value) {
-                    firebase.firestore().collection('recipes').doc(recipe['.key']).delete();
-                }
-            });
+            if(recipe.created_by && recipe.created_by == this.user.uid) {
+                this.$swal({
+                    html: 'Are you sure you want to delete this recipe?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete Recipe',
+                    confirmButtonClass: 'btn btn-danger',
+                    cancelButtonText: 'Cancel',
+                    cancelButtonClass: 'btn btn-light',
+                    buttonsStyling: false,
+                    reverseButtons: true
+                }).then((willDeleteRecipe) => {
+                    if (willDeleteRecipe.value) {
+                        firebase.firestore().collection('recipes').doc(recipe['.key']).delete();
+
+                        if(recipe.name) {
+                            var message = recipe.name + ' deleted';
+                        } else {
+                            var message = 'Recipe deleted';
+                        }
+
+                        this.$swal({
+                            toast: true,
+                            html: message,
+                            type: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                    }
+                });
+            } else if(!recipe.created_by || recipe.created_by !== this.user.uid) {
+                this.$swal({
+                    toast: true,
+                    html: "You do not have priviledges to delete this recipe",
+                    type: "error",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+
+            }
         }
     }
 };
@@ -166,4 +207,14 @@ export default {
 .badge + .badge {
     margin-top: .25rem;
 }
+/* .edit-recipe-button {
+    border-top-left-radius: 0;
+}
+.delete-recipe-button {
+    border-bottom-left-radius: 0;
+}
+.list-group-item.has-actions {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+} */
 </style>

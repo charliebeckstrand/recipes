@@ -181,7 +181,7 @@
                                 <template v-else>Edit</template> Recipe
                             </button>
 
-                            <button type="submit" class="btn btn-danger ml-auto" @click.prevent="deleteRecipe()" v-if="snapshot.id">
+                            <button type="submit" class="btn btn-danger ml-auto" @click.prevent="deleteRecipe()" v-if="snapshot.id && recipe.created_by == user.uid">
                                 Delete Recipe
                             </button>
                         </div>
@@ -193,12 +193,21 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import firebase from 'firebase/app';
 import VSelectize from '@isneezy/vue-selectize';
 import 'selectize/dist/css/selectize.css';
 
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
+
+// Vue.directive('focus', {
+//     inserted(el, binding, vnode) {
+//         Vue.nextTick(function() {
+//             el.focus();
+//         });
+//     }
+// });
 
 export default {
     name: "create-recipe",
@@ -264,6 +273,9 @@ export default {
         }
     },
     computed: {
+        user() {
+            return this.$store.state.user;
+        },
         ingredientsHaveValues() {
             var haveValues = true;
             _.forEach(this.recipe.ingredients, ingredient => {
@@ -334,15 +346,20 @@ export default {
             this.recipe.nutrition.splice(nutritionIndex, 1);
         },
         saveRecipe(recipe) {
-            var name = null;
-            var description = null;
             var types = [];
             var ingredients = [];
             var instructions = [];
+            var nutrition = [];
+
+            var name = null;
+            var description = null;
             var prep_time = null;
             var cook_time = null;
             var total_time = null;
-            var nutrition = [];
+            var created = null;
+            var created_by = null;
+
+            var updated = this.moment().format('LTS');
 
             if(recipe.name) {
                 name = recipe.name;
@@ -371,8 +388,18 @@ export default {
             if(recipe.nutrition && recipe.nutrition.length) {
                 nutrition = recipe.nutrition;
             }
+            if(recipe.created) {
+                created = recipe.created;
+            } else {
+                created = this.moment().format('LTS');
+            }
+            if(recipe.created_by) {
+                created_by = recipe.created_by;
+            } else {
+                created_by = this.user.uid;
+            }
 
-            if(!this.validateRecipe(recipe)) return;
+            if(!this.validateRecipe()) return;
 
             if(this.snapshot.id) {
                 firebase.firestore().collection("recipes").doc(this.snapshot.id).set({
@@ -384,13 +411,20 @@ export default {
                     prep_time: prep_time,
                     cook_time: cook_time,
                     total_time: total_time,
-                    nutrition: nutrition
+                    nutrition: nutrition,
+                    created: created,
+                    created_by: created_by,
+                    updated: updated
                 })
                 .then(response => {
+                    if(name) {
+                        var message = name + ' updated';
+                    } else {
+                        var message = 'Recipe updated';
+                    }
                     this.$swal({
                         toast: true,
-                        title: '',
-                        html: 'Recipe updated',
+                        html: message,
                         type: 'success',
                         position: 'top-end',
                         showConfirmButton: false,
@@ -411,13 +445,19 @@ export default {
                     prep_time: prep_time,
                     cook_time: cook_time,
                     total_time: total_time,
-                    nutrition: nutrition
+                    nutrition: nutrition,
+                    created: created,
+                    created_by: created_by
                 })
                 .then(response => {
+                    if(name) {
+                        var message = name + ' created';
+                    } else {
+                        var message = 'Recipe created';
+                    }
                     this.$swal({
                         toast: true,
-                        title: '',
-                        html: 'Recipe created',
+                        html: message,
                         type: 'success',
                         position: 'top-end',
                         showConfirmButton: false,
@@ -430,16 +470,16 @@ export default {
                 });
             }
         },
-        validateRecipe(recipe) {
+        validateRecipe() {
             this.underValidation = true;
 
             var valid = true;
 
-            if(!recipe.name) {
+            if(!this.recipe.name) {
                 valid = false;
             }
 
-            if(!recipe.ingredients || recipe.ingredients && !recipe.ingredients.length) {
+            if(!this.recipe.ingredients || this.recipe.ingredients && !this.recipe.ingredients.length) {
                 valid = false;
             }
 
@@ -447,7 +487,7 @@ export default {
                 valid = false;
             }
 
-            if(!recipe.instructions || recipe.instructions && !recipe.instructions.length) {
+            if(!this.recipe.instructions || this.recipe.instructions && !this.recipe.instructions.length) {
                 valid = false;
             }
 
@@ -458,32 +498,44 @@ export default {
             return valid;
         },
         deleteRecipe() {
-            this.$swal({
-				html: 'Are you sure you want to delete this recipe?',
-				showCancelButton: true,
-				confirmButtonText: 'Delete Recipe',
-				confirmButtonClass: 'btn btn-danger',
-				cancelButtonText: 'Cancel',
-				cancelButtonClass: 'btn btn-light',
-				buttonsStyling: false,
-				reverseButtons: true
-			}).then((willDeleteRecipe) => {
-				if (willDeleteRecipe.value) {
-                    firebase.firestore().collection('recipes').doc(this.snapshot.id).delete();
+            if(this.recipe.created_by == this.user.uid) {
+                this.$swal({
+    				html: 'Are you sure you want to delete this recipe?',
+    				showCancelButton: true,
+    				confirmButtonText: 'Delete Recipe',
+    				confirmButtonClass: 'btn btn-danger',
+    				cancelButtonText: 'Cancel',
+    				cancelButtonClass: 'btn btn-light',
+    				buttonsStyling: false,
+    				reverseButtons: true
+    			}).then((willDeleteRecipe) => {
+    				if (willDeleteRecipe.value) {
+                        firebase.firestore().collection('recipes').doc(this.snapshot.id).delete();
 
-                    this.$swal({
-                        toast: true,
-                        title: '',
-                        html: 'Recipe deleted',
-                        type: 'success',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 5000
-                    });
+                        if(name) {
+                            var message = name + ' deleted';
+                        } else {
+                            var message = 'Recipe deleted';
+                        }
 
-                    this.$router.replace('/');
-                }
-            });
+                        this.$swal({
+                            toast: true,
+                            html: message,
+                            type: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+
+                        this.$router.replace('/');
+                    }
+                });
+            } else {
+                this.$swal({
+                    type: "Error",
+    				html: "You do not have the necessary priviledges to delete this recipe",
+    			});
+            }
         }
     },
     mounted() {

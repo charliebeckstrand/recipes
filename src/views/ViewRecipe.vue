@@ -28,12 +28,7 @@
                                     <img :src="recipe.thumbnail" class="img-fluid rounded my-auto" height="auto">
                                 </a>
                             </div>
-                            <div class="mb-md-0 mb-3" v-else>
-                                <div class="img-thumbnail">
-                                    <img src="http://placehold.it/500x500/e9ecef/e9ecef" class="img-fluid rounded my-auto" height="auto">
-                                </div>
-                            </div>
-                            <div class="ml-md-3 ml-0" :class="{'mb-lg-0 mb-3': recipe.description}">
+                            <div :class="{'ml-md-3 ml-0': recipe.thumbnail, 'mb-lg-0 mb-3': recipe.description}">
                                 <h4 :class="{'mb-1': recipe.description || recipe.total_time || (recipe.types && recipe.types.length), 'mb-0': !recipe.description && (!recipe.types || recipe.types && !recipe.types.length)}">
                                     <span class="text-capitalize">{{recipe.name}}</span>
                                 </h4>
