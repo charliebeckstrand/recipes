@@ -33,18 +33,28 @@
                             <div class="d-sm-flex d-none img-thumbnail" v-if="recipe.thumbnail">
                                 <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
                             </div>
-                            <div :class="{'ml-sm-3 ml-0': recipe.thumbnail, 'mr-3': user && user.uid && user.uid == recipe.created_by}">
-                                <h5 class="mb-1 text-capitalize mr-lg-0 mr-auto">{{recipe.name}}</h5>
+                            <div class="flex-grow-1" :class="{'ml-sm-3 ml-0': recipe.thumbnail, 'mr-3': user && user.uid && user.uid == recipe.created_by}">
+                                <h5 class="mb-1 text-capitalize mr-lg-0 mr-auto">
+                                    {{recipe.name}}
+                                </h5>
 
                                 <p class="text-muted mb-1 d-md-block d-none" v-if="recipe.description">{{recipe.description}}</p>
 
-                                <div class="d-flex">
+                                <div class="d-flex flex-md-row flex-column">
                                     <div>
-                                        <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                        <span class="badge badge-dark">{{user.displayName}}</span>
                                     </div>
-                                    <div class="ml-1" v-if="recipe.total_time">
-                                        <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                    <div class="d-flex">
+                                        <div :class="{'ml-md-1': user.displayName}" v-if="recipe.types">
+                                            <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                        </div>
+                                        <div class="ml-1" v-if="recipe.total_time">
+                                            <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                        </div>
                                     </div>
+                                    <!-- <div class="ml-1">
+                                        <span class="badge badge-light">{{recipe.created_date}}</span>
+                                    </div> -->
                                 </div>
                             </div>
                             <template v-if="user && user.uid && user.uid == recipe.created_by">
@@ -113,7 +123,9 @@ export default {
             if(this.search) {
                 return this.recipes.filter(recipe => {
                     var search = this.search.toLowerCase();
+
                     var searchMatch = true ? (this.search === '' || recipe.name.toLowerCase().indexOf(search) > -1) : false;
+                    var displayNameMatch = true ? (this.search === '' || recipe.created_by_display_name.toLowerCase().indexOf(search) > -1) : false;
 
                     if(recipe.types) {
                         var typeMatch = false;
@@ -124,7 +136,7 @@ export default {
                         });
                         var typeMatch = true ? (this.search === '' || typeMatches.length) : false;
 
-                        return searchMatch || typeMatch;
+                        return searchMatch || typeMatch || displayNameMatch;
                     } else {
                         return searchMatch;
                     }
@@ -204,9 +216,9 @@ export default {
     min-width: 75px;
     min-height: 75px;
 }
-.badge + .badge {
+/* .badge + .badge {
     margin-top: .25rem;
-}
+} */
 /* .edit-recipe-button {
     border-top-left-radius: 0;
 }

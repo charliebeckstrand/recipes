@@ -18,13 +18,27 @@
                 </div>
 
                 <form @submit.prevent="signInWithEmailAndPassword()">
-                    <div class="form-group">
-                        <input type="email" class="form-control rounded-0" :class="{'is-invalid': invalidEmail}" placeholder="Email" v-model="email" @input="invalidEmail = false" autofocus>
+                    <div class="form-group mb-1">
+                        <div class="input-group">
+                            <!-- <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <font-awesome-icon :icon="['far', 'at']" fixed-width />
+                                </div>
+                            </div> -->
+                            <input type="email" class="form-control" :class="{'is-invalid': invalidEmail}" placeholder="Email" v-model="email" @input="invalidEmail = false" autofocus>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control rounded-0" :class="{'is-invalid': invalidPassword}" placeholder="Password" v-model="password" @input="invalidPassword = false">
+                        <div class="input-group">
+                            <!-- <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <font-awesome-icon :icon="['far', 'lock']" fixed-width />
+                                </div>
+                            </div> -->
+                            <input type="password" class="form-control" :class="{'is-invalid': invalidPassword}" placeholder="Password" v-model="password" @input="invalidPassword = false">
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-block text-uppercase rounded-0" :class="{'btn-dark': email && password, 'btn-light': !email || !password}" :disabled="!email || !password || loggingIn">
+                    <button type="submit" class="btn btn-block text-uppercase" :class="{'btn-dark': email && password, 'btn-light': !email || !password}" :disabled="!email || !password || loggingIn">
                         Login
                     </button>
                 </form>

@@ -42,11 +42,14 @@
                                 </div> -->
 
                                 <div class="d-flex">
-                                    <div>
+                                    <div v-if="recipe.types && recipe.types.length">
                                         <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
                                     </div>
-                                    <div class="ml-1" v-if="recipe.total_time">
+                                    <div :class="{'ml-1': recipe.types && recipe.types.length}" v-if="recipe.total_time">
                                         <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">time not specified</span>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +107,7 @@
                         </li>
                     </ul>
 
-                    <div class="tab-content">
+                    <div class="tab-content mb-3">
                         <div class="tab-pane" :class="{'active': showIngredientsTab}" v-if="recipe.ingredients && recipe.ingredients.length">
                             <div class="list-group">
                                 <div class="list-group-item" v-for="ingredient in recipe.ingredients">
@@ -128,32 +131,13 @@
                         </div>
                     </div>
 
-                    <!-- <div class="card mb-3" v-if="recipe.ingredients && recipe.ingredients.length">
-                        <h5 class="card-header bg-white text-uppercase">Ingredients</h5>
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item bg-light" v-for="ingredient in recipe.ingredients">
-                                &ndash;	<strong>{{ingredient.measurement}}</strong> {{ingredient.ingredient}}
-                            </div>
+                    <div class="d-flex">
+                        <div class="ml-lg-auto ml-0">
+                            <span class="badge badge-lg badge-dark">{{user.displayName}}</span>
+                            <span class="badge badge-lg badge-light">{{recipe.created_date}}</span>
                         </div>
-                    </div> -->
+                    </div>
 
-                    <!-- <div class="card mb-3" v-if="recipe.instructions && recipe.instructions.length">
-                        <h5 class="card-header bg-white text-uppercase">Instructions</h5>
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item bg-light" v-for="(instruction, instructionIndex) in recipe.instructions">
-                                {{instructionIndex + 1}}. {{instruction}}
-                            </div>
-                        </div>
-                    </div> -->
-
-                    <!-- <div class="card mb-3" v-if="recipe.nutrition">
-                        <h5 class="card-header alert-warning text-uppercase">Nutrition</h5>
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item">
-                                &bull; Serving Size <strong>{{recipe.nutrition.serving_size}}</strong>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
             </template>
 

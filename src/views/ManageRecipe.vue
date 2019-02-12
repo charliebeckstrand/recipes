@@ -177,12 +177,12 @@
 
                         <div class="d-flex">
                             <button type="submit" class="btn" :class="{'btn-success': !snapshot.id, 'btn-primary': snapshot.id}">
-                                <template v-if="!snapshot.id">Create</template>
-                                <template v-else>Edit</template> Recipe
+                                <template v-if="!snapshot.id">Create Recipe</template>
+                                <template v-else>Save Changes</template>
                             </button>
 
-                            <button type="submit" class="btn btn-danger ml-auto" @click.prevent="deleteRecipe()" v-if="snapshot.id && recipe.created_by == user.uid">
-                                Delete Recipe
+                            <button type="submit" class="btn btn-outline-danger ml-auto" @click.prevent="deleteRecipe()" v-if="snapshot.id && recipe.created_by == user.uid">
+                                <font-awesome-icon :icon="['far', 'trash']" />
                             </button>
                         </div>
                     </form>
@@ -356,10 +356,12 @@ export default {
             var prep_time = null;
             var cook_time = null;
             var total_time = null;
-            var created = null;
+            var created_date = null;
+            var created_date_time = null;
             var created_by = null;
+            var created_by_display_name = null;
 
-            var updated = this.moment().format('LTS');
+            var updated = this.moment().format("MM-DD-YYYY HH:mm:ss");
 
             if(recipe.name) {
                 name = recipe.name;
@@ -388,15 +390,25 @@ export default {
             if(recipe.nutrition && recipe.nutrition.length) {
                 nutrition = recipe.nutrition;
             }
-            if(recipe.created) {
-                created = recipe.created;
+            if(recipe.created_date) {
+                created_date = recipe.created_date;
             } else {
-                created = this.moment().format('LTS');
+                created_date = this.moment().format("MM-DD-YYYY");
+            }
+            if(recipe.created_date_time) {
+                created_date_time = recipe.created_date_time;
+            } else {
+                created_date_time = this.moment().format("MM-DD-YYYY HH:mm:ss");
             }
             if(recipe.created_by) {
                 created_by = recipe.created_by;
             } else {
                 created_by = this.user.uid;
+            }
+            if(recipe.created_by_display_name) {
+                created_by_display_name = recipe.created_by_display_name;
+            } else {
+                created_by_display_name = this.user.displayName;
             }
 
             if(!this.validateRecipe()) return;
@@ -412,8 +424,10 @@ export default {
                     cook_time: cook_time,
                     total_time: total_time,
                     nutrition: nutrition,
-                    created: created,
+                    created_date: created_date,
+                    created_date_time: created_date_time,
                     created_by: created_by,
+                    created_by_display_name: created_by_display_name,
                     updated: updated
                 })
                 .then(response => {
@@ -446,8 +460,10 @@ export default {
                     cook_time: cook_time,
                     total_time: total_time,
                     nutrition: nutrition,
-                    created: created,
-                    created_by: created_by
+                    created_date: created_date,
+                    created_date_time: created_date_time,
+                    created_by: created_by,
+                    created_by_display_name: created_by_display_name
                 })
                 .then(response => {
                     if(name) {

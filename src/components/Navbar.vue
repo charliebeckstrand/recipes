@@ -14,11 +14,11 @@
                         </a>
                     </div>
                 </li>
-                <!-- <li class="nav-item" v-else>
-                    <router-link :to="{name: 'login'}" class="btn btn-outline-primary rounded-0">
-                        Log In
+                <li class="nav-item" v-else>
+                    <router-link :to="{name: 'login'}">
+                        Login
                     </router-link>
-                </li> -->
+                </li>
             </ul>
         </nav>
     </div>
