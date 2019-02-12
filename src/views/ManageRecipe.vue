@@ -126,11 +126,11 @@
                         </div>
 
                         <div class="form-group mb-2">
+                            <label for="nutrition-facts">Nutrition Facts</label>
                             <div :class="{'mt-1': nutritionIndex !== 0}" v-for="(fact, nutritionIndex) in recipe.nutrition">
                                 <!-- desktop -->
                                 <div class="d-lg-block d-none">
-                                    <label for="nutrition-facts">Nutrition Facts</label>
-                                    <div :class="{'mt-1': nutritionIndex !== 0}" v-for="(fact, nutritionIndex) in recipe.nutrition" v-if="recipe.nutrition && recipe.nutrition.length">
+                                    <div :class="{'mt-1': nutritionIndex !== 0}" v-if="recipe.nutrition && recipe.nutrition.length">
                                         <div class="input-group">
                                             <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
                                             <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
