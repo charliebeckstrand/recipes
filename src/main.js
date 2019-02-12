@@ -29,6 +29,8 @@ library.add(far, fas, fal);
 dom.watch() // This will kick of the initial replacement of i to svg tags and configure a MutationObserver
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import '@/assets/css/sweet-alert-overrides.css';
 import '@/assets/css/app.css';
 
 let app;

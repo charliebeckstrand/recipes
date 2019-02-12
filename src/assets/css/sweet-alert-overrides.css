@@ -1,0 +1,48 @@
+/* Sweet Alert 2 */
+.swal2-popup {
+    padding: 2rem;
+}
+
+.swal2-popup.swal2-toast {
+    padding: .75em;
+}
+
+.swal2-popup.swal2-toast .swal2-title {
+    margin: 0 .25em;
+}
+
+.swal2-actions button + button {
+    margin-left: .5rem;
+}
+
+.swal2-icon.swal2-success {
+    color: #28a745;
+    border-color: #43B25C;
+}
+
+.swal2-icon.swal2-success [class^=swal2-success-line] {
+    background-color: #43B25C;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+    border-color: #43B25C;
+}
+
+.swal2-icon.swal2-warning {
+    color: #FFD145;
+    border-color: #FFC926;
+}
+
+.swal2-icon.swal2-info {
+    color: #51B9CA;
+    border-color: #34AEC1;
+}
+
+.swal2-icon.swal2-error {
+    color: #dc3545;
+    border-color: #E04E5C;
+}
+
+ .swal2-icon.swal2-error [class^=swal2-x-mark-line] {
+     background-color: #E04E5C;
+ }
