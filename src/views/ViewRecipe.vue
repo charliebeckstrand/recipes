@@ -21,43 +21,48 @@
             <template v-else>
                 <div class="mb-5 pb-5">
 
-                    <div class="d-flex flex-md-row flex-column my-3 align-items-center">
-                        <div class="mb-md-0 mb-3" v-if="recipe.thumbnail">
-                            <a :href="recipe.thumbnail" class="d-flex img-thumbnail" target="_blank">
-                                <img :src="recipe.thumbnail" class="img-fluid rounded my-auto" height="auto">
-                            </a>
-                        </div>
-                        <div class="mb-md-0 mb-3" v-else>
-                            <div class="img-thumbnail">
-                                <img src="http://placehold.it/500x500/e9ecef/e9ecef" class="img-fluid rounded my-auto" height="auto">
+                    <div class="d-flex">
+                        <div class="d-flex flex-md-row flex-column align-items-center mx-lg-0 mx-auto mb-md-3">
+                            <div class="mb-md-0 mb-3" v-if="recipe.thumbnail">
+                                <a :href="recipe.thumbnail" class="d-flex img-thumbnail" target="_blank">
+                                    <img :src="recipe.thumbnail" class="img-fluid rounded my-auto" height="auto">
+                                </a>
                             </div>
-                        </div>
-                        <div class="ml-md-3 ml-0">
-                            <h4 :class="{'mb-1': recipe.description || recipe.types && recipe.types.length || recipe.total_time}">
-                                <span class="text-capitalize">{{recipe.name}}</span>
-                            </h4>
-
-                            <p class="text-muted text-lg-left text-justify m-0" :class="{'mb-1': recipe.types && recipe.types.length}">
-                                {{recipe.description}}
-                            </p>
-
-                            <div>
-                                <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                            <div class="mb-md-0 mb-3" v-else>
+                                <div class="img-thumbnail">
+                                    <img src="http://placehold.it/500x500/e9ecef/e9ecef" class="img-fluid rounded my-auto" height="auto">
+                                </div>
                             </div>
+                            <div class="ml-md-3 ml-0" :class="{'mb-lg-0 mb-3': recipe.description}">
+                                <h4 :class="{'mb-1': recipe.description || recipe.total_time || (recipe.types && recipe.types.length), 'mb-0': !recipe.description && (!recipe.types || recipe.types && !recipe.types.length)}">
+                                    <span class="text-capitalize">{{recipe.name}}</span>
+                                </h4>
 
-                            <!-- <div class="d-flex">
-                                <div>
+                                <p class="text-muted m-0 d-md-block d-none" :class="{'mb-1': recipe.types && recipe.types.length}">
+                                    {{recipe.description}}
+                                </p>
+
+                                <!-- <div>
                                     <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
-                                </div>
-                                <div class="ml-1" v-if="recipe.total_time">
-                                    <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
-                                </div>
-                            </div> -->
+                                </div> -->
 
+                                <div class="d-flex">
+                                    <div>
+                                        <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                    </div>
+                                    <div class="ml-1" v-if="recipe.total_time">
+                                        <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="d-flex">
+                    <p class="text-muted text-center mb-3 d-md-none d-block" :class="{'mb-1': recipe.types && recipe.types.length}">
+                        {{recipe.description}}
+                    </p>
+
+                    <!-- <div class="d-flex mb-3">
                         <div class="d-flex mx-md-0 mx-auto">
                             <div class="form-group">
                                 <label class="mb-0" for="prep-time">Prep Time</label>
@@ -84,46 +89,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row d-none">
-                        <div class="mb-lg-3 mb-1" :class="{'col-lg-4': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.prep_time && (!recipe.cook_time || !recipe.total_time)}" v-if="recipe.prep_time">
-                            <div class="card">
-                                <h5 class="card-header text-uppercase">Prep Time</h5>
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        <span class="badge" :class="{'badge-success': recipe.prep_time < 10, 'badge-warning': recipe.prep_time >= 10 && recipe.prep_time < 30, 'badge-danger': recipe.prep_time >= 30}">
-                                            {{recipe.prep_time}} minutes
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-lg-3 mb-1" :class="{'col-lg-4 pl-lg-0': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.cook_time && (!recipe.prep_time || !recipe.total_time)}" v-if="recipe.cook_time">
-                            <div class="card">
-                                <h5 class="card-header text-uppercase">Cook Time</h5>
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        <span class="badge" :class="{'badge-success': recipe.cook_time < 10, 'badge-warning': recipe.cook_time >= 10 && recipe.cook_time < 30, 'badge-danger': recipe.cook_time >= 30}">
-                                            {{recipe.cook_time}} minutes
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3" :class="{'col-lg-4 pl-lg-0': recipe.prep_time && recipe.cook_time && recipe.total_time, 'col': recipe.total_time && (!recipe.prep_time || !recipe.cook_time)}" v-if="recipe.total_time">
-                            <div class="card">
-                                <h5 class="card-header text-uppercase">Total Time</h5>
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">
-                                            {{recipe.total_time}} minutes
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </div> -->
 
                     <ul class="nav nav-tabs mb-3" v-if="recipe.ingredients || recipe.instructions || recipe.nutrition">
                         <li class="nav-item d-block text-lg-left text-center" v-if="recipe.ingredients && recipe.ingredients.length">
@@ -147,7 +113,7 @@
                         <div class="tab-pane" :class="{'active': showIngredientsTab}" v-if="recipe.ingredients && recipe.ingredients.length">
                             <div class="list-group">
                                 <div class="list-group-item" v-for="ingredient in recipe.ingredients">
-                                    &ndash;	<strong>{{ingredient.measurement}}</strong> {{ingredient.ingredient}}
+                                    <em>{{ingredient.amount}} {{ingredient.measurement}} </em> <strong>{{ingredient.ingredient}}</strong>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +127,7 @@
                         <div class="tab-pane" :class="{'active': showNutritionTab}" v-if="recipe.nutrition && recipe.nutrition.length">
                             <div class="list-group">
                                 <div class="list-group-item" v-for="fact in recipe.nutrition">
-                                    {{fact.fact}}: <strong>{{fact.amount}}</strong>
+                                    <strong>{{fact.amount}}</strong> {{fact.fact}}
                                 </div>
                             </div>
                         </div>
@@ -276,13 +242,19 @@ export default {
 
 <style lang="scss">
 .img-thumbnail {
-    height: 75px;
-    width: 75px;
+    height: 100px;
+    width: 100px;
 }
 .recipe-type + .recipe-type:before {
     content: ", ";
 }
-@media(max-width: 768px) {
+@media(max-width: 767px) {
+    .img-thumbnail {
+        height: 150px;
+        width: 150px;
+    }
+}
+@media(max-width: 767px) {
     .nav-tabs {
         border-bottom: 0;
     }

@@ -30,14 +30,17 @@
                 <div class="list-group" v-if="filteredRecipes && filteredRecipes.length">
                     <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}" class="list-group-item list-group-item-action" v-for="(recipe, recipeIndex) in filteredRecipes">
                         <div class="d-flex align-items-center">
-                            <div class="d-flex img-thumbnail" v-if="recipe.thumbnail">
+                            <div class="d-sm-flex d-none img-thumbnail" v-if="recipe.thumbnail">
                                 <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
                             </div>
-                            <div class="d-flex img-thumbnail" v-else>
+                            <div class="d-sm-flex d-none img-thumbnail" v-else>
                                 <img src="http://placehold.it/500x500/e9ecef/e9ecef" class="img-fluid rounded my-auto">
                             </div>
-                            <div class="ml-3">
-                                <h6 class="m-0 text-capitalize mr-lg-0 mr-auto">{{recipe.name}}</h6>
+                            <div class="ml-sm-3 ml-0">
+                                <h5 class="mb-1 text-capitalize mr-lg-0 mr-auto">{{recipe.name}}</h5>
+
+                                <p class="text-muted mb-1 d-md-block d-none" v-if="recipe.description">{{recipe.description}}</p>
+
                                 <div class="d-flex">
                                     <div>
                                         <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
@@ -137,8 +140,10 @@ export default {
 
 <style scoped>
 .img-thumbnail {
-    height: 50px;
-    width: 50px;
+    height: 75px;
+    width: 75px;
+    min-width: 75px;
+    min-height: 75px;
 }
 .badge + .badge {
     margin-top: .25rem;

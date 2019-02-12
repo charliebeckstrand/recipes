@@ -31,6 +31,11 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" rows="3" v-model="recipe.description" />
+                        </div>
+
+                        <div class="form-group">
                             <label for="recipeType">Type<span v-if="recipe.types && recipe.types.length > 1">s</span></label>
                             <v-selectize v-model="recipe.types" :options="types" multiple />
                         </div>
@@ -95,7 +100,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Step {{instructionIndex + 1}}</span>
                                     </div>
-                                    <textarea class="form-control" placeholder="Instruction" rows="3" v-model="instruction.instruction" />
+                                    <textarea class="form-control" placeholder="Instruction" rows="1" v-model="instruction.instruction" />
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-danger" @click.prevent="removeInstrution(instructionIndex)">-</button>
                                     </div>
