@@ -41,15 +41,30 @@
                                     <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
                                 </div> -->
 
-                                <div class="d-flex">
-                                    <div v-if="recipe.types && recipe.types.length">
-                                        <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                <div class="d-flex flex-md-row flex-column">
+                                    <div>
+                                        <span class="badge badge-info" v-if="user && user.displayName">{{user.displayName}}</span>
                                     </div>
-                                    <div :class="{'ml-1': recipe.types && recipe.types.length}" v-if="recipe.total_time">
-                                        <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
-                                    </div>
-                                    <div v-else>
-                                        <span class="badge badge-danger">time not specified</span>
+                                    <div class="d-flex">
+                                        <div v-if="recipe.types && recipe.types.length">
+                                            <span class="badge badge-secondary" :class="{'ml-1': user && user.displayName}" v-for="type in recipe.types" v-if="recipe.types.length < 3">
+                                                {{type}}
+                                            </span>
+                                            <span class="badge badge-secondary cursor-pointer" :class="{'ml-1': user && user.displayName}" v-tippy="{placement: 'bottom', html: '#types', arrow: true, theme: 'light', hideOnClick: false, delay: [100, 0]}" v-if="recipe.types.length >= 3">
+                                                {{recipe.types.length}} types
+                                                <div id="types" class="d-none">
+                                                    <span v-for="(type, typeIndex) in recipe.types">{{type}}<span v-if="typeIndex + 1 < recipe.types.length">, </span></span>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        <div :class="{'ml-1': recipe.types && recipe.types.length || user && user.displayName}">
+                                            <template v-if="recipe.total_time">
+                                                <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="badge badge-danger">time not specified</span>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -133,7 +148,6 @@
 
                     <div class="d-flex">
                         <div class="ml-lg-auto ml-0">
-                            <span class="badge badge-lg badge-dark">{{user.displayName}}</span>
                             <span class="badge badge-lg badge-light">{{recipe.created_date}}</span>
                         </div>
                     </div>

@@ -28,25 +28,35 @@
                 </div>
 
                 <div class="list-group" v-if="filteredRecipes && filteredRecipes.length">
-                    <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}" v-for="(recipe, recipeIndex) in filteredRecipes" class="list-group-item list-group-item-action" :class="{'has-actions': user && user.uid && user.uid == recipe.created_by}">
+                    <div v-for="(recipe, recipeIndex) in filteredRecipes" class="list-group-item" :class="{'has-actions': user && user.uid && user.uid == recipe.created_by}">
                         <div class="d-flex align-items-center">
                             <div class="d-sm-flex d-none img-thumbnail" v-if="recipe.thumbnail">
                                 <img :src="recipe.thumbnail" class="img-fluid rounded my-auto">
                             </div>
                             <div class="flex-grow-1" :class="{'ml-sm-3 ml-0': recipe.thumbnail, 'mr-3': user && user.uid && user.uid == recipe.created_by}">
                                 <h5 class="mb-1 text-capitalize mr-lg-0 mr-auto">
-                                    {{recipe.name}}
+                                    <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}">{{recipe.name}}</router-link>
                                 </h5>
 
-                                <p class="text-muted mb-1 d-md-block d-none" v-if="recipe.description">{{recipe.description}}</p>
+                                <p class="text-muted mb-1 d-md-block d-none" v-if="recipe.description">
+                                    {{recipe.description}}
+                                </p>
 
                                 <div class="d-flex flex-md-row flex-column">
                                     <div>
-                                        <span class="badge badge-dark">{{user.displayName}}</span>
+                                        <span class="badge badge-info" v-if="user && user.displayName">{{user.displayName}}</span>
                                     </div>
                                     <div class="d-flex">
-                                        <div :class="{'ml-md-1': user.displayName}" v-if="recipe.types">
-                                            <span class="badge badge-secondary" v-for="type in recipe.types">{{type}}</span>
+                                        <div :class="{'ml-md-1': user && user.displayName}" v-if="recipe.types">
+                                            <span class="badge badge-secondary" v-for="type in recipe.types" v-if="recipe.types.length < 3">
+                                                {{type}}
+                                            </span>
+                                            <span class="badge badge-secondary cursor-pointer" v-tippy="{placement: 'bottom', html: '#types', arrow: true, theme: 'light', hideOnClick: false, delay: [100, 0]}" v-if="recipe.types.length >= 3">
+                                                {{recipe.types.length}} types
+                                                <div id="types" class="d-none">
+                                                    <span v-for="(type, typeIndex) in recipe.types">{{type}}<span v-if="typeIndex + 1 < recipe.types.length">, </span></span>
+                                                </div>
+                                            </span>
                                         </div>
                                         <div class="ml-1" v-if="recipe.total_time">
                                             <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
@@ -56,6 +66,14 @@
                                         <span class="badge badge-light">{{recipe.created_date}}</span>
                                     </div> -->
                                 </div>
+                            </div>
+                            <div :class="{'mr-3': user && user.uid && user.uid == recipe.created_by}">
+                                <a href="#" class="text-danger" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
+                                    <font-awesome-icon :icon="['fas', 'heart']" />
+                                </a>
+                                <a href="#" class="text-danger" @click.prevent="favoriteRecipe(recipe)" v-else>
+                                    <font-awesome-icon :icon="['far', 'heart']" />
+                                </a>
                             </div>
                             <template v-if="user && user.uid && user.uid == recipe.created_by">
                                 <div class="btn-group ml-auto">
@@ -68,7 +86,7 @@
                                 </div>
                             </template>
                         </div>
-                    </router-link>
+                    </div>
                 </div>
 
                 <div class="alert bg-warning text-white" v-if="!filteredRecipes || filteredRecipes && !filteredRecipes.length">
@@ -204,6 +222,110 @@ export default {
                 });
 
             }
+        },
+        favoriteRecipe(recipe) {
+            let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
+
+            var snapshot = {};
+
+            ref.get().then(snapshot => {
+                if (snapshot.exists) {
+                    snapshot = snapshot;
+
+                    firebase.firestore().runTransaction(transaction => {
+                        return transaction.get(ref).then(snapshot => {
+
+                            const favorited_by = snapshot.get('favorited_by');
+
+                            favorited_by.push(
+                                {
+                                    uid: this.user.uid,
+                                    email: this.user.email
+                                }
+                            );
+
+                            transaction.update(ref, 'favorited_by', favorited_by);
+                        });
+                    }).then(response => {
+                        this.$swal({
+                            toast: true,
+                            html: recipe.name + ' favorited',
+                            type: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                    })
+                    .catch(error => {
+                        this.$swal("Error", error.message, "error");
+                    });
+
+                    // firebase.firestore().collection("recipes").doc(snapshot.id).update(docRef, 'favorites', favorites)
+                    // .then(response => {
+                    //
+                    //     this.$swal({
+                    //         toast: true,
+                    //         html: recipe.name + ' favorited',
+                    //         type: 'success',
+                    //         position: 'top-end',
+                    //         showConfirmButton: false,
+                    //         timer: 5000
+                    //     });
+                    //
+                    //     this.snapshot = {};
+                    // })
+                    // .catch(error => {
+                    //     this.$swal("Error", error.message, "error");
+                    // });
+                } else {
+                    console.log("No such document exists!");
+                }
+            });
+        },
+        unfavoriteRecipe(recipe) {
+            let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
+
+            var snapshot = {};
+
+            ref.get().then(snapshot => {
+                if (snapshot.exists) {
+                    snapshot = snapshot;
+
+                    firebase.firestore().runTransaction(transaction => {
+                        return transaction.get(ref).then(snapshot => {
+
+                            const favorited_by = snapshot.get('favorited_by');
+
+                            const index = _.findIndex(favorited_by, {uid: this.user.uid});
+
+                            favorited_by.splice(index, 1);
+
+                            transaction.update(ref, 'favorited_by', favorited_by);
+                        });
+                    }).then(response => {
+                        this.$swal({
+                            toast: true,
+                            html: recipe.name + ' unfavorited',
+                            type: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                    })
+                    .catch(error => {
+                        this.$swal("Error", error.message, "error");
+                    });
+                } else {
+                    console.log("No such document exists!");
+                }
+            });
+        },
+        recipeFavorited(recipe) {
+            var favorited = false;
+            if(_.find(recipe.favorited_by, {uid: this.user.uid})) {
+                favorited = true;
+            }
+            return favorited;
         }
     }
 };

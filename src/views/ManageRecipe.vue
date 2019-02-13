@@ -201,14 +201,6 @@ import 'selectize/dist/css/selectize.css';
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
 
-// Vue.directive('focus', {
-//     inserted(el, binding, vnode) {
-//         Vue.nextTick(function() {
-//             el.focus();
-//         });
-//     }
-// });
-
 export default {
     name: "create-recipe",
     components: {
@@ -314,7 +306,7 @@ export default {
 
                     this.loadingRecipe = false;
                 }
-            })
+            });
         },
         addType() {
             this.recipe.types.push({
@@ -350,6 +342,7 @@ export default {
             var ingredients = [];
             var instructions = [];
             var nutrition = [];
+            var favorited_by = [];
 
             var name = null;
             var description = null;
@@ -363,12 +356,6 @@ export default {
 
             var updated = this.moment().format("MM-DD-YYYY HH:mm:ss");
 
-            if(recipe.name) {
-                name = recipe.name;
-            }
-            if(recipe.description) {
-                description = recipe.description;
-            }
             if(recipe.types && recipe.types.length) {
                 types = recipe.types;
             }
@@ -378,6 +365,19 @@ export default {
             if(recipe.instructions && recipe.instructions.length) {
                 instructions = recipe.instructions;
             }
+            if(recipe.nutrition && recipe.nutrition.length) {
+                nutrition = recipe.nutrition;
+            }
+            if(recipe.favorited_by && recipe.favorited_by.length) {
+                favorited_by = recipe.favorited_by;
+            }
+
+            if(recipe.name) {
+                name = recipe.name;
+            }
+            if(recipe.description) {
+                description = recipe.description;
+            }
             if(recipe.prep_time) {
                 prep_time = recipe.prep_time;
             }
@@ -386,9 +386,6 @@ export default {
             }
             if(recipe.total_time) {
                 total_time = recipe.total_time;
-            }
-            if(recipe.nutrition && recipe.nutrition.length) {
-                nutrition = recipe.nutrition;
             }
             if(recipe.created_date) {
                 created_date = recipe.created_date;
@@ -414,16 +411,16 @@ export default {
             if(!this.validateRecipe()) return;
 
             if(this.snapshot.id) {
-                firebase.firestore().collection("recipes").doc(this.snapshot.id).set({
-                    name: name,
-                    description: description,
+                firebase.firestore().collection("recipes").doc(this.snapshot.id).update({
                     types: types,
                     ingredients: ingredients,
                     instructions: instructions,
+                    nutrition: nutrition,
+                    name: name,
+                    description: description,
                     prep_time: prep_time,
                     cook_time: cook_time,
                     total_time: total_time,
-                    nutrition: nutrition,
                     created_date: created_date,
                     created_date_time: created_date_time,
                     created_by: created_by,
@@ -451,15 +448,16 @@ export default {
                 });
             } else {
                 firebase.firestore().collection("recipes").doc().set({
-                    name: name,
-                    description: description,
                     types: types,
                     ingredients: ingredients,
                     instructions: instructions,
+                    nutrition: nutrition,
+                    favorited_by: favorited_by,
+                    name: name,
+                    description: description,
                     prep_time: prep_time,
                     cook_time: cook_time,
                     total_time: total_time,
-                    nutrition: nutrition,
                     created_date: created_date,
                     created_date_time: created_date_time,
                     created_by: created_by,

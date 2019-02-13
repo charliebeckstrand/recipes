@@ -67,7 +67,8 @@ export const db = firebase.firestore();
 Vue.component("v-gravatar", Gravatar);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
-Vue.use(VueFirestore, VueTippy, VueLodash, Lodash);
+Vue.use(VueFirestore, VueLodash, Lodash);
+Vue.use(VueTippy);
 Vue.use(VueContentPlaceholders);
 Vue.use(VueSweetalert2);
 Vue.prototype.moment = moment;
