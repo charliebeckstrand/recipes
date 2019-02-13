@@ -17,7 +17,7 @@
                                 {{currentUser.email}}
                             </div>
                         </template>
-                        <b-dropdown-item :to="{name: 'user-profile'}">
+                        <b-dropdown-item :to="{name: 'profile'}">
                             <font-awesome-icon :icon="['far', 'user']" fixed-width /> Profile
                         </b-dropdown-item>
                         <b-dropdown-item href="#" @click.prevent="logOut()">

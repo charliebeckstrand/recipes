@@ -4,18 +4,13 @@
             <div class="col-lg-3 col-md-6 col-sm-8 mx-sm-auto mx-3 my-auto">
                 <div class="d-flex">
                     <div class="mx-auto mb-3">
-                        <!-- <router-link: :to="{name: 'home'}">
-                            <img src="/assets/45332.svg" width="75" height="75" alt="Logo">
-                        </router-link> -->
-                        <a href="/">
+                        <router-link :to="{name: 'home'}">
                             <img src="@/assets/img/45332.svg" width="75" height="75" alt="Logo">
-                        </a>
+                        </router-link>
                     </div>
                 </div>
 
-                <div class="alert bg-danger text-white rounded-0" v-if="invalidEmail || invalidPassword">
-                    {{error.message}}
-                </div>
+                <b-alert v-if="invalidEmail || invalidPassword" variant="danger" show>{{error.message}}</b-alert>
 
                 <form @submit.prevent="signInWithEmailAndPassword()">
                     <div class="form-group mb-1">
@@ -77,7 +72,7 @@ export default {
                 this.loggingIn = false;
 
                 this.$router.push({name: 'home'});
-                
+
             }).catch((error) => {
                 this.error = error;
 

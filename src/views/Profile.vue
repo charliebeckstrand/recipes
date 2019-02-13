@@ -1,5 +1,5 @@
 <template>
-    <div class="user-profile">
+    <div class="profile">
         <div class="container">
             <Navbar />
 
@@ -16,8 +16,11 @@
                     <div class="input-group">
                         <input type="text" class="form-control" v-model="editableUser.displayName">
                         <div class="input-group-append" v-if="userChanges()">
-                            <button type="submit" class="btn btn-primary">
-                                Save Changes
+                            <button type="submit" class="btn btn-primary" :disabled="savingUser">
+                                <template v-if="savingUser">
+                                    <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
+                                </template>
+                                <template v-else>Save Changes</template>
                             </button>
                         </div>
                     </div>
@@ -41,7 +44,7 @@ import Navbar from "@/components/Navbar.vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
 
 export default {
-    name: "user-profile",
+    name: "profile",
     components: {
         Navbar,
         Breadcrumb
@@ -56,7 +59,9 @@ export default {
                     text: 'Profile',
                     active: true
                 }
-            ]
+            ],
+
+            savingUser: false
         }
     },
     computed: {
@@ -67,6 +72,8 @@ export default {
     methods: {
         updateUser() {
             var currentUser = firebase.auth().currentUser;
+
+            this.savingUser = true;
 
             currentUser.updateProfile({
                 displayName: this.editableUser.displayName
@@ -83,7 +90,10 @@ export default {
                 this.editableUser = _.cloneDeep(firebase.auth().currentUser);
                 this.editableUserCache = _.cloneDeep(firebase.auth().currentUser);
 
+                this.savingUser = false;
+
             }).catch(error => {
+                this.savingUser = false;
                 this.$swal({
                     toast: true,
                     html: error.message,

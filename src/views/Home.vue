@@ -13,51 +13,56 @@
 
                 <div class="d-lg-flex mb-3">
                     <div v-if="currentUser && currentUser.uid" class="mr-3 mb-lg-0 mb-3">
-                        <router-link :to="{name: 'create-recipe'}" class="btn btn-outline-success">
+                        <b-button :to="{name: 'create-recipe'}" variant="outline-success">
                             Create Recipe
-                        </router-link>
+                        </b-button>
                     </div>
                     <div v-if="recipes && recipes.length" class="flex-grow-1 mb-lg-0 mb-3 ml-lg-auto">
-                        <input type="text" class="form-control" placeholder="Search" v-model="search">
+                        <b-form-input type="text" v-model="search" placeholder="Search" />
                     </div>
                 </div>
                 <div v-if="filteredRecipes && filteredRecipes.length">
-
-                    <b-card header-tag="header" footer-tag="footer" :class="{'mb-3': recipeIndex + 1 < filteredRecipes.length}" v-for="(recipe, recipeIndex) in filteredRecipes">
-                        <h6 slot="header" class="d-flex mb-0">
-                            <div class="align-self-center mr-3">
-                                <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}">{{recipe.name}}</router-link>
-                            </div>
-                            <div class="align-self-center ml-auto">
-                                <div class="d-flex">
-                                    <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)">
-                                        <a href="#" class="text-secondary" @click.prevent="editRecipe(recipe)">
-                                            <font-awesome-icon :icon="['far', 'pen']" fixed-width />
-                                        </a>
-                                    </div>
-                                    <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="ml-2">
-                                        <a href="#" class="text-secondary" @click.prevent="deleteRecipe(recipe)">
-                                            <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
-                                        </a>
-                                    </div>
-                                    <div v-if="currentUser && currentUser.uid" class="ml-2">
-                                        <a href="#" class="text-danger" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
-                                            <font-awesome-icon :icon="['fas', 'heart']" fixed-width />
-                                        </a>
-                                        <a href="#" class="text-danger" @click.prevent="favoriteRecipe(recipe)" v-else>
-                                            <font-awesome-icon :icon="['far', 'heart']" fixed-width />
-                                        </a>
+                    <template v-for="(recipe, recipeIndex) in filteredRecipes">
+                        <b-card no-body class="mb-3">
+                            <b-card-header class="d-flex h6">
+                                <div class="align-self-center mr-3">
+                                    <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}">{{recipe.name}}</router-link>
+                                </div>
+                                <div class="align-self-center ml-auto">
+                                    <div class="d-flex">
+                                        <div v-if="recipe.time && recipe.time.total" :title="recipe.time.total + ' minutes'" v-tippy="{placement : 'bottom', arrow: false, flip: true, theme: 'light', delay: [100, 0]}" class="cursor-pointer mr-2" :class="{'text-success': recipe.time.total >= 10, 'text-warning': (recipe.time.total > 10 && recipe.time.total <= 30), 'text-danger': recipe.time.total > 30}">
+                                            <font-awesome-icon :icon="['far', 'stopwatch']" fixed-width />
+                                        </div>
+                                        <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="mr-2">
+                                            <a href="#" class="text-secondary" @click.prevent="editRecipe(recipe)">
+                                                <font-awesome-icon :icon="['far', 'pen']" fixed-width />
+                                            </a>
+                                        </div>
+                                        <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="mr-2">
+                                            <a href="#" class="text-secondary" @click.prevent="deleteRecipe(recipe)">
+                                                <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
+                                            </a>
+                                        </div>
+                                        <div v-if="currentUser && currentUser.uid">
+                                            <a href="#" class="text-danger" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
+                                                <font-awesome-icon :icon="['fas', 'heart']" fixed-width />
+                                            </a>
+                                            <a href="#" class="text-danger" @click.prevent="favoriteRecipe(recipe)" v-else>
+                                                <font-awesome-icon :icon="['far', 'heart']" fixed-width />
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </h6>
-                        <p class="card-text" v-if="recipe.description">{{recipe.description}}</p>
-                        <div slot="footer">
-                            <small class="text-muted">created by <template v-if="recipe.created_by && recipe.created_by.displayName">{{recipe.created_by.displayName}}</template><template v-if="recipe.created_by && recipe.created_by.email && !recipe.created_by.displayName">{{recipe.created_by.email}}</template> on <template v-if="recipe.created && recipe.created.date">{{recipe.created.date}}</template></small>
-                        </div>
-                    </b-card>
+                            </b-card-header>
+                            <b-card-body v-if="recipe.description">
+                                <p class="card-text text-muted">{{recipe.description}}</p>
+                            </b-card-body>
+                            <b-card-footer :class="{'border-top-0': !recipe.description}">
+                                <small class="text-muted">created by <template v-if="recipe.created_by && recipe.created_by.displayName">{{recipe.created_by.displayName}}</template><template v-if="recipe.created_by && recipe.created_by.email && !recipe.created_by.displayName">{{recipe.created_by.email}}</template> on <template v-if="recipe.created && recipe.created.date">{{recipe.created.date}}</template></small>
+                            </b-card-footer>
+                        </b-card>
+                    </template>
                 </div>
-
                 <b-alert variant="warning" :show="!filteredRecipes || filteredRecipes && !filteredRecipes.length">
                     0 recipes match your search
                 </b-alert>

@@ -23,80 +23,46 @@
                 <div class="mb-5 pb-5">
 
                     <b-card no-body>
-                        <h5 slot="header" class="d-flex mb-0">
-                            <div class="align-self-center mr-3">
-                                {{recipe.name}}
-                            </div>
-                            <div class="align-self-center ml-auto">
-                                <div class="d-flex">
-                                    <!-- <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)">
-                                        <a href="#" class="text-secondary" @click.prevent="editRecipe(recipe)">
-                                            <font-awesome-icon :icon="['far', 'pen']" fixed-width />
-                                        </a>
-                                    </div>
-                                    <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="ml-2">
-                                        <a href="#" class="text-secondary" @click.prevent="deleteRecipe(recipe)">
-                                            <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
-                                        </a>
-                                    </div> -->
-                                </div>
-                            </div>
-                        </h5>
-                        <b-card-body>
-                            <p class="card-text" v-if="recipe.description">{{recipe.description}}</p>
+                        <!-- <h5 class="card-header d-flex mb-0">
+                            {{recipe.name}}
+                        </h5> -->
+                        <b-card-header class="h5">
+                            {{recipe.name}}
+                        </b-card-header>
+                        <b-card-body v-if="recipe.description">
+                            <p class="card-text">{{recipe.description}}</p>
                         </b-card-body>
-                        <b-card-footer>
-                            <b-nav pills>
-                              <b-nav-item v-if="recipe.ingredients && recipe.ingredients.length" :active="showIngredientsTab" @click="toggleIngredientsTab()">Ingredients</b-nav-item>
-                              <b-nav-item v-if="recipe.instructions && recipe.instructions.length" :active="showInstructionsTab" @click="toggleInstructionsTab()">Instructions</b-nav-item>
-                              <b-nav-item v-if="recipe.nutrition && recipe.nutrition.length" :active="showNutritionTab" @click="toggleNutrutionTab()">Nutrition</b-nav-item>
-                            </b-nav>
+                        <b-card-footer :class="{'border-top-0': !recipe.description}">
+                            <div class="d-flex">
+                                <b-nav pills>
+                                  <b-nav-item v-if="recipe.ingredients && recipe.ingredients.length" :active="showIngredientsTab" @click="toggleIngredientsTab()">Ingredients</b-nav-item>
+                                  <b-nav-item v-if="recipe.instructions && recipe.instructions.length" :active="showInstructionsTab" @click="toggleInstructionsTab()">Instructions</b-nav-item>
+                                  <b-nav-item v-if="recipe.nutrition && recipe.nutrition.length" :active="showNutritionTab" @click="toggleNutrutionTab()">Nutrition</b-nav-item>
+                                </b-nav>
+                            </div>
                         </b-card-footer>
-                        <b-list-group v-if="showIngredientsTab" flush>
+                        <b-list-group flush v-if="showIngredientsTab">
                             <b-list-group-item v-for="ingredient in recipe.ingredients">
                                 <em>{{ingredient.amount}} {{ingredient.measurement}} </em> <u>{{ingredient.ingredient}}</u>
                             </b-list-group-item>
                         </b-list-group>
 
-                        <b-list-group v-if="showInstructionsTab" flush>
+                        <b-list-group flush v-if="showInstructionsTab">
                             <b-list-group-item v-for="(instruction, instructionIndex) in recipe.instructions">
                                 {{instructionIndex + 1}}. {{instruction.instruction}}
                             </b-list-group-item>
                         </b-list-group>
 
-                        <b-list-group v-if="showNutritionTab" flush>
+                        <b-list-group flush v-if="showNutritionTab">
                             <b-list-group-item v-for="fact in recipe.nutrition">
                                 <strong>{{fact.amount}}</strong> {{fact.fact}}
                             </b-list-group-item>
                         </b-list-group>
 
-                        <b-card-footer>
+                        <!-- <b-card-footer :class="{'border-top-0': !recipe.description}">
                             <small class="text-muted">created by <template v-if="recipe.created_by && recipe.created_by.displayName">{{recipe.created_by.displayName}}</template><template v-if="recipe.created_by && recipe.created_by.email && !recipe.created_by.displayName">{{recipe.created_by.email}}</template></small>
-                        </b-card-footer>
+                        </b-card-footer> -->
                     </b-card>
-
-                    <!-- <div class="d-flex">
-                        <div v-if="recipe.types && recipe.types.length">
-                            <span v-if="recipe.types.length < 3" class="badge badge-secondary" :class="{'ml-1': recipe.created_by_display_name}" v-for="type in recipe.types">
-                                {{type}}
-                            </span>
-                            <span v-if="recipe.types.length >= 3" class="badge badge-secondary cursor-pointer" :class="{'ml-1': currentUser && currentUser.displayName}" v-tippy="{placement: 'bottom', html: '#types', arrow: true, theme: 'light', hideOnClick: false, delay: [100, 0]}">
-                                {{recipe.types.length}} types
-                                <div id="types" class="d-none">
-                                    <span v-for="(type, typeIndex) in recipe.types">{{type}}<span v-if="typeIndex + 1 < recipe.types.length">, </span></span>
-                                </div>
-                            </span>
-                        </div>
-                        <div :class="{'ml-1': recipe.types && recipe.types.length || recipe.created_by_display_name}">
-                            <template v-if="recipe.total_time">
-                                <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
-                            </template>
-                            <template v-else>
-                                <span class="badge badge-danger">time not specified</span>
-                            </template>
-                        </div>
-                    </div> -->
-
                 </div>
             </template>
 

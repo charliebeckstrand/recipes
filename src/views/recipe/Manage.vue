@@ -15,10 +15,9 @@
 
             <template v-if="loadingRecipe">
                 <template v-if="loadingRecipe">
-                    <content-placeholders>
-                        <content-placeholders-heading :img="false" />
-                        <content-placeholders-text :lines="5" />
-                    </content-placeholders>
+                    <div class="spinner-grow" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
                 </template>
             </template>
             <template v-else>
@@ -231,7 +230,7 @@ export default {
 
         Navbar
     },
-    props: ['recipe_key'],
+    props: ["recipe_key"],
     data() {
         return {
             types: ['breakfast', 'lunch', 'dinner', 'desert', 'snack', 'drink'],
