@@ -7,7 +7,7 @@
 
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item" v-if="user">
-                    {{user.email}}
+                    <router-link :to="{name: 'user-profile'}" class="text-dark">{{user.email}}</router-link>
                     <div class="text-right">
                         <a class="text-danger rounded-0" href="#" @click.prevent="logOut()">
                             Log Out

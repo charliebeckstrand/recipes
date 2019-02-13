@@ -43,15 +43,15 @@
                                 </p>
 
                                 <div class="d-flex flex-md-row flex-column">
-                                    <div>
-                                        <span class="badge badge-info" v-if="user && user.displayName">{{user.displayName}}</span>
+                                    <div v-if="recipe.created_by_display_name">
+                                        <span class="badge badge-info">{{recipe.created_by_display_name}}</span>
                                     </div>
                                     <div class="d-flex">
-                                        <div :class="{'ml-md-1': user && user.displayName}" v-if="recipe.types">
-                                            <span class="badge badge-secondary" v-for="type in recipe.types" v-if="recipe.types.length < 3">
+                                        <div v-if="recipe.types" :class="{'ml-md-1': recipe.created_by_display_name}">
+                                            <span v-if="recipe.types.length < 3" class="badge badge-secondary" v-for="type in recipe.types">
                                                 {{type}}
                                             </span>
-                                            <span class="badge badge-secondary cursor-pointer" v-tippy="{placement: 'bottom', html: '#types', arrow: true, theme: 'light', hideOnClick: false, delay: [100, 0]}" v-if="recipe.types.length >= 3">
+                                            <span v-if="recipe.types.length >= 3" class="badge badge-secondary cursor-pointer" v-tippy="{placement: 'bottom', html: '#types', arrow: true, theme: 'light', hideOnClick: false, delay: [100, 0]}">
                                                 {{recipe.types.length}} types
                                                 <div id="types" class="d-none">
                                                     <span v-for="(type, typeIndex) in recipe.types">{{type}}<span v-if="typeIndex + 1 < recipe.types.length">, </span></span>
@@ -67,7 +67,7 @@
                                     </div> -->
                                 </div>
                             </div>
-                            <div :class="{'mr-3': user && user.uid && user.uid == recipe.created_by}">
+                            <div :class="{'mr-3': user && user.uid && user.uid == recipe.created_by}" v-if="user && user.uid">
                                 <a href="#" class="text-danger" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
                                     <font-awesome-icon :icon="['fas', 'heart']" />
                                 </a>
@@ -142,8 +142,12 @@ export default {
                 return this.recipes.filter(recipe => {
                     var search = this.search.toLowerCase();
 
-                    var searchMatch = true ? (this.search === '' || recipe.name.toLowerCase().indexOf(search) > -1) : false;
-                    var displayNameMatch = true ? (this.search === '' || recipe.created_by_display_name.toLowerCase().indexOf(search) > -1) : false;
+                    if(recipe.name) {
+                        var nameMatch = true ? (this.search === '' || recipe.name.toLowerCase().indexOf(search) > -1) : false;
+                    }
+                    if(recipe.created_by_display_name) {
+                        var displayNameMatch = true ? (this.search === '' || recipe.created_by_display_name.toLowerCase().indexOf(search) > -1) : false;
+                    }
 
                     if(recipe.types) {
                         var typeMatch = false;
@@ -153,10 +157,10 @@ export default {
                             }
                         });
                         var typeMatch = true ? (this.search === '' || typeMatches.length) : false;
+                    }
 
-                        return searchMatch || typeMatch || displayNameMatch;
-                    } else {
-                        return searchMatch;
+                    if(recipe.name && recipe.created_by_display_name && recipe.types) {
+                        return nameMatch || displayNameMatch || typeMatch;
                     }
                 });
             } else {
@@ -167,7 +171,7 @@ export default {
     },
     methods: {
         editRecipe(recipe) {
-            if(recipe.created_by && recipe.created_by == this.user.uid) {
+            if(recipe.created_by && this.user && recipe.created_by == this.user.uid) {
                 this.$router.push({name: 'edit-recipe', params: {recipe_key: recipe['.key']}});
             } else if(!recipe.created_by || recipe.created_by !== this.user.uid) {
                 this.$swal({
@@ -181,7 +185,7 @@ export default {
             }
         },
         deleteRecipe(recipe) {
-            if(recipe.created_by && recipe.created_by == this.user.uid) {
+            if(recipe.created_by && this.user && recipe.created_by == this.user.uid) {
                 this.$swal({
                     html: 'Are you sure you want to delete this recipe?',
                     showCancelButton: true,
@@ -211,7 +215,7 @@ export default {
                         });
                     }
                 });
-            } else if(!recipe.created_by || recipe.created_by !== this.user.uid) {
+            } else if(!this.user || !recipe.created_by || (this.user && recipe.created_by !== this.user.uid)) {
                 this.$swal({
                     toast: true,
                     html: "You do not have priviledges to delete this recipe",
@@ -224,106 +228,94 @@ export default {
             }
         },
         favoriteRecipe(recipe) {
-            let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
+            if(this.user) {
+                let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
 
-            var snapshot = {};
+                var snapshot = {};
 
-            ref.get().then(snapshot => {
-                if (snapshot.exists) {
-                    snapshot = snapshot;
+                ref.get().then(snapshot => {
+                    if (snapshot.exists) {
+                        snapshot = snapshot;
 
-                    firebase.firestore().runTransaction(transaction => {
-                        return transaction.get(ref).then(snapshot => {
+                        firebase.firestore().runTransaction(transaction => {
+                            return transaction.get(ref).then(snapshot => {
 
-                            const favorited_by = snapshot.get('favorited_by');
+                                const favorited_by = snapshot.get('favorited_by');
 
-                            favorited_by.push(
-                                {
-                                    uid: this.user.uid,
-                                    email: this.user.email
-                                }
-                            );
+                                favorited_by.push(
+                                    {
+                                        uid: this.user.uid,
+                                        email: this.user.email
+                                    }
+                                );
 
-                            transaction.update(ref, 'favorited_by', favorited_by);
+                                transaction.update(ref, 'favorited_by', favorited_by);
+                            });
+                        }).then(response => {
+                            // this.$swal({
+                            //     toast: true,
+                            //     html: recipe.name + ' favorited',
+                            //     type: 'success',
+                            //     position: 'top-end',
+                            //     showConfirmButton: false,
+                            //     timer: 5000
+                            // });
+                        })
+                        .catch(error => {
+                            this.$swal("Error", error.message, "error");
                         });
-                    }).then(response => {
-                        this.$swal({
-                            toast: true,
-                            html: recipe.name + ' favorited',
-                            type: 'success',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 5000
-                        });
-                    })
-                    .catch(error => {
-                        this.$swal("Error", error.message, "error");
-                    });
-
-                    // firebase.firestore().collection("recipes").doc(snapshot.id).update(docRef, 'favorites', favorites)
-                    // .then(response => {
-                    //
-                    //     this.$swal({
-                    //         toast: true,
-                    //         html: recipe.name + ' favorited',
-                    //         type: 'success',
-                    //         position: 'top-end',
-                    //         showConfirmButton: false,
-                    //         timer: 5000
-                    //     });
-                    //
-                    //     this.snapshot = {};
-                    // })
-                    // .catch(error => {
-                    //     this.$swal("Error", error.message, "error");
-                    // });
-                } else {
-                    console.log("No such document exists!");
-                }
-            });
+                    } else {
+                        console.log("No such document exists!");
+                    }
+                });
+            }
         },
         unfavoriteRecipe(recipe) {
-            let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
+            if(this.user) {
+                let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
 
-            var snapshot = {};
+                var snapshot = {};
 
-            ref.get().then(snapshot => {
-                if (snapshot.exists) {
-                    snapshot = snapshot;
+                ref.get().then(snapshot => {
+                    if (snapshot.exists) {
+                        snapshot = snapshot;
 
-                    firebase.firestore().runTransaction(transaction => {
-                        return transaction.get(ref).then(snapshot => {
+                        firebase.firestore().runTransaction(transaction => {
+                            return transaction.get(ref).then(snapshot => {
 
-                            const favorited_by = snapshot.get('favorited_by');
+                                const favorited_by = snapshot.get('favorited_by');
 
-                            const index = _.findIndex(favorited_by, {uid: this.user.uid});
+                                const index = _.findIndex(favorited_by, {uid: this.user.uid});
 
-                            favorited_by.splice(index, 1);
+                                favorited_by.splice(index, 1);
 
-                            transaction.update(ref, 'favorited_by', favorited_by);
+                                transaction.update(ref, 'favorited_by', favorited_by);
+                            });
+                        }).then(response => {
+                            // this.$swal({
+                            //     toast: true,
+                            //     html: recipe.name + ' unfavorited',
+                            //     type: 'success',
+                            //     position: 'top-end',
+                            //     showConfirmButton: false,
+                            //     timer: 5000
+                            // });
+                        })
+                        .catch(error => {
+                            this.$swal("Error", error.message, "error");
                         });
-                    }).then(response => {
-                        this.$swal({
-                            toast: true,
-                            html: recipe.name + ' unfavorited',
-                            type: 'success',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 5000
-                        });
-                    })
-                    .catch(error => {
-                        this.$swal("Error", error.message, "error");
-                    });
-                } else {
-                    console.log("No such document exists!");
-                }
-            });
+                    } else {
+                        console.log("No such document exists!");
+                    }
+                });
+            }
         },
         recipeFavorited(recipe) {
             var favorited = false;
-            if(_.find(recipe.favorited_by, {uid: this.user.uid})) {
-                favorited = true;
+            if(this.user) {
+                if(_.find(recipe.favorited_by, {uid: this.user.uid})) {
+                    favorited = true;
+                }
             }
             return favorited;
         }

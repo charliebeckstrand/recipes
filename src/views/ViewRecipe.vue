@@ -22,7 +22,7 @@
                 <div class="mb-5 pb-5">
 
                     <div class="d-flex">
-                        <div class="d-flex flex-md-row flex-column align-items-center mx-lg-0 mx-auto mb-md-3">
+                        <div class="d-flex flex-md-row flex-column align-items-center mb-md-3">
                             <div class="mb-md-0 mb-3" v-if="recipe.thumbnail">
                                 <a :href="recipe.thumbnail" class="d-flex img-thumbnail" target="_blank">
                                     <img :src="recipe.thumbnail" class="img-fluid rounded my-auto" height="auto">
@@ -42,22 +42,22 @@
                                 </div> -->
 
                                 <div class="d-flex flex-md-row flex-column">
-                                    <div>
-                                        <span class="badge badge-info" v-if="user && user.displayName">{{user.displayName}}</span>
+                                    <div v-if="recipe.created_by_display_name">
+                                        <span class="badge badge-info">{{recipe.created_by_display_name}}</span>
                                     </div>
                                     <div class="d-flex">
                                         <div v-if="recipe.types && recipe.types.length">
-                                            <span class="badge badge-secondary" :class="{'ml-1': user && user.displayName}" v-for="type in recipe.types" v-if="recipe.types.length < 3">
+                                            <span v-if="recipe.types.length < 3" class="badge badge-secondary" :class="{'ml-1': recipe.created_by_display_name}" v-for="type in recipe.types">
                                                 {{type}}
                                             </span>
-                                            <span class="badge badge-secondary cursor-pointer" :class="{'ml-1': user && user.displayName}" v-tippy="{placement: 'bottom', html: '#types', arrow: true, theme: 'light', hideOnClick: false, delay: [100, 0]}" v-if="recipe.types.length >= 3">
+                                            <span v-if="recipe.types.length >= 3" class="badge badge-secondary cursor-pointer" :class="{'ml-1': user && user.displayName}" v-tippy="{placement: 'bottom', html: '#types', arrow: true, theme: 'light', hideOnClick: false, delay: [100, 0]}">
                                                 {{recipe.types.length}} types
                                                 <div id="types" class="d-none">
                                                     <span v-for="(type, typeIndex) in recipe.types">{{type}}<span v-if="typeIndex + 1 < recipe.types.length">, </span></span>
                                                 </div>
                                             </span>
                                         </div>
-                                        <div :class="{'ml-1': recipe.types && recipe.types.length || user && user.displayName}">
+                                        <div :class="{'ml-1': recipe.types && recipe.types.length || recipe.created_by_display_name}">
                                             <template v-if="recipe.total_time">
                                                 <span class="badge" :class="{'badge-success': recipe.total_time < 10, 'badge-warning': recipe.total_time >= 10 && recipe.total_time < 30, 'badge-danger': recipe.total_time >= 30}">{{recipe.total_time}} minutes</span>
                                             </template>
@@ -71,7 +71,7 @@
                         </div>
                     </div>
 
-                    <p class="text-muted text-center mb-3 d-md-none d-block" :class="{'mb-1': recipe.types && recipe.types.length}">
+                    <p class="text-muted mb-3 d-md-none d-block" :class="{'mb-1': recipe.types && recipe.types.length}">
                         {{recipe.description}}
                     </p>
 
@@ -147,9 +147,7 @@
                     </div>
 
                     <div class="d-flex">
-                        <div class="ml-lg-auto ml-0">
-                            <span class="badge badge-lg badge-light">{{recipe.created_date}}</span>
-                        </div>
+                        <div class="text-muted">Created on {{recipe.created_date}} by {{recipe.created_by_display_name}}</div>
                     </div>
 
                 </div>
