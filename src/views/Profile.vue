@@ -16,6 +16,9 @@
                     <div class="input-group">
                         <input type="text" class="form-control" v-model="editableUser.displayName">
                         <div class="input-group-append" v-if="userChanges()">
+                            <button class="btn btn-danger" @click.prevent="cancelChanges()">
+                                Cancel
+                            </button>
                             <button type="submit" class="btn btn-primary" :disabled="savingUser">
                                 <template v-if="savingUser">
                                     <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
@@ -112,6 +115,9 @@ export default {
                 changes = false;
             }
             return changes;
+        },
+        cancelChanges() {
+            _.assign(this.editableUser, this.editableUserCache);
         }
     },
     mounted() {

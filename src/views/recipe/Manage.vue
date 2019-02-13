@@ -96,10 +96,7 @@
                             <label for="instructions">Instructions</label>
                             <div :class="{'mt-1': instructionIndex !== 0}" v-for="(instruction, instructionIndex) in recipe.instructions" v-if="recipe.instructions && recipe.instructions.length">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Step {{instructionIndex + 1}}</span>
-                                    </div>
-                                    <textarea class="form-control" :class="{'is-invalid': underValidation && !instruction.instruction}" rows="1" v-model="instruction.instruction" />
+                                    <textarea class="form-control" :class="{'is-invalid': underValidation && !instruction.instruction}" rows="1" :placeholder="'Step ' + (instructionIndex + 1)" v-model="instruction.instruction" />
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-danger" @click.prevent="removeInstrution(instructionIndex)">-</button>
                                     </div>
@@ -155,34 +152,11 @@
                         <div class="form-group mb-2">
                             <label for="nutrition-facts">Nutrition Facts</label>
                             <div :class="{'mt-1': nutritionIndex !== 0}" v-for="(fact, nutritionIndex) in recipe.nutrition">
-                                <!-- desktop -->
-                                <div class="d-lg-block d-none">
-                                    <div :class="{'mt-1': nutritionIndex !== 0}" v-if="recipe.nutrition && recipe.nutrition.length">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
-                                            <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn btn-outline-danger" @click.prevent="removeNutrition(nutritionIndex)">-</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- mobile -->
-                                <div class="d-lg-none d-flex">
-                                    <div class="card flex-grow-1 card-mobile">
-                                        <div class="card-body p-1 bg-light">
-                                            <div class="mb-1">
-                                                <input type="text" class="form-control" placeholder="Fact" v-model="fact.fact">
-                                            </div>
-                                            <div>
-                                                <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex">
-                                        <button type="button" class="btn btn-outline-danger remove-item-mobile" @click.prevent="removeNutrition(nutritionIndex)">
-                                            -
-                                        </button>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" v-model="fact.fact">
+                                    <!-- <input type="text" class="form-control" placeholder="Amount" v-model="fact.amount"> -->
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-danger" @click.prevent="removeNutrition(nutritionIndex)">-</button>
                                     </div>
                                 </div>
                             </div>
@@ -278,7 +252,7 @@ export default {
                     }
                 ],
                 instructions: [
-                    {}
+                    {}, {}, {}
                 ],
                 nutrition: [],
                 time: {},

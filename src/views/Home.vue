@@ -63,7 +63,7 @@
                         </b-card>
                     </template>
                 </div>
-                <b-alert variant="warning" :show="!filteredRecipes || filteredRecipes && !filteredRecipes.length">
+                <b-alert variant="warning" :show="(recipes && recipes.length) && (!filteredRecipes || filteredRecipes && !filteredRecipes.length)">
                     0 recipes match your search
                 </b-alert>
 
@@ -112,6 +112,8 @@ export default {
     watch: {
         filteredRecipes(recipes) {
             if(recipes && recipes.length) {
+                this.loadingRecipes = false;
+            } else {
                 this.loadingRecipes = false;
             }
         }
@@ -180,9 +182,9 @@ export default {
         deleteRecipe(recipe) {
             if((recipe.created_by && recipe.created_by.uid) && (this.currentUser && this.currentUser.uid) && recipe.created_by.uid == this.currentUser.uid) {
                 this.$swal({
-                    html: 'Are you sure you want to delete this recipe?',
+                    html: 'Delete <span class="font-weight-bold">' + recipe.name + '</span>?',
                     showCancelButton: true,
-                    confirmButtonText: 'Delete Recipe',
+                    confirmButtonText: 'Delete',
                     confirmButtonClass: 'btn btn-danger',
                     cancelButtonText: 'Cancel',
                     cancelButtonClass: 'btn btn-light',
@@ -191,21 +193,6 @@ export default {
                 }).then((willDeleteRecipe) => {
                     if (willDeleteRecipe.value) {
                         firebase.firestore().collection('recipes').doc(recipe['.key']).delete();
-
-                        if(recipe.name) {
-                            var message = recipe.name + ' deleted';
-                        } else {
-                            var message = 'Recipe deleted';
-                        }
-
-                        this.$swal({
-                            toast: true,
-                            html: message,
-                            type: 'success',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 5000
-                        });
                     }
                 });
             } else if(!this.currentUser || !recipe.created_by || (this.currentUser && this.currentUser.uid) && (recipe.created_by && recipe.created_by.uid) && recipe.created_by.uid !== this.currentUser.uid) {

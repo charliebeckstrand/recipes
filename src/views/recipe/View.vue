@@ -43,7 +43,7 @@
                         </b-card-footer>
                         <b-list-group flush v-if="showIngredientsTab">
                             <b-list-group-item v-for="ingredient in recipe.ingredients">
-                                <em>{{ingredient.amount}} {{ingredient.measurement}} </em> <u>{{ingredient.ingredient}}</u>
+                                {{ingredient.amount}} {{ingredient.measurement}} <u>{{ingredient.ingredient}}</u>
                             </b-list-group-item>
                         </b-list-group>
 

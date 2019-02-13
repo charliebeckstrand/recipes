@@ -9,9 +9,6 @@ html,
 body {
     height: 100%;
 }
-body {
-    padding: 1rem;
-}
 #app {
     height: 100%;
     -webkit-font-smoothing: antialiased;
