@@ -8,7 +8,7 @@
                             <img src="/assets/45332.svg" width="75" height="75" alt="Logo">
                         </router-link> -->
                         <a href="/">
-                            <img src="@/assets/45332.svg" width="75" height="75" alt="Logo">
+                            <img src="@/assets/img/45332.svg" width="75" height="75" alt="Logo">
                         </a>
                     </div>
                 </div>
@@ -76,7 +76,8 @@ export default {
             firebase.auth().signInWithEmailAndPassword(this.email, this.password).then((user) => {
                 this.loggingIn = false;
 
-                this.$router.replace('/');
+                this.$router.push({name: 'home'});
+                
             }).catch((error) => {
                 this.error = error;
 

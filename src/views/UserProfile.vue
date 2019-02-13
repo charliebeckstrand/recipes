@@ -3,21 +3,30 @@
         <div class="container">
             <Navbar />
 
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Profile</li>
-                </ol>
-            </nav>
+            <Breadcrumb :breadcrumbItems="breadcrumbItems" />
 
             <form @submit.prevent="updateUser()">
                 <div class="form-group">
-                    <label for="displayName">Display Name</label>
-                    <input type="text" class="form-control" v-model="editableUser.displayName">
+                    <label for="uid">UID</label>
+                    <input type="text" class="form-control" v-model="currentUser.uid" readonly>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    Save Changes
-                </button>
+                <div class="form-group">
+                    <label for="displayName">Display Name</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" v-model="editableUser.displayName">
+                        <div class="input-group-append" v-if="userChanges()">
+                            <button type="submit" class="btn btn-primary">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" v-model="currentUser.email" readonly>
+                </div>
             </form>
 
         </div>
@@ -29,66 +38,78 @@ import firebase from 'firebase/app';
 
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
+import Breadcrumb from "@/components/Breadcrumb.vue";
 
 export default {
     name: "user-profile",
     components: {
-        Navbar
+        Navbar,
+        Breadcrumb
     },
     data() {
         return {
             editableUser: {},
+            editableUserCache: {},
 
-            confirmEmail: null,
-
-            changeEmail: false,
-
-            underValidation: false
+            breadcrumbItems: [
+                {
+                    text: 'Profile',
+                    active: true
+                }
+            ]
         }
     },
     computed: {
-        user() {
-            return this.$store.state.user;
-        }
-    },
-    watch: {
-        user(user) {
-            if(user) {
-                this.editableUser = _.cloneDeep(user);
-            }
+        currentUser() {
+            return firebase.auth().currentUser;
         }
     },
     methods: {
         updateUser() {
-            var user = firebase.auth().currentUser;
+            var currentUser = firebase.auth().currentUser;
 
-            user.updateProfile({
+            currentUser.updateProfile({
                 displayName: this.editableUser.displayName
             }).then(response => {
-                this.$swal({
-                    toast: true,
-                    html: 'User updated',
-                    type: 'success',
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 5000
-                });
+                // this.$swal({
+                //     toast: true,
+                //     html: 'display name updated',
+                //     type: 'success',
+                //     position: 'top-end',
+                //     showConfirmButton: false,
+                //     timer: 5000
+                // });
+
+                this.editableUser = _.cloneDeep(firebase.auth().currentUser);
+                this.editableUserCache = _.cloneDeep(firebase.auth().currentUser);
+
             }).catch(error => {
                 this.$swal({
                     toast: true,
-                    html: 'An error occurred. Please try again',
+                    html: error.message,
                     type: 'error',
                     position: 'top-end',
                     showConfirmButton: false,
                     timer: 5000
                 });
             });
+        },
+        userChanges() {
+            var changes = false;
+            if(!_.isEqual(this.editableUser, this.editableUserCache)) {
+                changes = true;
+            } else {
+                changes = false;
+            }
+            return changes;
         }
     },
     mounted() {
-        this.editableUser = _.cloneDeep(this.user);
+        this.editableUser = _.cloneDeep(this.currentUser);
+        this.editableUserCache = _.cloneDeep(this.currentUser);
     }
 };
+
 </script>
 
 <style scoped>

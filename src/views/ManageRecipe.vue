@@ -100,7 +100,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Step {{instructionIndex + 1}}</span>
                                     </div>
-                                    <textarea class="form-control" :class="{'is-invalid': underValidation && !instruction.instruction}" placeholder="Instruction" rows="1" v-model="instruction.instruction" />
+                                    <textarea class="form-control" :class="{'is-invalid': underValidation && !instruction.instruction}" rows="1" v-model="instruction.instruction" />
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-danger" @click.prevent="removeInstrution(instructionIndex)">-</button>
                                     </div>
@@ -118,16 +118,39 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="recipePrepTime">Prep Time</label>
-                            <input type="number" min="1" class="form-control" v-model="recipe.prep_time">
-                        </div>
-                        <div class="form-group">
-                            <label for="recipeCookTime">Cook Time</label>
-                            <input type="number" min="1" class="form-control" v-model="recipe.cook_time">
-                        </div>
-                        <div class="form-group">
-                            <label for="recipeTotalTime">Total Time</label>
-                            <input type="number" min="1" class="form-control" v-model="recipe.total_time">
+                            <label for="time">Time</label>
+                            <div class="row">
+                                <div class="col-lg-4 mb-lg-0 mb-1">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                Prep
+                                            </div>
+                                        </div>
+                                        <input type="number" min="1" class="form-control" v-model="recipe.time.prep">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-lg-0 mb-1">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                Cook
+                                            </div>
+                                        </div>
+                                        <input type="number" min="1" class="form-control" v-model="recipe.time.cook">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                Total
+                                            </div>
+                                        </div>
+                                        <input type="number" min="1" class="form-control" v-model="recipe.time.total">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group mb-2">
@@ -181,7 +204,7 @@
                                 <template v-else>Save Changes</template>
                             </button>
 
-                            <button type="submit" class="btn btn-outline-danger ml-auto" @click.prevent="deleteRecipe()" v-if="snapshot.id && recipe.created_by == user.uid">
+                            <button type="submit" class="btn btn-outline-danger ml-auto" @click.prevent="deleteRecipe()" v-if="snapshot.id && currentUser.uid == recipe.created_by">
                                 <font-awesome-icon :icon="['far', 'trash']" />
                             </button>
                         </div>
@@ -246,6 +269,8 @@ export default {
             snapshot: {},
 
             recipe: {
+                created: {},
+                created_by: {},
                 ingredients: [
                     {
                         amount: "",
@@ -256,7 +281,8 @@ export default {
                 instructions: [
                     {}
                 ],
-                nutrition: []
+                nutrition: [],
+                time: {},
             },
 
             loadingRecipe: false,
@@ -265,8 +291,8 @@ export default {
         }
     },
     computed: {
-        user() {
-            return this.$store.state.user;
+        currentUser() {
+            return firebase.auth().currentUser;
         },
         ingredientsHaveValues() {
             var haveValues = true;
@@ -302,7 +328,14 @@ export default {
 
                     this.loadingRecipe = false;
                 } else {
-                    console.log("No such document exists!");
+                    this.$swal({
+                        toast: true,
+                        html: 'No such document exists',
+                        type: 'error',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
 
                     this.loadingRecipe = false;
                 }
@@ -346,13 +379,9 @@ export default {
 
             var name = null;
             var description = null;
-            var prep_time = null;
-            var cook_time = null;
-            var total_time = null;
-            var created_date = null;
-            var created_date_time = null;
-            var created_by = null;
-            var created_by_display_name = null;
+            var time = {};
+            var created = {};
+            var created_by = {};
 
             var updated = this.moment().format("MM-DD-YYYY HH:mm:ss");
 
@@ -378,34 +407,31 @@ export default {
             if(recipe.description) {
                 description = recipe.description;
             }
-            if(recipe.prep_time) {
-                prep_time = recipe.prep_time;
-            }
-            if(recipe.cook_time) {
-                cook_time = recipe.cook_time;
-            }
-            if(recipe.total_time) {
-                total_time = recipe.total_time;
-            }
-            if(recipe.created_date) {
-                created_date = recipe.created_date;
+            if(recipe.time) {
+                time = recipe.time;
             } else {
-                created_date = this.moment().format("MM-DD-YYYY");
+                time = {
+                    prep: recipe.prep,
+                    cook: recipe.cook,
+                    total: recipe.total
+                }
             }
-            if(recipe.created_date_time) {
-                created_date_time = recipe.created_date_time;
+            if(recipe.created && Object.keys(recipe.created).length) {
+                created = recipe.created;
             } else {
-                created_date_time = this.moment().format("MM-DD-YYYY HH:mm:ss");
+                created = {
+                    date: this.moment().format("MM-DD-YYYY"),
+                    date_time: this.moment().format("MM-DD-YYYY HH:mm:ss")
+                };
             }
-            if(recipe.created_by) {
+            if(recipe.created_by && Object.keys(recipe.created).length) {
                 created_by = recipe.created_by;
             } else {
-                created_by = this.user.uid;
-            }
-            if(recipe.created_by_display_name) {
-                created_by_display_name = recipe.created_by_display_name;
-            } else {
-                created_by_display_name = this.user.displayName;
+                created_by = {
+                    displayName: this.currentUser.displayName,
+                    email: this.currentUser.email,
+                    uid: this.currentUser.uid
+                };
             }
 
             if(!this.validateRecipe()) return;
@@ -418,30 +444,13 @@ export default {
                     nutrition: nutrition,
                     name: name,
                     description: description,
-                    prep_time: prep_time,
-                    cook_time: cook_time,
-                    total_time: total_time,
-                    created_date: created_date,
-                    created_date_time: created_date_time,
+                    time: time,
+                    created: created,
                     created_by: created_by,
-                    created_by_display_name: created_by_display_name,
                     updated: updated
                 })
                 .then(response => {
-                    if(name) {
-                        var message = name + ' updated';
-                    } else {
-                        var message = 'Recipe updated';
-                    }
-                    this.$swal({
-                        toast: true,
-                        html: message,
-                        type: 'success',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 5000
-                    });
-                    this.$router.replace('/');
+                    this.$router.push({name: 'home'});
                 })
                 .catch(error => {
                     this.$swal("Error", error.message, "error");
@@ -455,29 +464,12 @@ export default {
                     favorited_by: favorited_by,
                     name: name,
                     description: description,
-                    prep_time: prep_time,
-                    cook_time: cook_time,
-                    total_time: total_time,
-                    created_date: created_date,
-                    created_date_time: created_date_time,
-                    created_by: created_by,
-                    created_by_display_name: created_by_display_name
+                    time: time,
+                    created: created,
+                    created_by: created_by
                 })
                 .then(response => {
-                    if(name) {
-                        var message = name + ' created';
-                    } else {
-                        var message = 'Recipe created';
-                    }
-                    this.$swal({
-                        toast: true,
-                        html: message,
-                        type: 'success',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 5000
-                    });
-                    this.$router.replace('/');
+                    this.$router.push({name: 'home'});
                 })
                 .catch(error => {
                     this.$swal("Error", error.message, "error");
@@ -512,7 +504,7 @@ export default {
             return valid;
         },
         deleteRecipe() {
-            if(this.recipe.created_by == this.user.uid) {
+            if(this.currentUser.uid == this.recipe.created_by) {
                 this.$swal({
     				html: 'Are you sure you want to delete this recipe?',
     				showCancelButton: true,
@@ -541,7 +533,7 @@ export default {
                             timer: 5000
                         });
 
-                        this.$router.replace('/');
+                        this.$router.push({name: 'home'});
                     }
                 });
             } else {
