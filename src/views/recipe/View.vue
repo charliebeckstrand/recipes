@@ -73,7 +73,7 @@
                                 </form>
                             </b-card-body>
                             <b-list-group v-if="comments && comments.length" flush>
-                                <b-list-group-item v-for="comment in comments">
+                                <b-list-group-item v-for="comment in orderedComments">
                                     <div class="d-flex">
                                         <div class="flex-grow-1 align-self-center mr-3">
                                             <template v-if="!comment.editable">
@@ -217,6 +217,9 @@ export default {
                 }
             );
             return breadcrumbItems;
+        },
+        orderedComments() {
+            return _.orderBy(this.comments, 'created', 'desc');
         }
     },
     methods: {
