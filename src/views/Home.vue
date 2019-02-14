@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="align-self-center ml-auto">
                                     <div class="d-flex">
-                                        <a href="#" v-if="recipe.time && recipe.time.total" :title="recipe.time.total + ' minutes'" v-tippy="{placement : 'bottom', arrow: false, flip: true, theme: 'light', delay: [100, 0]}" class="mr-2" :class="{'text-success': recipe.time.total >= 10, 'text-warning': (recipe.time.total > 10 && recipe.time.total <= 30), 'text-danger': recipe.time.total > 30}" @click.prevent>
+                                        <a href="#" v-if="recipe.time && recipe.time.total" :title="recipe.time.total + ' minutes'" v-b-tooltip.hover class="mr-2" :class="{'text-success': recipe.time.total >= 10, 'text-warning': (recipe.time.total > 10 && recipe.time.total <= 30), 'text-danger': recipe.time.total > 30}" @click.prevent>
                                             <font-awesome-icon :icon="['far', 'stopwatch']" fixed-width />
                                         </a>
                                         <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="mr-2">
@@ -58,7 +58,9 @@
                                 <p class="card-text text-muted">{{recipe.description}}</p>
                             </b-card-body>
                             <b-card-footer :class="{'border-top-0': !recipe.description}">
-                                <small class="text-muted">created by <template v-if="recipe.created_by && recipe.created_by.displayName">{{recipe.created_by.displayName}}</template><template v-if="recipe.created_by && recipe.created_by.email && !recipe.created_by.displayName">{{recipe.created_by.email}}</template> on <template v-if="recipe.created && recipe.created.date">{{recipe.created.date}}</template></small>
+                                <small class="text-muted">
+                                    <template v-if="recipe.created_by && recipe.created_by.displayName">{{recipe.created_by.displayName}}</template><template v-if="recipe.created_by && recipe.created_by.email && !recipe.created_by.displayName">{{recipe.created_by.email}}</template> <template v-if="recipe.created && recipe.created.date_time"> &middot; {{moment(recipe.created.date_time).fromNow()}}</template>
+                                </small>
                             </b-card-footer>
                         </b-card>
                     </template>

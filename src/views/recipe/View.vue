@@ -60,7 +60,7 @@
                                     <b-input-group>
                                         <b-form-textarea type="text" placeholder="Comment" v-model="comment" />
                                         <b-input-group-append v-if="comment">
-                                            <b-button type="submit" variant="primary" :disabled="commenting">
+                                            <b-button type="submit" variant="info" :disabled="commenting">
                                                 <template v-if="commenting">
                                                     <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
                                                 </template>
@@ -73,7 +73,7 @@
                                 </form>
                             </b-card-body>
                             <b-list-group v-if="comments && comments.length" flush>
-                                <b-list-group-item v-for="comment in orderBy(comments, 'created', -1)">
+                                <b-list-group-item v-for="comment in comments">
                                     <div class="d-flex">
                                         <div class="flex-grow-1 align-self-center mr-3">
                                             <template v-if="!comment.editable">
@@ -100,7 +100,11 @@
                                                 </form>
                                             </template>
                                             <div v-if="!comment.editable">
-                                                <span class="text-muted"><small>{{comment.by.displayName}}</small> <vue-moments-ago prefix="" suffix="ago" :date="comment.created" lang="en"></vue-moments-ago></span>
+                                                <span class="text-muted">
+                                                    <small>
+                                                        <span v-if="comment.by.displayName">{{comment.by.displayName}}</span><span v-else>{{comment.by.email}}</span><span v-if="comment.created"> &middot; {{moment(comment.created).fromNow()}} </span><span v-if="comment.edited">&middot; <span class="text-muted" title="Edited" v-b-tooltip.hover><font-awesome-icon :icon="['far', 'user-edit']" fixed-width /></span></span>
+                                                    </small>
+                                                </span>
                                             </div>
                                         </div>
                                         <div v-if="comment.by.uid == currentUser.uid" class="d-flex align-self-center ml-auto">
@@ -129,8 +133,6 @@
 
 <script>
 import firebase from 'firebase/app';
-import VueMomentsAgo from 'vue-moments-ago';
-import Vue2Filters from 'vue2-filters';
 
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
@@ -139,13 +141,10 @@ import Breadcrumb from "@/components/Breadcrumb.vue";
 export default {
     name: "view-recipe",
     components: {
-        VueMomentsAgo,
-
         Navbar,
         Breadcrumb
     },
     props: ['recipe_key'],
-    mixins: [Vue2Filters.mixin],
     data() {
         return {
             comment: null,
@@ -268,7 +267,8 @@ export default {
             this.savingEditedComment = true;
 
             commentRef.update({
-                comment: comment.comment
+                comment: comment.comment,
+                edited: true
             }).then(response => {
                 this.$set(comment, 'editable', false);
                 this.commentCache = {};

@@ -12,14 +12,12 @@ import { fal } from '@fortawesome/pro-light-svg-icons';
 import moment from 'moment';
 
 import BootstrapVue from 'bootstrap-vue';
-import VueTippy from 'vue-tippy';
 import Lodash from 'lodash';
 import VueLodash from 'vue-lodash';
-import VueContentPlaceholders from 'vue-content-placeholders';
-import Gravatar from 'vue-gravatar';
 import VueSweetalert2 from 'vue-sweetalert2';
+
+import Gravatar from 'vue-gravatar';
 import Multiselect from 'vue-multiselect';
-import Vue2Filters from 'vue2-filters';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -27,19 +25,17 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 import '@/assets/css/sweet-alert-overrides.css';
+import '@/assets/css/vue-multiselect-overrides.css';
 import '@/assets/css/app.css';
+
+Vue.use(BootstrapVue);
+Vue.use(Lodash);
+Vue.use(VueLodash);
+Vue.use(VueSweetalert2);
 
 Vue.component('v-gravatar', Gravatar);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('multiselect', Multiselect);
-
-Vue.use(BootstrapVue);
-Vue.use(VueLodash);
-Vue.use(Lodash);
-Vue.use(VueTippy);
-Vue.use(VueContentPlaceholders);
-Vue.use(VueSweetalert2);
-Vue.use(Vue2Filters);
 
 Vue.prototype.moment = moment;
 

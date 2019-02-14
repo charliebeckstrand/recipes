@@ -60,8 +60,8 @@ export default {
     methods: {
         createRecipe(recipeObj) {
             const created = {
-                date: this.moment().format("MM-DD-YYYY"),
-                date_time: this.moment().format("MM-DD-YYYY HH:mm:ss")
+                date: this.moment().format("ddd, DD MMM YYYY"),
+                date_time: this.moment().format("ddd, DD MMM YYYY HH:mm:ss ZZ")
             }
 
             const created_by = {
