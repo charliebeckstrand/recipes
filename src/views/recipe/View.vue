@@ -73,18 +73,21 @@
                                 </form>
                             </b-card-body>
                             <b-list-group v-if="comments && comments.length" flush>
-                                <b-list-group-item v-for="comment in comments">
+                                <b-list-group-item v-for="comment in orderBy(comments, 'created', -1)">
                                     <div class="d-flex">
                                         <div class="flex-grow-1 align-self-center mr-3">
-                                            <template v-if="!commentEditable">
+                                            <template v-if="!comment.editable">
                                                 <div>{{comment.comment}}</div>
                                             </template>
                                             <template v-else>
                                                 <form @submit.prevent="saveEditedComment(comment)">
                                                     <b-input-group>
                                                         <b-form-textarea type="text" placeholder="Comment" v-model="comment.comment" />
-                                                        <b-input-group-append v-if="commentChanges(comment)">
-                                                            <b-button type="submit" variant="primary" :disabled="savingEditedComment">
+                                                        <b-input-group-append>
+                                                            <b-button type="button" variant="danger" @click.prevent="cancelEditComment(comment)">
+                                                                Cancel
+                                                            </b-button>
+                                                            <b-button type="submit" variant="primary" v-if="commentChanges(comment)" :disabled="savingEditedComment">
                                                                 <template v-if="savingEditedComment">
                                                                     <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
                                                                 </template>
@@ -96,12 +99,12 @@
                                                     </b-input-group>
                                                 </form>
                                             </template>
-                                            <div>
+                                            <div v-if="!comment.editable">
                                                 <span class="text-muted"><small>{{comment.by.displayName}}</small> <vue-moments-ago prefix="" suffix="ago" :date="comment.created" lang="en"></vue-moments-ago></span>
                                             </div>
                                         </div>
                                         <div v-if="comment.by.uid == currentUser.uid" class="d-flex align-self-center ml-auto">
-                                            <a href="#" class="text-primary" @click.prevent="editComment(comment)">
+                                            <a href="#" @click.prevent="editComment(comment)" :disabled="comment.editable">
                                                 <font-awesome-icon :icon="['far', 'edit']" fixed-width />
                                             </a>
                                             <a href="#" class="text-danger ml-2" @click.prevent="deleteComment(comment)">
@@ -127,6 +130,7 @@
 <script>
 import firebase from 'firebase/app';
 import VueMomentsAgo from 'vue-moments-ago';
+import Vue2Filters from 'vue2-filters';
 
 // @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
@@ -141,6 +145,7 @@ export default {
         Breadcrumb
     },
     props: ['recipe_key'],
+    mixins: [Vue2Filters.mixin],
     data() {
         return {
             comment: null,
@@ -148,7 +153,6 @@ export default {
 
             commentCache: {},
 
-            commentEditable: false,
             savingEditedComment: false,
 
             showIngredientsTab: true,
@@ -252,7 +256,11 @@ export default {
         },
         editComment(comment) {
             this.commentCache = _.cloneDeep(comment);
-            this.commentEditable = true;
+            this.$set(comment, 'editable', true);
+        },
+        cancelEditComment(comment) {
+            this.commentCache = {};
+            this.$set(comment, 'editable', false);
         },
         saveEditedComment(comment) {
             const commentRef = firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments').doc(comment['.key']);
@@ -262,7 +270,9 @@ export default {
             commentRef.update({
                 comment: comment.comment
             }).then(response => {
-                this.commentEditable = false;
+                this.$set(comment, 'editable', false);
+                this.commentCache = {};
+
                 this.savingEditedComment = false;
             })
         },

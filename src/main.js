@@ -19,6 +19,7 @@ import VueContentPlaceholders from 'vue-content-placeholders';
 import Gravatar from 'vue-gravatar';
 import VueSweetalert2 from 'vue-sweetalert2';
 import Multiselect from 'vue-multiselect';
+import Vue2Filters from 'vue2-filters';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -38,6 +39,7 @@ Vue.use(Lodash);
 Vue.use(VueTippy);
 Vue.use(VueContentPlaceholders);
 Vue.use(VueSweetalert2);
+Vue.use(Vue2Filters);
 
 Vue.prototype.moment = moment;
 

@@ -7560,6 +7560,10 @@ vue-tippy@^2.1.0:
     popper.js "^1.14.3"
     tippy.js "^2.6.*"
 
+vue2-filters@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/vue2-filters/-/vue2-filters-0.4.1.tgz#c72e697addc02b313b80b69c123c14cdee962cf5"
+
 vue@^2.5.16:
   version "2.6.5"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.5.tgz#7a7e8723b875b91800e576aac41cb3ed325dddf0"
