@@ -242,7 +242,7 @@ export default {
         addComment(recipe, comment) {
             var comments = firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments');
 
-            const by = {
+            const user = {
                 displayName: this.currentUser.displayName,
                 email: this.currentUser.email,
                 uid: this.currentUser.uid
@@ -250,7 +250,7 @@ export default {
 
             this.commenting = true;
 
-            comments.add({comment: comment, by: by, created: this.moment().format("ddd, DD MMM YYYY HH:mm:ss ZZ")})
+            comments.add({comment: comment, user: user, created: this.moment().format("ddd, DD MMM YYYY HH:mm:ss ZZ")})
             .then(response => {
                 this.commenting = false;
                 this.comment = null;
@@ -279,8 +279,8 @@ export default {
                 this.savingEditedComment = false;
             })
         },
-        deleteComment(comment) {
-            const commentRef = firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments').doc(comment['.key']);
+        deleteComment(commentRef) {
+            const comment = firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments').doc(commentRef['.key']);
 
             this.$swal({
                 html: 'Are you sure you want to delete this comment?',
@@ -293,7 +293,7 @@ export default {
                 reverseButtons: true
             }).then((willDeleteComment) => {
                 if (willDeleteComment.value) {
-                    commentRef.delete();
+                    comment.delete();
                 }
             });
         },

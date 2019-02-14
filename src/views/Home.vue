@@ -44,10 +44,10 @@
                                             </a>
                                         </div>
                                         <div v-if="currentUser && currentUser.uid">
-                                            <a href="#" class="text-danger" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
+                                            <a href="#" class="text-danger unfavorite-recipe" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
                                                 <font-awesome-icon :icon="['fas', 'heart']" fixed-width />
                                             </a>
-                                            <a href="#" class="text-danger" @click.prevent="favoriteRecipe(recipe)" v-else>
+                                            <a href="#" class="text-danger favorite-recipe" @click.prevent="favoriteRecipe(recipe)" v-else>
                                                 <font-awesome-icon :icon="['far', 'heart']" fixed-width />
                                             </a>
                                         </div>
@@ -112,6 +112,22 @@ export default {
                 ref: firebase.firestore().collection('test_recipes'),
                 resolve: () => {
                     this.resolved = true;
+                },
+                reject: (error) => {
+                    this.$swal({
+                        toast: true,
+                        html: error.message,
+                        type: 'error',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                }
+            },
+            users: {
+                ref: firebase.firestore().collection('users'),
+                resolve: () => {
+
                 },
                 reject: (error) => {
                     this.$swal({
@@ -218,79 +234,60 @@ export default {
             }
         },
         favoriteRecipe(recipe) {
-            if(this.currentUser) {
-                let ref = firebase.firestore().collection('test_recipes').doc(recipe['.key']);
+            if(this.currentUser && this.currentUser.uid) {
+                const usersCollection = firebase.firestore().collection('users');
 
-                var snapshot = {};
+                const userQuery = usersCollection.where("uid", "==", this.currentUser.uid);
 
-                ref.get().then(snapshot => {
-                    if (snapshot.exists) {
-                        snapshot = snapshot;
+                userQuery.get().then((snapshot) => {
+                    if(snapshot.docs && snapshot.docs.length) {
+                        var user = null;
 
-                        // firebase.firestore().runTransaction(transaction => {
-                        //     return transaction.get(ref).then(snapshot => {
-                        //
-                        //         const favorited_by = snapshot.get('favorited_by');
-                        //
-                        //         favorited_by.push(
-                        //             {
-                        //                 uid: this.currentUser.uid,
-                        //                 email: this.currentUser.email
-                        //             }
-                        //         );
-                        //
-                        //         transaction.update(ref, 'favorited_by', favorited_by);
-                        //     });
-                        // }).then(response => {
-                        //
-                        // })
-                        // .catch(error => {
-                        //     this.$swal("Error", error.message, "error");
-                        // });
+                        _.forEach(snapshot.docs, doc => {
+                            user = usersCollection.doc(doc.id);
+                        })
+
+                        user.update({
+                            favorites: firebase.firestore.FieldValue.arrayUnion(recipe['.key'])
+                        });
+                    } else {
+                        usersCollection.add({uid: this.currentUser.uid});
                     }
                 });
             }
         },
         unfavoriteRecipe(recipe) {
-            if(this.currentUser) {
-                let ref = firebase.firestore().collection('test_recipes').doc(recipe['.key']);
+            if(this.currentUser && this.currentUser.uid) {
+                const usersCollection = firebase.firestore().collection('users');
 
-                var snapshot = {};
+                const userQuery = usersCollection.where("uid", "==", this.currentUser.uid);
 
-                ref.get().then(snapshot => {
-                    if (snapshot.exists) {
-                        snapshot = snapshot;
+                userQuery.get().then((snapshot) => {
+                    if(snapshot.docs && snapshot.docs.length) {
+                        var user = null;
 
-                        firebase.firestore().runTransaction(transaction => {
-                            return transaction.get(ref).then(snapshot => {
-
-                                const favorited_by = snapshot.get('favorited_by');
-
-                                const index = _.findIndex(favorited_by, {uid: this.currentUser.uid});
-
-                                favorited_by.splice(index, 1);
-
-                                transaction.update(ref, 'favorited_by', favorited_by);
-                            });
-                        }).then(response => {
-                            // recipe unfavorited
+                        _.forEach(snapshot.docs, doc => {
+                            user = usersCollection.doc(doc.id);
                         })
-                        .catch(error => {
-                            this.$swal("Error", error.message, "error");
+
+                        user.update({
+                            favorites: firebase.firestore.FieldValue.arrayRemove(recipe['.key'])
                         });
-                    } else {
-                        console.log("No such document exists!");
                     }
                 });
             }
         },
         recipeFavorited(recipe) {
             var favorited = false;
-            if(this.currentUser && this.currentUser.uid) {
-                if(_.find(recipe.favorited_by, {uid: this.currentUser.uid})) {
-                    favorited = true;
+            _.forEach(this.users, user => {
+                if(user.uid == this.currentUser.uid) {
+                    _.forEach(user.favorites, favorite => {
+                        if(favorite == recipe['.key']) {
+                            favorited = true;
+                        }
+                    })
                 }
-            }
+            });
             return favorited;
         }
     }
@@ -303,6 +300,12 @@ export default {
     width: 75px;
     min-width: 75px;
     min-height: 75px;
+}
+a.favorite-recipe:hover,
+a.favorite-recipe:focus,
+a.unfavorite-recipe:hover,
+a.unfavorite-recipe:focus {
+    color: #dc3545 !important;
 }
 /* .badge + .badge {
     margin-top: .25rem;
