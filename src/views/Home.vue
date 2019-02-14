@@ -11,8 +11,8 @@
             <template v-else>
                 <Breadcrumb :breadcrumbItems="breadcrumbItems" />
 
-                <div class="d-lg-flex mb-3">
-                    <div v-if="currentUser && currentUser.uid" class="mr-3 mb-lg-0 mb-3">
+                <div class="d-lg-flex mb-3" v-if="currentUser && currentUser.uid">
+                    <div class="mr-3 mb-lg-0 mb-3">
                         <b-button :to="{name: 'create-recipe'}" variant="outline-success">
                             Create Recipe
                         </b-button>
@@ -109,7 +109,7 @@ export default {
     firestore() {
         return {
             recipes: {
-                ref: firebase.firestore().collection('test_recipes'),
+                ref: firebase.firestore().collection('recipes'),
                 resolve: () => {
                     this.resolved = true;
                 },
@@ -220,7 +220,7 @@ export default {
         deleteRecipe(recipe) {
             if((recipe.created_by && recipe.created_by.uid) && (this.currentUser && this.currentUser.uid) && recipe.created_by.uid == this.currentUser.uid) {
                 this.$swal({
-                    html: 'Are you sure you want to delete "' + recipe.name + '"?',
+                    html: 'Are you sure you want to delete the recipe "' + recipe.name + '"?',
                     showCancelButton: true,
                     confirmButtonText: 'Delete',
                     confirmButtonClass: 'btn btn-danger',
@@ -230,7 +230,7 @@ export default {
                     reverseButtons: true
                 }).then((willDeleteRecipe) => {
                     if (willDeleteRecipe.value) {
-                        firebase.firestore().collection('test_recipes').doc(recipe['.key']).delete();
+                        firebase.firestore().collection('recipes').doc(recipe['.key']).delete();
                     }
                 });
             } else if(!this.currentUser || !recipe.created_by || (this.currentUser && this.currentUser.uid) && (recipe.created_by && recipe.created_by.uid) && recipe.created_by.uid !== this.currentUser.uid) {

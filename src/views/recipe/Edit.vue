@@ -47,7 +47,7 @@ export default {
     firestore() {
         return {
             recipe: {
-                ref: firebase.firestore().collection('test_recipes').doc(this.recipe_key),
+                ref: firebase.firestore().collection('recipes').doc(this.recipe_key),
                 resolve: () => {
                     this.resolved = true;
                 },
@@ -121,7 +121,7 @@ export default {
             if(!created_by) { var created_by = {} };
 
             if(this.recipe_key) {
-                firebase.firestore().collection("test_recipes").doc(this.recipe_key).update({
+                firebase.firestore().collection("recipes").doc(this.recipe_key).update({
                     name: name,
                     description: description,
 

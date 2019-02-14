@@ -73,7 +73,7 @@ export default {
             Object.assign(recipeObj, {created});
             Object.assign(recipeObj, {created_by});
 
-            firebase.firestore().collection("test_recipes").doc().set(recipeObj)
+            firebase.firestore().collection("recipes").doc().set(recipeObj)
             .then(response => {
                 this.$router.push({name: 'home'});
             })

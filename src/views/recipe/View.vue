@@ -102,7 +102,7 @@
                                             <div v-if="!comment.editable">
                                                 <span class="text-muted">
                                                     <small>
-                                                        <span v-if="comment.user && comment.user.displayName">{{comment.user.displayName}}</span><span v-else>{{comment.user.email}}</span><span v-if="comment.created"> &middot; {{moment(comment.created).fromNow()}} </span><span v-if="comment.edited">&middot; <span class="text-muted" title="Edited" v-b-tooltip.hover><font-awesome-icon :icon="['far', 'user-edit']" fixed-width /></span></span>
+                                                        <span v-if="comment.user && comment.user.displayName">{{comment.user.displayName}}</span><span v-else>{{comment.user.email}}</span><span v-if="comment.created"> <span v-if="comment.user.displayName || comment.user.email">&middot;</span> {{moment(comment.created).fromNow()}} </span><span v-if="comment.edited">&middot; <span class="text-muted" title="Edited" v-b-tooltip.hover><font-awesome-icon :icon="['far', 'user-edit']" fixed-width /></span></span>
                                                     </small>
                                                 </span>
                                             </div>
@@ -165,7 +165,7 @@ export default {
     firestore() {
         return {
             recipe: {
-                ref: firebase.firestore().collection('test_recipes').doc(this.recipe_key),
+                ref: firebase.firestore().collection('recipes').doc(this.recipe_key),
                 resolve: () => {
                     this.resolved = true;
                 },
@@ -181,7 +181,7 @@ export default {
                 }
             },
             comments: {
-                ref: firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments'),
+                ref: firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments'),
                 resolve: () => {
                     this.commentsResolved = true;
                 },
@@ -240,12 +240,22 @@ export default {
         },
 
         addComment(recipe, comment) {
-            var comments = firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments');
+            var comments = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments');
 
-            const user = {
-                displayName: this.currentUser.displayName,
-                email: this.currentUser.email,
-                uid: this.currentUser.uid
+            var user = null;
+
+            if(this.currentUser) {
+                user = {
+                    displayName: this.currentUser.displayName,
+                    email: this.currentUser.email,
+                    uid: this.currentUser.uid
+                }
+            } else {
+                user = {
+                    displayName: null,
+                    email: null,
+                    uid: null
+                }
             }
 
             this.commenting = true;
@@ -265,7 +275,7 @@ export default {
             this.$set(comment, 'editable', false);
         },
         saveEditedComment(comment) {
-            const commentRef = firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments').doc(comment['.key']);
+            const commentRef = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments').doc(comment['.key']);
 
             this.savingEditedComment = true;
 
@@ -280,7 +290,7 @@ export default {
             })
         },
         deleteComment(commentRef) {
-            const comment = firebase.firestore().collection('test_recipes').doc(this.recipe_key).collection('comments').doc(commentRef['.key']);
+            const comment = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments').doc(commentRef['.key']);
 
             this.$swal({
                 html: 'Are you sure you want to delete this comment?',
