@@ -24,15 +24,15 @@
                 <div v-if="filteredRecipes && filteredRecipes.length">
                     <template v-for="(recipe, recipeIndex) in filteredRecipes">
                         <b-card no-body class="mb-3">
-                            <b-card-header class="d-flex h6">
+                            <b-card-header class="h6 d-flex">
                                 <div class="align-self-center mr-3">
                                     <router-link :to="{name: 'view-recipe', params: {recipe_key: recipe['.key']}}">{{recipe.name}}</router-link>
                                 </div>
                                 <div class="align-self-center ml-auto">
                                     <div class="d-flex">
-                                        <div v-if="recipe.time && recipe.time.total" :title="recipe.time.total + ' minutes'" v-tippy="{placement : 'bottom', arrow: false, flip: true, theme: 'light', delay: [100, 0]}" class="cursor-pointer mr-2" :class="{'text-success': recipe.time.total >= 10, 'text-warning': (recipe.time.total > 10 && recipe.time.total <= 30), 'text-danger': recipe.time.total > 30}">
+                                        <a href="#" v-if="recipe.time && recipe.time.total" :title="recipe.time.total + ' minutes'" v-tippy="{placement : 'bottom', arrow: false, flip: true, theme: 'light', delay: [100, 0]}" class="mr-2" :class="{'text-success': recipe.time.total >= 10, 'text-warning': (recipe.time.total > 10 && recipe.time.total <= 30), 'text-danger': recipe.time.total > 30}" @click.prevent>
                                             <font-awesome-icon :icon="['far', 'stopwatch']" fixed-width />
-                                        </div>
+                                        </a>
                                         <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="mr-2">
                                             <a href="#" class="text-secondary" @click.prevent="editRecipe(recipe)">
                                                 <font-awesome-icon :icon="['far', 'pen']" fixed-width />
@@ -190,7 +190,7 @@ export default {
         deleteRecipe(recipe) {
             if((recipe.created_by && recipe.created_by.uid) && (this.currentUser && this.currentUser.uid) && recipe.created_by.uid == this.currentUser.uid) {
                 this.$swal({
-                    html: 'Delete <em>' + recipe.name + '</em>?',
+                    html: 'Are you sure you want to delete "' + recipe.name + '"?',
                     showCancelButton: true,
                     confirmButtonText: 'Delete',
                     confirmButtonClass: 'btn btn-danger',
@@ -224,8 +224,6 @@ export default {
                 ref.get().then(snapshot => {
                     if (snapshot.exists) {
                         snapshot = snapshot;
-
-                        console.log(snapshot)
 
                         // firebase.firestore().runTransaction(transaction => {
                         //     return transaction.get(ref).then(snapshot => {

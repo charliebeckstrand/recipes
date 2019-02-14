@@ -100,9 +100,11 @@ export default {
             var created = recipeObj.created;
             var created_by = recipeObj.created_by;
 
+            const currentTime = new Date().toLocaleString();
+
             var updated = {
-                date: this.moment().format("MM-DD-YYYY"),
-                date_time: this.moment().format("MM-DD-YYYY HH:mm:ss")
+                date: this.moment(currentTime).format("ddd, DD MMM YYYY"),
+                date_time: this.moment(currentTime).format("ddd, DD MMM YYYY HH:mm:ss ZZ")
             };
 
             if(!description) { var description = null };
