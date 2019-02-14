@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-navbar toggleable="sm" type="light" class="mb-3 px-0">
+        <b-navbar toggleable="sm" type="light" class="my-3 px-0">
             <b-navbar-brand :to="{name: 'home'}">
                 <img src="@/assets/img/45332.svg" width="50" height="50" alt="Logo">
             </b-navbar-brand>

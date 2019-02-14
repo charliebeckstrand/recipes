@@ -3,36 +3,23 @@
         <div class="container">
             <Navbar />
 
-            <template v-if="loadingRecipe">
+            <template v-if="!resolved">
                 <div class="spinner-grow" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
             </template>
             <template v-else>
-                <!-- <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <router-link :to="{name: 'home'}" class="breadcrumb-item text-capitalize">Recipes</router-link>
-                        <li class="breadcrumb-item text-capitalize active" aria-current="page" v-if="recipe.name">
-                            {{recipe.name}}
-                        </li>
-                    </ol>
-                </nav> -->
-
                 <Breadcrumb :breadcrumbItems="breadcrumbItems" />
 
                 <div class="mb-5 pb-5">
-
                     <b-card no-body>
-                        <!-- <h5 class="card-header d-flex mb-0">
-                            {{recipe.name}}
-                        </h5> -->
                         <b-card-header class="h5">
                             {{recipe.name}}
                         </b-card-header>
                         <b-card-body v-if="recipe.description">
                             <p class="card-text">{{recipe.description}}</p>
                         </b-card-body>
-                        <b-card-footer :class="{'border-top-0': !recipe.description}">
+                        <b-card-footer :class="{'border-top-0': !recipe.description}" v-if="recipe.ingredients && recipe.ingredients.length || recipe.instructions && recipe.instructions.length || recipe.nutrition && recipe.nutrition.length">
                             <div class="d-flex">
                                 <b-nav pills>
                                   <b-nav-item v-if="recipe.ingredients && recipe.ingredients.length" :active="showIngredientsTab" @click="toggleIngredientsTab()">Ingredients</b-nav-item>
@@ -58,10 +45,6 @@
                                 <strong>{{fact.amount}}</strong> {{fact.fact}}
                             </b-list-group-item>
                         </b-list-group>
-
-                        <!-- <b-card-footer :class="{'border-top-0': !recipe.description}">
-                            <small class="text-muted">created by <template v-if="recipe.created_by && recipe.created_by.displayName">{{recipe.created_by.displayName}}</template><template v-if="recipe.created_by && recipe.created_by.email && !recipe.created_by.displayName">{{recipe.created_by.email}}</template></small>
-                        </b-card-footer> -->
                     </b-card>
                 </div>
             </template>
@@ -86,13 +69,31 @@ export default {
     props: ['recipe_key'],
     data() {
         return {
-            recipe: {},
-
-            loadingRecipe: false,
-
             showIngredientsTab: true,
             showInstructionsTab: false,
-            showNutritionTab: false
+            showNutritionTab: false,
+
+            resolved: false
+        }
+    },
+    firestore() {
+        return {
+            recipe: {
+                ref: firebase.firestore().collection('test_recipes').doc(this.recipe_key),
+                resolve: () => {
+                    this.resolved = true;
+                },
+                reject: (error) => {
+                    this.$swal({
+                        toast: true,
+                        html: error.message,
+                        type: 'error',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                }
+            }
         }
     },
     computed: {
@@ -101,37 +102,22 @@ export default {
         },
         breadcrumbItems() {
             var breadcrumbItems = [];
-            breadcrumbItems.push({
-                text: 'Recipes',
-                to: {
-                    name: 'home'
+            breadcrumbItems.push(
+                {
+                    text: 'Recipes',
+                    to: {
+                        name: 'home'
+                    }
+                },
+                {
+                    text: this.recipe.name,
+                    active: true
                 }
-            },
-            {
-                text: this.recipe.name,
-                active: true
-            });
+            );
             return breadcrumbItems;
         }
     },
     methods: {
-        getRecipe() {
-            this.loadingRecipe = true;
-
-            let ref = firebase.firestore().collection('recipes').doc(this.recipe_key);
-
-            ref.get().then(snapshot => {
-                if (snapshot.exists) {
-                    this.recipe = snapshot.data();
-
-                    this.loadingRecipe = false;
-                } else {
-                    console.log("No such document exists!");
-
-                    this.loadingRecipe = false;
-                }
-            })
-        },
         toggleIngredientsTab() {
             this.showIngredientsTab = true;
             this.showInstructionsTab = false;
@@ -147,9 +133,6 @@ export default {
             this.showInstructionsTab = false;
             this.showNutritionTab = true;
         }
-    },
-    mounted() {
-        this.getRecipe();
     }
 };
 </script>

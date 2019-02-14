@@ -16,7 +16,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" v-model="editableUser.displayName">
                         <div class="input-group-append" v-if="userChanges()">
-                            <button class="btn btn-danger" @click.prevent="cancelChanges()">
+                            <button class="btn btn-danger" @click.prevent="cancelChanges()" v-if="!savingUser">
                                 Cancel
                             </button>
                             <button type="submit" class="btn btn-primary" :disabled="savingUser">

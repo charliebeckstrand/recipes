@@ -3,7 +3,7 @@
         <div class="container">
             <Navbar />
 
-            <template v-if="loadingRecipes">
+            <template v-if="!resolved">
                 <div class="spinner-grow" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
@@ -90,8 +90,6 @@ export default {
     },
     data() {
         return {
-            recipes: [],
-
             breadcrumbItems: [
                 {
                     text: 'Recipes',
@@ -99,22 +97,30 @@ export default {
                 }
             ],
 
+            // recipes: [],
+
             search: null,
 
-            loadingRecipes: true
+            resolved: false
         }
     },
     firestore() {
         return {
-            recipes: firebase.firestore().collection('recipes'),
-        }
-    },
-    watch: {
-        filteredRecipes(recipes) {
-            if(recipes && recipes.length) {
-                this.loadingRecipes = false;
-            } else {
-                this.loadingRecipes = false;
+            recipes: {
+                ref: firebase.firestore().collection('test_recipes'),
+                resolve: () => {
+                    this.resolved = true;
+                },
+                reject: (error) => {
+                    this.$swal({
+                        toast: true,
+                        html: error.message,
+                        type: 'error',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                }
             }
         }
     },
@@ -124,6 +130,7 @@ export default {
         },
         filteredRecipes() {
             var filteredRecipes = [];
+
             if(this.search) {
                 return this.recipes.filter(recipe => {
                     var search = this.search.toLowerCase();
@@ -161,6 +168,7 @@ export default {
             } else {
                 filteredRecipes = _.orderBy(this.recipes, 'created');
             }
+
             return _.orderBy(filteredRecipes, 'created');
         }
     },
@@ -182,7 +190,7 @@ export default {
         deleteRecipe(recipe) {
             if((recipe.created_by && recipe.created_by.uid) && (this.currentUser && this.currentUser.uid) && recipe.created_by.uid == this.currentUser.uid) {
                 this.$swal({
-                    html: 'Delete <span class="font-weight-bold">' + recipe.name + '</span>?',
+                    html: 'Delete <em>' + recipe.name + '</em>?',
                     showCancelButton: true,
                     confirmButtonText: 'Delete',
                     confirmButtonClass: 'btn btn-danger',
@@ -192,7 +200,7 @@ export default {
                     reverseButtons: true
                 }).then((willDeleteRecipe) => {
                     if (willDeleteRecipe.value) {
-                        firebase.firestore().collection('recipes').doc(recipe['.key']).delete();
+                        firebase.firestore().collection('test_recipes').doc(recipe['.key']).delete();
                     }
                 });
             } else if(!this.currentUser || !recipe.created_by || (this.currentUser && this.currentUser.uid) && (recipe.created_by && recipe.created_by.uid) && recipe.created_by.uid !== this.currentUser.uid) {
@@ -209,7 +217,7 @@ export default {
         },
         favoriteRecipe(recipe) {
             if(this.currentUser) {
-                let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
+                let ref = firebase.firestore().collection('test_recipes').doc(recipe['.key']);
 
                 var snapshot = {};
 
@@ -217,35 +225,35 @@ export default {
                     if (snapshot.exists) {
                         snapshot = snapshot;
 
-                        firebase.firestore().runTransaction(transaction => {
-                            return transaction.get(ref).then(snapshot => {
+                        console.log(snapshot)
 
-                                const favorited_by = snapshot.get('favorited_by');
-
-                                favorited_by.push(
-                                    {
-                                        uid: this.currentUser.uid,
-                                        email: this.currentUser.email
-                                    }
-                                );
-
-                                transaction.update(ref, 'favorited_by', favorited_by);
-                            });
-                        }).then(response => {
-                            // recipe favorited
-                        })
-                        .catch(error => {
-                            this.$swal("Error", error.message, "error");
-                        });
-                    } else {
-                        console.log("No such document exists!");
+                        // firebase.firestore().runTransaction(transaction => {
+                        //     return transaction.get(ref).then(snapshot => {
+                        //
+                        //         const favorited_by = snapshot.get('favorited_by');
+                        //
+                        //         favorited_by.push(
+                        //             {
+                        //                 uid: this.currentUser.uid,
+                        //                 email: this.currentUser.email
+                        //             }
+                        //         );
+                        //
+                        //         transaction.update(ref, 'favorited_by', favorited_by);
+                        //     });
+                        // }).then(response => {
+                        //
+                        // })
+                        // .catch(error => {
+                        //     this.$swal("Error", error.message, "error");
+                        // });
                     }
                 });
             }
         },
         unfavoriteRecipe(recipe) {
             if(this.currentUser) {
-                let ref = firebase.firestore().collection('recipes').doc(recipe['.key']);
+                let ref = firebase.firestore().collection('test_recipes').doc(recipe['.key']);
 
                 var snapshot = {};
 
