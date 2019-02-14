@@ -36,7 +36,7 @@ const router = new Router({
             }
         },
         {
-            path: "/recipes/view/:recipe_key",
+            path: "/recipe/:recipe_key",
             name: "view-recipe",
             props: true,
             // route level code-splitting
@@ -46,7 +46,7 @@ const router = new Router({
             import(/* webpackChunkName: "view-recipe" */ "./views/recipe/View.vue")
         },
         {
-            path: "/recipes/create",
+            path: "/create",
             name: "create-recipe",
             meta: {
                 requiresAuth: true
@@ -58,7 +58,7 @@ const router = new Router({
             import(/* webpackChunkName: "create-recipe" */ "./views/recipe/Create.vue")
         },
         {
-            path: "/recipes/edit/:recipe_key",
+            path: "/recipe/:recipe_key/edit",
             name: "edit-recipe",
             props: true,
             meta: {
@@ -69,7 +69,7 @@ const router = new Router({
             // which is lazy-loaded when the route is visited.
             component: () =>
             import(/* webpackChunkName: "create-recipe" */ "./views/recipe/Edit.vue")
-        },
+        }
     ]
 });
 
@@ -77,39 +77,19 @@ router.beforeEach((to, from, next) => {
     const currentUser = firebase.auth().currentUser;
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-    if(to.path == '/') {
-        if(to.matched.some(record => record.meta.requiresAuth && !currentUser)) {
-            next({
-                // requires auth and user is not logged in
-                path: '/login',
-                query: {
-                    redirect: to.fullPath
-                }
-            })
-        }
-        else if(!to.matched.some(record => record.meta.requiresAuth)) {
-            next();
-        } else {
-            next();
-        }
-    } else {
-        if(to.matched.some(record => record.meta.requiresAuth)) {
-            if (!currentUser) {
-                next({
-                    // requires auth and user is not logged in
-                    path: '/login',
-                    query: {
-                        redirect: to.fullPath
-                    }
-                });
-            } else {
-                // requires auth and user is logged in
-                next();
+    if(requiresAuth && !currentUser) {
+        next({
+            // requires auth and user is not logged in
+            path: '/login',
+            query: {
+                redirect: to.fullPath
             }
-        } else {
-            // does no require auth
-            next();
-        }
+        })
+    }
+    else if(!requiresAuth) {
+        next();
+    } else {
+        next();
     }
 });
 

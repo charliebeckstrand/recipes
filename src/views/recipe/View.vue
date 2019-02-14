@@ -102,12 +102,12 @@
                                             <div v-if="!comment.editable">
                                                 <span class="text-muted">
                                                     <small>
-                                                        <span v-if="comment.by.displayName">{{comment.by.displayName}}</span><span v-else>{{comment.by.email}}</span><span v-if="comment.created"> &middot; {{moment(comment.created).fromNow()}} </span><span v-if="comment.edited">&middot; <span class="text-muted" title="Edited" v-b-tooltip.hover><font-awesome-icon :icon="['far', 'user-edit']" fixed-width /></span></span>
+                                                        <span v-if="comment.user && comment.user.displayName">{{comment.user.displayName}}</span><span v-else>{{comment.user.email}}</span><span v-if="comment.created"> &middot; {{moment(comment.created).fromNow()}} </span><span v-if="comment.edited">&middot; <span class="text-muted" title="Edited" v-b-tooltip.hover><font-awesome-icon :icon="['far', 'user-edit']" fixed-width /></span></span>
                                                     </small>
                                                 </span>
                                             </div>
                                         </div>
-                                        <div v-if="comment.by.uid == currentUser.uid" class="d-flex align-self-center ml-auto">
+                                        <div v-if="comment.user && comment.user.uid && comment.user.uid == currentUser.uid" class="d-flex align-self-center ml-auto">
                                             <a href="#" @click.prevent="editComment(comment)" :disabled="comment.editable">
                                                 <font-awesome-icon :icon="['far', 'edit']" fixed-width />
                                             </a>

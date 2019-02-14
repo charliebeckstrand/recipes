@@ -9,9 +9,15 @@
                 </div>
             </template>
             <template v-else>
-                <Breadcrumb :breadcrumbItems="breadcrumbItems" />
-
-                <RecipeForm :recipe="recipe" :recipe_key="recipe_key" @editRecipe="editRecipe" />
+                <template v-if="currentUser.uid == recipe.created_by.uid">
+                    <Breadcrumb :breadcrumbItems="breadcrumbItems" />
+                    <RecipeForm :recipe="recipe" :recipe_key="recipe_key" @editRecipe="editRecipe" />
+                </template>
+                <template v-else>
+                    <b-alert variant="danger" show>
+                        You do not have priviledges to edit this recipe
+                    </b-alert>
+                </template>
             </template>
         </div>
     </div>
@@ -87,7 +93,6 @@ export default {
     },
     methods: {
         editRecipe(recipeObj) {
-
             var name = recipeObj.name;
             var description = recipeObj.description;
 

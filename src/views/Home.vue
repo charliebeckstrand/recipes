@@ -43,14 +43,14 @@
                                                 <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
                                             </a>
                                         </div>
-                                        <div v-if="currentUser && currentUser.uid">
+                                        <!-- <div v-if="currentUser && currentUser.uid">
                                             <a href="#" class="text-danger unfavorite-recipe" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
                                                 <font-awesome-icon :icon="['fas', 'heart']" fixed-width />
                                             </a>
                                             <a href="#" class="text-danger favorite-recipe" @click.prevent="favoriteRecipe(recipe)" v-else>
                                                 <font-awesome-icon :icon="['far', 'heart']" fixed-width />
                                             </a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </b-card-header>
@@ -99,7 +99,7 @@ export default {
                 }
             ],
 
-            // recipes: [],
+            user: {},
 
             search: null,
 
@@ -124,22 +124,34 @@ export default {
                     });
                 }
             },
-            users: {
-                ref: firebase.firestore().collection('users'),
-                resolve: () => {
-
-                },
-                reject: (error) => {
-                    this.$swal({
-                        toast: true,
-                        html: error.message,
-                        type: 'error',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 5000
-                    });
-                }
-            }
+            // users: {
+            //     ref: firebase.firestore().collection('users'),
+            //     resolve: () => {
+            //         const usersCollection = firebase.firestore().collection('users');
+            //
+            //         const query = usersCollection.where("uid", "==", this.currentUser.uid);
+            //
+            //         query.get().then((snapshot) => {
+            //             if(snapshot.docs && snapshot.docs.length) {
+            //                 _.forEach(snapshot.docs, doc => {
+            //                     this.user = usersCollection.doc(doc.id);
+            //                 });
+            //             } else {
+            //                 usersCollection.add({uid: this.currentUser.uid});
+            //             }
+            //         });
+            //     },
+            //     reject: (error) => {
+            //         this.$swal({
+            //             toast: true,
+            //             html: error.message,
+            //             type: 'error',
+            //             position: 'top-end',
+            //             showConfirmButton: false,
+            //             timer: 5000
+            //         });
+            //     }
+            // }
         }
     },
     computed: {
@@ -233,63 +245,61 @@ export default {
 
             }
         },
-        favoriteRecipe(recipe) {
-            if(this.currentUser && this.currentUser.uid) {
-                const usersCollection = firebase.firestore().collection('users');
-
-                const userQuery = usersCollection.where("uid", "==", this.currentUser.uid);
-
-                userQuery.get().then((snapshot) => {
-                    if(snapshot.docs && snapshot.docs.length) {
-                        var user = null;
-
-                        _.forEach(snapshot.docs, doc => {
-                            user = usersCollection.doc(doc.id);
-                        })
-
-                        user.update({
-                            favorites: firebase.firestore.FieldValue.arrayUnion(recipe['.key'])
-                        });
-                    } else {
-                        usersCollection.add({uid: this.currentUser.uid});
-                    }
-                });
-            }
-        },
-        unfavoriteRecipe(recipe) {
-            if(this.currentUser && this.currentUser.uid) {
-                const usersCollection = firebase.firestore().collection('users');
-
-                const userQuery = usersCollection.where("uid", "==", this.currentUser.uid);
-
-                userQuery.get().then((snapshot) => {
-                    if(snapshot.docs && snapshot.docs.length) {
-                        var user = null;
-
-                        _.forEach(snapshot.docs, doc => {
-                            user = usersCollection.doc(doc.id);
-                        })
-
-                        user.update({
-                            favorites: firebase.firestore.FieldValue.arrayRemove(recipe['.key'])
-                        });
-                    }
-                });
-            }
-        },
-        recipeFavorited(recipe) {
-            var favorited = false;
-            _.forEach(this.users, user => {
-                if(user.uid == this.currentUser.uid) {
-                    _.forEach(user.favorites, favorite => {
-                        if(favorite == recipe['.key']) {
-                            favorited = true;
-                        }
-                    })
-                }
-            });
-            return favorited;
-        }
+        // favoriteRecipe(recipe) {
+        //     if(this.currentUser && this.currentUser.uid) {
+        //         const usersCollection = firebase.firestore().collection('users');
+        //
+        //         const userQuery = usersCollection.where("uid", "==", this.currentUser.uid);
+        //
+        //         userQuery.get().then((snapshot) => {
+        //             if(snapshot.docs && snapshot.docs.length) {
+        //                 var user = null;
+        //
+        //                 _.forEach(snapshot.docs, doc => {
+        //                     user = usersCollection.doc(doc.id);
+        //                 })
+        //
+        //                 user.update({
+        //                     favorites: firebase.firestore.FieldValue.arrayUnion(recipe['.key'])
+        //                 });
+        //             }
+        //         });
+        //     }
+        // },
+        // unfavoriteRecipe(recipe) {
+        //     if(this.currentUser && this.currentUser.uid) {
+        //         const usersCollection = firebase.firestore().collection('users');
+        //
+        //         const userQuery = usersCollection.where("uid", "==", this.currentUser.uid);
+        //
+        //         userQuery.get().then((snapshot) => {
+        //             if(snapshot.docs && snapshot.docs.length) {
+        //                 var user = null;
+        //
+        //                 _.forEach(snapshot.docs, doc => {
+        //                     user = usersCollection.doc(doc.id);
+        //                 })
+        //
+        //                 user.update({
+        //                     favorites: firebase.firestore.FieldValue.arrayRemove(recipe['.key'])
+        //                 });
+        //             }
+        //         });
+        //     }
+        // },
+        // recipeFavorited(recipe) {
+        //     var favorited = false;
+        //     _.forEach(this.users, user => {
+        //         if(user.uid == this.currentUser.uid) {
+        //             _.forEach(user.favorites, favorite => {
+        //                 if(favorite == recipe['.key']) {
+        //                     favorited = true;
+        //                 }
+        //             })
+        //         }
+        //     });
+        //     return favorited;
+        // }
     }
 };
 </script>
