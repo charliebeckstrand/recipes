@@ -65,7 +65,7 @@
                                 <a href="#" @click.prevent="editComment(comment)" v-if="((comment.user && comment.user.uid) && (user && user.uid) && comment.user.uid == user.uid)" :disabled="comment.editable">
                                     <font-awesome-icon :icon="['far', 'edit']" fixed-width />
                                 </a>
-                                <a href="#" class="text-danger ml-2" v-if="((comment.user && comment.user.uid) && (user && user.uid) && comment.user.uid == user.uid) || ((user && user.uid) && (recipe.created_by && recipe.created_by.uid) && recipe.created_by.uid == user.uid)" @click.prevent="deleteComment(comment)">
+                                <a href="#" class="text-danger ml-3" v-if="((comment.user && comment.user.uid) && (user && user.uid) && comment.user.uid == user.uid) || ((user && user.uid) && (recipe.created_by && recipe.created_by.uid) && recipe.created_by.uid == user.uid)" @click.prevent="deleteComment(comment)">
                                     <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
                                 </a>
                             </div>

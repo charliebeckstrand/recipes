@@ -18,9 +18,9 @@
                     <div v-for="(ingredient, ingredientIndex) in recipe.ingredients" class="mb-2" v-if="recipe.ingredients && recipe.ingredients.length">
                         <div class="d-lg-block d-none">
                             <b-input-group>
-                                <b-form-input :id="'ingredient-' + ingredientIndex + '-ingredient'" type="text" placeholder="Ingredient" v-model="ingredient.ingredient"></b-form-input>
-                                <b-form-input :id="'ingredient-' + ingredientIndex + '-amount'" type="text" placeholder="Amount" v-model="ingredient.amount"></b-form-input>
-                                <b-form-input :id="'ingredient-' + ingredientIndex + '-measurement'" type="text" placeholder="Measurement" v-model="ingredient.measurement"></b-form-input>
+                                <b-form-input :id="'ingredient-' + ingredientIndex + '-ingredient'" type="text" :class="{'is-invalid': underValidation && !ingredientHasValues(ingredient)}" placeholder="Ingredient" v-model="ingredient.ingredient"></b-form-input>
+                                <b-form-input :id="'ingredient-' + ingredientIndex + '-amount'" type="text" :class="{'is-invalid': underValidation && !ingredientHasValues(ingredient)}" placeholder="Amount" v-model="ingredient.amount"></b-form-input>
+                                <b-form-input :id="'ingredient-' + ingredientIndex + '-measurement'" type="text" :class="{'is-invalid': underValidation && !ingredientHasValues(ingredient)}" placeholder="Measurement" v-model="ingredient.measurement"></b-form-input>
                                 <b-input-group-append>
                                     <b-btn variant="outline-danger" @click.prevent="removeIngredient(ingredientIndex)">
                                         -
@@ -30,9 +30,9 @@
                         </div>
                         <div class="d-lg-none d-flex">
                             <div class="flex-grow-1">
-                                <b-form-input :id="'ingredient-' + ingredientIndex + '-ingredient-mobile'" type="text" class="mb-1" placeholder="Ingredient" v-model="ingredient.ingredient"></b-form-input>
-                                <b-form-input :id="'ingredient-' + ingredientIndex + '-amount-mobile'" type="text" class="mb-1" placeholder="Amount" v-model="ingredient.amount"></b-form-input>
-                                <b-form-input :id="'ingredient-' + ingredientIndex + '-measurement-mobile'" type="text" placeholder="Measurement" v-model="ingredient.measurement"></b-form-input>
+                                <b-form-input :id="'ingredient-' + ingredientIndex + '-ingredient-mobile'" type="text" class="mb-1" :class="{'is-invalid': underValidation && !ingredientHasValues(ingredient)}" placeholder="Ingredient" v-model="ingredient.ingredient"></b-form-input>
+                                <b-form-input :id="'ingredient-' + ingredientIndex + '-amount-mobile'" type="text" class="mb-1" :class="{'is-invalid': underValidation && !ingredientHasValues(ingredient)}" placeholder="Amount" v-model="ingredient.amount"></b-form-input>
+                                <b-form-input :id="'ingredient-' + ingredientIndex + '-measurement-mobile'" type="text" :class="{'is-invalid': underValidation && !ingredientHasValues(ingredient)}" placeholder="Measurement" v-model="ingredient.measurement"></b-form-input>
                             </div>
                             <div class="ml-1 align-self-center">
                                 <b-btn variant="outline-danger" @click.prevent="removeIngredient(ingredientIndex)">
@@ -54,7 +54,7 @@
                 <div id="recipe-ingredients">
                     <div v-for="(instruction, instructionIndex) in recipe.instructions" class="mb-2" v-if="recipe.instructions && recipe.instructions.length">
                         <b-input-group>
-                            <b-form-textarea :id="'instruction-' + instructionIndex" :placeholder="'Step ' + (instructionIndex + 1)" v-model="instruction.instruction"></b-form-textarea>
+                            <b-form-textarea :id="'instruction-' + instructionIndex" :class="{'is-invalid': underValidation && !instructionsHasValues(instruction)}" :placeholder="'Step ' + (instructionIndex + 1)" v-model="instruction.instruction"></b-form-textarea>
                             <b-input-group-append>
                                 <b-btn variant="outline-danger" @click.prevent="removeInstrution(instructionIndex)">-</b-btn>
                             </b-input-group-append>
@@ -144,76 +144,70 @@ export default {
         }
     },
     props: ['recipe', 'recipe_key'],
-    computed: {
-        ingredientsHaveValues () {
-            var haveValues = true;
-            _.forEach(this.recipe.ingredients, ingredient => {
-                if(!ingredient.amount || !ingredient.measurement || !ingredient.ingredient) {
-                    haveValues = false;
-                    return false;
-                }
-            });
-            return haveValues;
-        },
-        instructionsHaveValues () {
-            var haveValues = true;
-            _.forEach(this.recipe.instructions, instruction => {
-                if(!instruction.instruction) {
-                    haveValues = false;
-                    return false;
-                }
-            });
-            return haveValues;
-        }
-    },
     methods: {
         addType (newType) {
-            this.recipe.types.push(newType);
+            this.recipe.types.push(newType)
         },
         addIngredient () {
-            this.recipe.ingredients.push({});
+            this.recipe.ingredients.push({})
         },
         removeIngredient (ingredientIndex) {
-            this.recipe.ingredients.splice(ingredientIndex, 1);
+            this.recipe.ingredients.splice(ingredientIndex, 1)
         },
         addInstruction () {
-            this.recipe.instructions.push({});
+            this.recipe.instructions.push({})
         },
         removeInstrution (instructionIndex) {
-            this.recipe.instructions.splice(instructionIndex, 1);
+            this.recipe.instructions.splice(instructionIndex, 1)
         },
         addNutrition () {
-            this.recipe.nutrition.push({});
+            this.recipe.nutrition.push({})
         },
         removeNutrition (nutritionIndex) {
-            this.recipe.nutrition.splice(nutritionIndex, 1);
+            this.recipe.nutrition.splice(nutritionIndex, 1)
         },
         saveRecipe (recipe) {
-            if(!this.validateRecipe()) return;
+            if(!this.validateRecipe()) return
 
-            this.saving = true;
+            this.saving = true
 
             if(this.recipe_key) {
-                this.$emit("editRecipe", recipe);
+                this.$emit("editRecipe", recipe)
             } else {
-                this.$emit("createRecipe", recipe);
+                this.$emit("createRecipe", recipe)
             }
         },
+        ingredientHasValues (ingredient) {
+            var hasValues = true
+            if(!ingredient.amount || !ingredient.measurement || !ingredient.ingredient) {
+                hasValues = false
+                return false
+            }
+            return hasValues
+        },
+        instructionsHasValues (instruction) {
+            var hasValues = true
+            if(!instruction.instruction) {
+                hasValues = false
+                return false
+            }
+            return hasValues
+        },
         validateRecipe () {
-            this.underValidation = true;
+            this.underValidation = true
 
-            var valid = true;
+            var valid = true
 
             if(!this.recipe.name) {
-                valid = false;
+                valid = false
             }
 
-            if(!this.ingredientsHaveValues) {
-                valid = false;
+            if((this.recipe.ingredients && this.recipe.ingredients.length) && !this.ingredientsHasValues) {
+                valid = false
             }
 
-            if(!this.instructionsHaveValues) {
-                valid = false;
+            if((this.recipe.instructions && this.recipe.instructions.length) && !this.instructionsHasValues) {
+                valid = false
             }
 
             return valid;

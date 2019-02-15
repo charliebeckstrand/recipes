@@ -35,10 +35,10 @@
                                         </a>
                                         <div v-if="(recipe.created_by && recipe.created_by.uid) && (user && user.uid) && recipe.created_by.uid == user.uid">
                                             <a href="#" class="text-secondary ml-3" @click.prevent="editRecipe(recipe)">
-                                                <font-awesome-icon :icon="['far', 'pen']" fixed-width />
+                                                <font-awesome-icon :icon="['far', 'pen']" />
                                             </a>
                                             <a href="#" class="text-secondary ml-3" @click.prevent="deleteRecipe(recipe)">
-                                                <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
+                                                <font-awesome-icon :icon="['far', 'trash-alt']" />
                                             </a>
                                         </div>
                                     </div>
