@@ -1,0 +1,7 @@
+.form-control:not(.form-control-sm) {
+	min-height: 38px;
+}
+
+.form-control-sm {
+    min-height: 31px;
+}

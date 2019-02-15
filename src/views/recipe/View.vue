@@ -46,84 +46,17 @@
                                 <strong>{{fact.amount}}</strong> {{fact.fact}}
                             </b-list-group-item>
                         </b-list-group>
+
+                        <b-card-footer :class="{'border-top-0': !recipe.description}">
+                            <small class="text-muted">
+                                <template v-if="recipe.created_by && recipe.created_by.displayName">{{recipe.created_by.displayName}}</template><template v-if="recipe.created_by && recipe.created_by.email && !recipe.created_by.displayName">{{recipe.created_by.email}}</template> <template v-if="recipe.created && recipe.created.date_time"> &middot; {{moment(recipe.created.date_time).fromNow()}}</template>
+                            </small>
+                        </b-card-footer>
                     </b-card>
 
-                    <template v-if="!commentsResolved">
-                        <div class="spinner-grow" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
+                    <template v-if="user && user.uid">
+                            <Comments :recipe_key="recipe_key" class="mt-3" />
                     </template>
-                    <template v-else>
-                        <b-card class="mt-3" no-body>
-                            <b-card-body class="p-1">
-                                <form @submit.prevent="addComment(recipe, comment)">
-                                    <b-input-group>
-                                        <b-form-textarea type="text" placeholder="Comment" v-model="comment" />
-                                        <b-input-group-append v-if="comment">
-                                            <b-button type="submit" variant="info" :disabled="commenting">
-                                                <template v-if="commenting">
-                                                    <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
-                                                </template>
-                                                <template v-else>
-                                                    Add Comment
-                                                </template>
-                                            </b-button>
-                                        </b-input-group-append>
-                                    </b-input-group>
-                                </form>
-                            </b-card-body>
-                            <b-list-group v-if="comments && comments.length" flush>
-                                <b-list-group-item v-for="comment in orderedComments">
-                                    <div class="d-flex">
-                                        <div class="flex-grow-1 align-self-center mr-3">
-                                            <template v-if="!comment.editable">
-                                                <div>{{comment.comment}}</div>
-                                            </template>
-                                            <template v-else>
-                                                <form @submit.prevent="saveEditedComment(comment)">
-                                                    <b-input-group>
-                                                        <b-form-textarea type="text" placeholder="Comment" v-model="comment.comment" />
-                                                        <b-input-group-append>
-                                                            <b-button type="button" variant="danger" @click.prevent="cancelEditComment(comment)">
-                                                                Cancel
-                                                            </b-button>
-                                                            <b-button type="submit" variant="primary" v-if="commentChanges(comment)" :disabled="savingEditedComment">
-                                                                <template v-if="savingEditedComment">
-                                                                    <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
-                                                                </template>
-                                                                <template v-else>
-                                                                    Save Changes
-                                                                </template>
-                                                            </b-button>
-                                                        </b-input-group-append>
-                                                    </b-input-group>
-                                                </form>
-                                            </template>
-                                            <div v-if="!comment.editable">
-                                                <span class="text-muted">
-                                                    <small>
-                                                        <span v-if="comment.user && comment.user.displayName">{{comment.user.displayName}}</span><span v-else>{{comment.user.email}}</span><span v-if="comment.created"> <span v-if="comment.user.displayName || comment.user.email">&middot;</span> {{moment(comment.created).fromNow()}} </span><span v-if="comment.edited">&middot; <span class="text-muted" title="Edited" v-b-tooltip.hover><font-awesome-icon :icon="['far', 'user-edit']" fixed-width /></span></span>
-                                                    </small>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div v-if="comment.user && comment.user.uid && comment.user.uid == currentUser.uid" class="d-flex align-self-center ml-auto">
-                                            <a href="#" @click.prevent="editComment(comment)" :disabled="comment.editable">
-                                                <font-awesome-icon :icon="['far', 'edit']" fixed-width />
-                                            </a>
-                                            <a href="#" class="text-danger ml-2" @click.prevent="deleteComment(comment)">
-                                                <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </b-list-group-item>
-                            </b-list-group>
-                            <b-card-footer class="text-muted" v-if="!comments || comments && !comments.length">
-                                no comments
-                            </b-card-footer>
-                        </b-card>
-                    </template>
-
                 </div>
             </template>
 
@@ -132,34 +65,30 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
+import { mapState } from 'vuex'
+
+import firebase from 'firebase/app'
 
 // @ is an alias to /src
-import Navbar from "@/components/Navbar.vue";
-import Breadcrumb from "@/components/Breadcrumb.vue";
+import Navbar from '@/components/Navbar.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import Comments from '@/components/Comments.vue'
 
 export default {
-    name: "view-recipe",
+    name: 'view-recipe',
     components: {
         Navbar,
-        Breadcrumb
+        Breadcrumb,
+        Comments
     },
     props: ['recipe_key'],
     data() {
         return {
-            comment: null,
-            commenting: false,
-
-            commentCache: {},
-
-            savingEditedComment: false,
-
             showIngredientsTab: true,
             showInstructionsTab: false,
             showNutritionTab: false,
 
             resolved: false,
-            commentsResolved: false
         }
     },
     firestore() {
@@ -179,29 +108,11 @@ export default {
                         timer: 5000
                     });
                 }
-            },
-            comments: {
-                ref: firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments'),
-                resolve: () => {
-                    this.commentsResolved = true;
-                },
-                reject: (error) => {
-                    this.$swal({
-                        toast: true,
-                        html: error.message,
-                        type: 'error',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 5000
-                    });
-                }
             }
         }
     },
     computed: {
-        currentUser() {
-            return firebase.auth().currentUser;
-        },
+        ...mapState(['user']),
         breadcrumbItems() {
             var breadcrumbItems = [];
             breadcrumbItems.push(
@@ -217,9 +128,6 @@ export default {
                 }
             );
             return breadcrumbItems;
-        },
-        orderedComments() {
-            return _.orderBy(this.comments, 'created', 'desc');
         }
     },
     methods: {
@@ -237,82 +145,6 @@ export default {
             this.showIngredientsTab = false;
             this.showInstructionsTab = false;
             this.showNutritionTab = true;
-        },
-
-        addComment(recipe, comment) {
-            var comments = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments');
-
-            var user = null;
-
-            if(this.currentUser) {
-                user = {
-                    displayName: this.currentUser.displayName,
-                    email: this.currentUser.email,
-                    uid: this.currentUser.uid
-                }
-            } else {
-                user = {
-                    displayName: null,
-                    email: null,
-                    uid: null
-                }
-            }
-
-            this.commenting = true;
-
-            comments.add({comment: comment, user: user, created: this.moment().format("ddd, DD MMM YYYY HH:mm:ss ZZ")})
-            .then(response => {
-                this.commenting = false;
-                this.comment = null;
-            });
-        },
-        editComment(comment) {
-            this.commentCache = _.cloneDeep(comment);
-            this.$set(comment, 'editable', true);
-        },
-        cancelEditComment(comment) {
-            this.commentCache = {};
-            this.$set(comment, 'editable', false);
-        },
-        saveEditedComment(comment) {
-            const commentRef = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments').doc(comment['.key']);
-
-            this.savingEditedComment = true;
-
-            commentRef.update({
-                comment: comment.comment,
-                edited: true
-            }).then(response => {
-                this.$set(comment, 'editable', false);
-                this.commentCache = {};
-
-                this.savingEditedComment = false;
-            })
-        },
-        deleteComment(commentRef) {
-            const comment = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments').doc(commentRef['.key']);
-
-            this.$swal({
-                html: 'Are you sure you want to delete this comment?',
-                showCancelButton: true,
-                confirmButtonText: 'Delete',
-                confirmButtonClass: 'btn btn-danger',
-                cancelButtonText: 'Cancel',
-                cancelButtonClass: 'btn btn-light',
-                buttonsStyling: false,
-                reverseButtons: true
-            }).then((willDeleteComment) => {
-                if (willDeleteComment.value) {
-                    comment.delete();
-                }
-            });
-        },
-        commentChanges(comment) {
-            if(!_.isEqual(comment.comment, this.commentCache.comment)) {
-                return true;
-            } else {
-                return false;
-            }
         }
     }
 };

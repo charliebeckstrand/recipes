@@ -1,28 +1,29 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue'
+import Vuex from 'vuex'
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
-  state: {
-      recipes: [],
+const state = {
+    user: null
+}
 
-      user: {}
-  },
-  mutations: {
-      setRecipes(state, recipes) {
-          state.recipes = recipes;
-      },
-      setUser(state, user) {
-          state.user = user;
-      }
-  },
-  actions: {
-      getRecipes(context) {
-          return state.recipes;
-      },
-      getUser(context) {
-          return state.user;
-      }
-  }
-});
+const mutations = {
+    setUser (state, { user }) {
+        Vue.set(state, 'user', user)
+    }
+}
+
+const actions = {}
+
+const getters = {
+    user: state => state.user
+}
+
+const store = new Vuex.Store({
+    state,
+    mutations,
+    actions,
+    getters
+})
+
+export default store

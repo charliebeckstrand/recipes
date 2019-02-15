@@ -8,19 +8,17 @@
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
             <b-collapse is-nav id="nav_collapse">
-                <!-- Right aligned nav items -->
-                <b-navbar-nav class="ml-auto" v-if="currentUser && currentUser.uid">
+                <b-navbar-nav class="ml-auto" v-if="user && user.uid">
                     <b-nav-item-dropdown right>
-                        <!-- Using button-content slot -->
                         <template slot="button-content">
                             <div class="d-inline-block pt-sm-0 pt-3">
-                                {{currentUser.email}}
+                                {{user.email}}
                             </div>
                         </template>
                         <b-dropdown-item :to="{name: 'profile'}">
                             <font-awesome-icon :icon="['far', 'user']" fixed-width /> Profile
                         </b-dropdown-item>
-                        <b-dropdown-item href="#" @click.prevent="logOut()">
+                        <b-dropdown-item href="#" @click.prevent="logout()">
                             <font-awesome-icon :icon="['far', 'sign-out']" fixed-width /> Logout
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
@@ -33,29 +31,24 @@
                     </b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
-
         </b-navbar>
     </div>
 </template>
 
 <script>
-import firebase from 'firebase/app';
+import { mapState } from 'vuex'
 
 export default {
-    name: "navbar",
+    name: 'navbar',
     computed: {
-        currentUser() {
-			return firebase.auth().currentUser;
-		}
+        ...mapState(['user'])
     },
     methods: {
-        logOut() {
-            firebase.auth().signOut().then(() => {
-                this.$router.push({name: 'login'});
-            });
+        logout() {
+            this.$auth.logout().then(response => {
+                this.$router.push({name: 'home'})
+            })
         }
-    },
-    mounted() {
     }
 };
 </script>

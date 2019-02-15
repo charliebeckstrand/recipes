@@ -11,7 +11,7 @@
             <template v-else>
                 <Breadcrumb :breadcrumbItems="breadcrumbItems" />
 
-                <div class="d-lg-flex mb-3" v-if="currentUser && currentUser.uid">
+                <div class="d-lg-flex mb-3" v-if="user && user.uid">
                     <div class="mr-3 mb-lg-0 mb-3">
                         <b-button :to="{name: 'create-recipe'}" variant="outline-success">
                             Create Recipe
@@ -30,27 +30,17 @@
                                 </div>
                                 <div class="align-self-center ml-auto">
                                     <div class="d-flex">
-                                        <a href="#" v-if="recipe.time && recipe.time.total" :title="recipe.time.total + ' minutes'" v-b-tooltip.hover class="mr-2" :class="{'text-success': recipe.time.total >= 10, 'text-warning': (recipe.time.total > 10 && recipe.time.total <= 30), 'text-danger': recipe.time.total > 30}" @click.prevent>
+                                        <a href="#" v-if="recipe.time && recipe.time.total" :title="recipe.time.total + ' minutes'" v-b-tooltip.hover :class="{'text-success': recipe.time.total >= 10, 'text-warning': (recipe.time.total > 10 && recipe.time.total <= 30), 'text-danger': recipe.time.total > 30}" @click.prevent>
                                             <font-awesome-icon :icon="['far', 'stopwatch']" fixed-width />
                                         </a>
-                                        <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="mr-2">
-                                            <a href="#" class="text-secondary" @click.prevent="editRecipe(recipe)">
+                                        <div v-if="(recipe.created_by && recipe.created_by.uid) && (user && user.uid) && recipe.created_by.uid == user.uid">
+                                            <a href="#" class="text-secondary ml-2" @click.prevent="editRecipe(recipe)">
                                                 <font-awesome-icon :icon="['far', 'pen']" fixed-width />
                                             </a>
-                                        </div>
-                                        <div v-if="currentUser && currentUser.uid && (recipe.created_by && recipe.created_by.uid == currentUser.uid)" class="mr-2">
-                                            <a href="#" class="text-secondary" @click.prevent="deleteRecipe(recipe)">
+                                            <a href="#" class="text-secondary ml-2" @click.prevent="deleteRecipe(recipe)">
                                                 <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
                                             </a>
                                         </div>
-                                        <!-- <div v-if="currentUser && currentUser.uid">
-                                            <a href="#" class="text-danger unfavorite-recipe" @click.prevent="unfavoriteRecipe(recipe)" v-if="recipeFavorited(recipe)">
-                                                <font-awesome-icon :icon="['fas', 'heart']" fixed-width />
-                                            </a>
-                                            <a href="#" class="text-danger favorite-recipe" @click.prevent="favoriteRecipe(recipe)" v-else>
-                                                <font-awesome-icon :icon="['far', 'heart']" fixed-width />
-                                            </a>
-                                        </div> -->
                                     </div>
                                 </div>
                             </b-card-header>
@@ -78,11 +68,13 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
+import { mapState } from 'vuex'
+
+import firebase from 'firebase/app'
 
 // @ is an alias to /src
-import Navbar from "@/components/Navbar.vue";
-import Breadcrumb from "@/components/Breadcrumb.vue";
+import Navbar from '@/components/Navbar.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
 
 export default {
     name: "home",
@@ -98,8 +90,6 @@ export default {
                     active: true
                 }
             ],
-
-            user: {},
 
             search: null,
 
@@ -124,87 +114,38 @@ export default {
                     });
                 }
             },
-            // users: {
-            //     ref: firebase.firestore().collection('users'),
-            //     resolve: () => {
-            //         const usersCollection = firebase.firestore().collection('users');
-            //
-            //         const query = usersCollection.where("uid", "==", this.currentUser.uid);
-            //
-            //         query.get().then((snapshot) => {
-            //             if(snapshot.docs && snapshot.docs.length) {
-            //                 _.forEach(snapshot.docs, doc => {
-            //                     this.user = usersCollection.doc(doc.id);
-            //                 });
-            //             } else {
-            //                 usersCollection.add({uid: this.currentUser.uid});
-            //             }
-            //         });
-            //     },
-            //     reject: (error) => {
-            //         this.$swal({
-            //             toast: true,
-            //             html: error.message,
-            //             type: 'error',
-            //             position: 'top-end',
-            //             showConfirmButton: false,
-            //             timer: 5000
-            //         });
-            //     }
-            // }
         }
     },
     computed: {
-        currentUser() {
-            return firebase.auth().currentUser;
-        },
+        ...mapState(['user']),
         filteredRecipes() {
-            var filteredRecipes = [];
+            if(!this.search) return _.orderBy(this.recipes, 'created', 'desc');
 
-            if(this.search) {
-                return this.recipes.filter(recipe => {
-                    var search = this.search.toLowerCase();
-
-                    if(recipe.name) {
-                        var nameMatch = true ? (this.search === '' || recipe.name.toLowerCase().indexOf(search) > -1) : false;
+            return this.recipes.filter(recipe => {
+                if(_.includes(recipe.name.toLowerCase(), this.search.toLowerCase())) {
+                    return recipe
+                }
+                if(recipe.created_by) {
+                    if(_.includes(recipe.created_by.email.toLowerCase(), this.search.toLowerCase())) {
+                        return recipe
                     }
-
-                    if(recipe.created_by && recipe.created_by.email) {
-                        var emailMatch = true ? (this.search === '' || recipe.created_by.email.toLowerCase().indexOf(search) > -1) : false;
+                    else if(_.includes(recipe.created_by.displayName.toLowerCase(), this.search.toLowerCase())) {
+                        return recipe
                     }
-
-                    if(recipe.created_by && recipe.created_by.displayName) {
-                        var displayNameMatch = true ? (this.search === '' || recipe.created_by.displayName.toLowerCase().indexOf(search) > -1) : false;
-                    }
-
-                    if(recipe.types) {
-                        var typeMatch = false;
-                        var typeMatches = recipe.types.filter(type => {
-                            if(type.indexOf(this.search) > -1) {
-                                return type;
-                            }
-                        });
-                        var typeMatch = true ? (this.search === '' || typeMatches.length) : false;
-                    }
-
-                    if(recipe.name && !recipe.types && !recipe.created_by) {
-                        return nameMatch;
-                    } else if(recipe.name && recipe.types && !recipe.created_by) {
-                        return nameMatch || typeMatch;
-                    } else if(recipe.name && recipe.types && recipe.created_by) {
-                        return nameMatch || emailMatch || displayNameMatch || typeMatch;
-                    }
-                });
-            } else {
-                filteredRecipes = _.orderBy(this.recipes, 'created');
-            }
-
-            return _.orderBy(filteredRecipes, 'created');
+                }
+                if(recipe.types) {
+                    _.forEach(recipe.types, type => {
+                        if(_.includes(type.type.toLowerCase(), this.search.toLowerCase())) {
+                            return recipe
+                        }
+                    })
+                }
+            })
         }
     },
     methods: {
         editRecipe(recipe) {
-            if((recipe.created_by && recipe.created_by.uid) && (this.currentUser && this.currentUser.uid) && recipe.created_by.uid == this.currentUser.uid) {
+            if((recipe.created_by && recipe.created_by.uid) && (this.user && this.user.uid) && recipe.created_by.uid == this.user.uid) {
                 this.$router.push({name: 'edit-recipe', params: {recipe_key: recipe['.key']}});
             } else if(!recipe.created_by || recipe.created_by !== this.currentUser.uid) {
                 this.$swal({
@@ -218,9 +159,9 @@ export default {
             }
         },
         deleteRecipe(recipe) {
-            if((recipe.created_by && recipe.created_by.uid) && (this.currentUser && this.currentUser.uid) && recipe.created_by.uid == this.currentUser.uid) {
+            if((recipe.created_by && recipe.created_by.uid) && (this.user && this.user.uid) && recipe.created_by.uid == this.user.uid) {
                 this.$swal({
-                    html: 'Are you sure you want to delete the recipe "' + recipe.name + '"?',
+                    html: 'Are you sure you want to delete "' + recipe.name + '"?',
                     showCancelButton: true,
                     confirmButtonText: 'Delete',
                     confirmButtonClass: 'btn btn-danger',
@@ -233,7 +174,7 @@ export default {
                         firebase.firestore().collection('recipes').doc(recipe['.key']).delete();
                     }
                 });
-            } else if(!this.currentUser || !recipe.created_by || (this.currentUser && this.currentUser.uid) && (recipe.created_by && recipe.created_by.uid) && recipe.created_by.uid !== this.currentUser.uid) {
+            } else if(!this.user || !recipe.created_by || ((this.user && this.user.uid) && (recipe.created_by && recipe.created_by.uid) && recipe.created_by.uid !== this.user.uid)) {
                 this.$swal({
                     toast: true,
                     html: "You do not have priviledges to delete this recipe",
