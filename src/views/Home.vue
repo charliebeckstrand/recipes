@@ -11,8 +11,8 @@
             <template v-else>
                 <Breadcrumb :breadcrumbItems="breadcrumbItems" />
 
-                <div class="d-lg-flex mb-3" v-if="user && user.uid">
-                    <div class="mr-3 mb-lg-0 mb-3">
+                <div class="d-lg-flex mb-3">
+                    <div class="mr-3 mb-lg-0 mb-3" v-if="user && user.uid">
                         <b-button :to="{name: 'create-recipe'}" variant="outline-success">
                             Create Recipe
                         </b-button>
