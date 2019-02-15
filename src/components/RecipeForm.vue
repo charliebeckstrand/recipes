@@ -104,10 +104,28 @@
             </b-form-group>
 
             <template v-if="recipe_key">
-                <b-button type="submit" variant="primary">Save Changes</b-button>
+                <b-button type="submit" variant="primary" :disabled="saving">
+                    <template v-if="saving">
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </template>
+                    <template v-else>
+                        Save Changes
+                    </template>
+                </b-button>
             </template>
             <template v-else>
-                <b-button type="submit" variant="success">Create Recipe</b-button>
+                <b-button type="submit" variant="success" :disabled="saving">
+                    <template v-if="saving">
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </template>
+                    <template v-else>
+                        Create Recipe
+                    </template>
+                </b-button>
             </template>
         </b-form>
     </div>
@@ -115,17 +133,19 @@
 
 <script>
 export default {
-    name: "recipe-form",
+    name: 'recipe-form',
     data() {
         return {
             types: ['breakfast', 'lunch', 'dinner', 'desert', 'snack', 'drink'],
+
+            saving: false,
 
             underValidation: false
         }
     },
     props: ['recipe', 'recipe_key'],
     computed: {
-        ingredientsHaveValues() {
+        ingredientsHaveValues () {
             var haveValues = true;
             _.forEach(this.recipe.ingredients, ingredient => {
                 if(!ingredient.amount || !ingredient.measurement || !ingredient.ingredient) {
@@ -135,7 +155,7 @@ export default {
             });
             return haveValues;
         },
-        instructionsHaveValues() {
+        instructionsHaveValues () {
             var haveValues = true;
             _.forEach(this.recipe.instructions, instruction => {
                 if(!instruction.instruction) {
@@ -147,29 +167,31 @@ export default {
         }
     },
     methods: {
-        addType(newType) {
+        addType (newType) {
             this.recipe.types.push(newType);
         },
-        addIngredient() {
+        addIngredient () {
             this.recipe.ingredients.push({});
         },
-        removeIngredient(ingredientIndex) {
+        removeIngredient (ingredientIndex) {
             this.recipe.ingredients.splice(ingredientIndex, 1);
         },
-        addInstruction() {
+        addInstruction () {
             this.recipe.instructions.push({});
         },
-        removeInstrution(instructionIndex) {
+        removeInstrution (instructionIndex) {
             this.recipe.instructions.splice(instructionIndex, 1);
         },
-        addNutrition() {
+        addNutrition () {
             this.recipe.nutrition.push({});
         },
-        removeNutrition(nutritionIndex) {
+        removeNutrition (nutritionIndex) {
             this.recipe.nutrition.splice(nutritionIndex, 1);
         },
-        saveRecipe(recipe) {
+        saveRecipe (recipe) {
             if(!this.validateRecipe()) return;
+
+            this.saving = true;
 
             if(this.recipe_key) {
                 this.$emit("editRecipe", recipe);
@@ -177,7 +199,7 @@ export default {
                 this.$emit("createRecipe", recipe);
             }
         },
-        validateRecipe() {
+        validateRecipe () {
             this.underValidation = true;
 
             var valid = true;
@@ -196,8 +218,6 @@ export default {
 
             return valid;
         }
-    },
-    mounted() {
     }
 };
 </script>

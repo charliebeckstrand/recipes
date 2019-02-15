@@ -5,27 +5,29 @@
 
             <Breadcrumb :breadcrumbItems="breadcrumbItems" />
 
-            <RecipeForm :recipe="recipe" @createRecipe="createRecipe" />
+            <RecipeForm ref="recipeForm" :recipe="recipe" @createRecipe="createRecipe" />
         </div>
     </div>
 </template>
 
 <script>
-import firebase from 'firebase/app';
+import { mapState } from 'vuex'
+
+import firebase from 'firebase/app'
 
 // @ is an alias to /src
-import Navbar from "@/components/Navbar.vue";
-import Breadcrumb from "@/components/Breadcrumb.vue";
-import RecipeForm from "@/components/RecipeForm.vue";
+import Navbar from '@/components/Navbar.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import RecipeForm from '@/components/RecipeForm.vue'
 
 export default {
-    name: "create-recipe",
+    name: 'create-recipe',
     components: {
         Navbar,
         Breadcrumb,
         RecipeForm
     },
-    data() {
+    data () {
         return {
             recipe: {
                 types: [],
@@ -37,7 +39,8 @@ export default {
         }
     },
     computed: {
-        breadcrumbItems() {
+        ...mapState(['user']),
+        breadcrumbItems () {
             var breadcrumbItems = [];
             breadcrumbItems.push(
                 {
@@ -52,22 +55,19 @@ export default {
                 }
             );
             return breadcrumbItems;
-        },
-        currentUser() {
-			return firebase.auth().currentUser;
-		}
+        }
     },
     methods: {
-        createRecipe(recipeObj) {
+        createRecipe (recipeObj) {
             const created = {
                 date: this.moment().format("ddd, DD MMM YYYY"),
                 date_time: this.moment().format("ddd, DD MMM YYYY HH:mm:ss ZZ")
             }
 
             const created_by = {
-                displayName: this.currentUser.displayName,
-                email: this.currentUser.email,
-                uid: this.currentUser.uid
+                displayName: this.user.displayName,
+                email: this.user.email,
+                uid: this.user.uid
             }
 
             Object.assign(recipeObj, {created});
@@ -76,6 +76,8 @@ export default {
             firebase.firestore().collection("recipes").doc().set(recipeObj)
             .then(response => {
                 this.$router.push({name: 'home'});
+
+                this.$refs.recipeForm.saving = false;
             })
             .catch(error => {
                 this.$swal("Error", error.message, "error");

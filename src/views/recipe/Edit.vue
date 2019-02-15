@@ -9,9 +9,9 @@
                 </div>
             </template>
             <template v-else>
-                <template v-if="currentUser.uid == recipe.created_by.uid">
+                <template v-if="user.uid == recipe.created_by.uid">
                     <Breadcrumb :breadcrumbItems="breadcrumbItems" />
-                    <RecipeForm :recipe="recipe" :recipe_key="recipe_key" @editRecipe="editRecipe" />
+                    <RecipeForm ref="recipeForm" :recipe="recipe" :recipe_key="recipe_key" @editRecipe="editRecipe" />
                 </template>
                 <template v-else>
                     <b-alert variant="danger" show>
@@ -24,27 +24,29 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
+import { mapState } from 'vuex'
+
+import firebase from 'firebase/app'
 
 // @ is an alias to /src
-import Navbar from "@/components/Navbar.vue";
-import Breadcrumb from "@/components/Breadcrumb.vue";
-import RecipeForm from "@/components/RecipeForm.vue";
+import Navbar from '@/components/Navbar.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import RecipeForm from '@/components/RecipeForm.vue'
 
 export default {
-    name: "create-recipe",
+    name: 'edit-recipe',
     components: {
         Navbar,
         Breadcrumb,
         RecipeForm
     },
-    props: ["recipe_key"],
-    data() {
+    props: ['recipe_key'],
+    data () {
         return {
             resolved: false
         }
     },
-    firestore() {
+    firestore () {
         return {
             recipe: {
                 ref: firebase.firestore().collection('recipes').doc(this.recipe_key),
@@ -66,7 +68,8 @@ export default {
         }
     },
     computed: {
-        breadcrumbItems() {
+        ...mapState(['user']),
+        breadcrumbItems () {
             var breadcrumbItems = [];
             if(this.recipe.name) {
                 var message = 'Edit "' + this.recipe.name + '"';
@@ -86,13 +89,10 @@ export default {
                 }
             );
             return breadcrumbItems;
-        },
-        currentUser() {
-			return firebase.auth().currentUser;
-		}
+        }
     },
     methods: {
-        editRecipe(recipeObj) {
+        editRecipe (recipeObj) {
             var name = recipeObj.name;
             var description = recipeObj.description;
 
@@ -137,12 +137,14 @@ export default {
                 })
                 .then(response => {
                     this.$router.push({name: 'home'});
+
+                    this.$refs.recipeForm.saving = false;
                 })
                 .catch(error => {
                     this.$swal("Error", error.message, "error");
                 });
             }
-        },
+        }
     }
 };
 </script>

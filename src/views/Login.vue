@@ -44,7 +44,7 @@ export default {
     components: {
         Navbar
     },
-    data() {
+    data () {
         return {
             email: null,
             password: null,

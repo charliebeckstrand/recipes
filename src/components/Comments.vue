@@ -14,7 +14,9 @@
                             <b-input-group-append v-if="comment">
                                 <b-button id="send-button" type="submit" class="send-button" variant="outline-primary" :disabled="commenting">
                                     <template v-if="commenting">
-                                        <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
+                                        <div class="spinner-border spinner-border-sm" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
                                     </template>
                                     <template v-else>
                                         Add Comment
@@ -85,7 +87,7 @@ import firebase from 'firebase/app'
 
 export default {
     name: "comments",
-    props: ['recipe_key'],
+    props: ['recipe_key', 'recipe'],
     data() {
         return {
             comment: null,
@@ -120,12 +122,12 @@ export default {
     },
     computed: {
         ...mapState(['user']),
-        orderedComments() {
+        orderedComments () {
             return _.orderBy(this.comments, 'created', 'desc');
         }
     },
     methods: {
-        addComment(recipe, comment) {
+        addComment (recipe, comment) {
             var comments = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments');
 
             var user = null;
@@ -146,15 +148,15 @@ export default {
                 this.commenting = false;
             });
         },
-        editComment(comment) {
+        editComment (comment) {
             this.commentCache = _.cloneDeep(comment);
             this.$set(comment, 'editable', true);
         },
-        cancelEditComment(comment) {
+        cancelEditComment (comment) {
             this.commentCache = {};
             this.$set(comment, 'editable', false);
         },
-        saveEditedComment(comment) {
+        saveEditedComment (comment) {
             const commentRef = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments').doc(comment['.key']);
 
             this.savingEditedComment = true;
@@ -169,7 +171,7 @@ export default {
                 this.savingEditedComment = false;
             })
         },
-        deleteComment(commentRef) {
+        deleteComment (commentRef) {
             const comment = firebase.firestore().collection('recipes').doc(this.recipe_key).collection('comments').doc(commentRef['.key']);
 
             this.$swal({
@@ -187,7 +189,7 @@ export default {
                 }
             });
         },
-        commentChanges(comment) {
+        commentChanges (comment) {
             if(!_.isEqual(comment.comment, this.commentCache.comment)) {
                 return true;
             } else {

@@ -8,7 +8,7 @@
             <form @submit.prevent="updateUser()">
                 <div class="form-group">
                     <label for="uid">UID</label>
-                    <input type="text" class="form-control" v-model="currentUser.uid" readonly>
+                    <input type="text" class="form-control" v-model="user.uid" readonly>
                 </div>
 
                 <div class="form-group">
@@ -31,7 +31,7 @@
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" v-model="currentUser.email" readonly>
+                    <input type="email" class="form-control" v-model="user.email" readonly>
                 </div>
             </form>
 
@@ -40,19 +40,21 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
+import { mapState } from 'vuex'
+
+import firebase from 'firebase/app'
 
 // @ is an alias to /src
-import Navbar from "@/components/Navbar.vue";
-import Breadcrumb from "@/components/Breadcrumb.vue";
+import Navbar from '@/components/Navbar.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
 
 export default {
-    name: "profile",
+    name: 'profile',
     components: {
         Navbar,
         Breadcrumb
     },
-    data() {
+    data () {
         return {
             editableUser: {},
             editableUserCache: {},
@@ -68,17 +70,15 @@ export default {
         }
     },
     computed: {
-        currentUser() {
-            return firebase.auth().currentUser;
-        }
+        ...mapState(['user'])
     },
     methods: {
-        updateUser() {
-            var currentUser = firebase.auth().currentUser;
+        updateUser () {
+            var user = firebase.auth().user;
 
             this.savingUser = true;
 
-            currentUser.updateProfile({
+            user.updateProfile({
                 displayName: this.editableUser.displayName
             }).then(response => {
                 // this.$swal({
@@ -90,8 +90,8 @@ export default {
                 //     timer: 5000
                 // });
 
-                this.editableUser = _.cloneDeep(firebase.auth().currentUser);
-                this.editableUserCache = _.cloneDeep(firebase.auth().currentUser);
+                this.editableUser = _.cloneDeep(firebase.auth().user);
+                this.editableUserCache = _.cloneDeep(firebase.auth().user);
 
                 this.savingUser = false;
 
@@ -107,7 +107,7 @@ export default {
                 });
             });
         },
-        userChanges() {
+        userChanges () {
             var changes = false;
             if(!_.isEqual(this.editableUser, this.editableUserCache)) {
                 changes = true;
@@ -116,13 +116,15 @@ export default {
             }
             return changes;
         },
-        cancelChanges() {
+        cancelChanges () {
             _.assign(this.editableUser, this.editableUserCache);
         }
     },
-    mounted() {
-        this.editableUser = _.cloneDeep(this.currentUser);
-        this.editableUserCache = _.cloneDeep(this.currentUser);
+    mounted () {
+        if(this.user) {
+            this.editableUser = _.cloneDeep(this.user);
+            this.editableUserCache = _.cloneDeep(this.user);
+        }
     }
 };
 

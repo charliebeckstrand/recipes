@@ -55,7 +55,7 @@
                     </b-card>
 
                     <template v-if="user && user.uid">
-                            <Comments :recipe_key="recipe_key" class="mt-3" />
+                            <Comments :recipe_key="recipe_key" :recipe="recipe" class="mt-3" />
                     </template>
                 </div>
             </template>
@@ -82,16 +82,16 @@ export default {
         Comments
     },
     props: ['recipe_key'],
-    data() {
+    data () {
         return {
             showIngredientsTab: true,
             showInstructionsTab: false,
             showNutritionTab: false,
 
-            resolved: false,
+            resolved: false
         }
     },
-    firestore() {
+    firestore () {
         return {
             recipe: {
                 ref: firebase.firestore().collection('recipes').doc(this.recipe_key),
@@ -113,7 +113,7 @@ export default {
     },
     computed: {
         ...mapState(['user']),
-        breadcrumbItems() {
+        breadcrumbItems () {
             var breadcrumbItems = [];
             breadcrumbItems.push(
                 {
@@ -131,17 +131,17 @@ export default {
         }
     },
     methods: {
-        toggleIngredientsTab() {
+        toggleIngredientsTab () {
             this.showIngredientsTab = true;
             this.showInstructionsTab = false;
             this.showNutritionTab = false;
         },
-        toggleInstructionsTab() {
+        toggleInstructionsTab () {
             this.showIngredientsTab = false;
             this.showInstructionsTab = true;
             this.showNutritionTab = false;
         },
-        toggleNutrutionTab() {
+        toggleNutrutionTab () {
             this.showIngredientsTab = false;
             this.showInstructionsTab = false;
             this.showNutritionTab = true;

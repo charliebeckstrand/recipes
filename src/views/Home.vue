@@ -34,10 +34,10 @@
                                             <font-awesome-icon :icon="['far', 'stopwatch']" fixed-width />
                                         </a>
                                         <div v-if="(recipe.created_by && recipe.created_by.uid) && (user && user.uid) && recipe.created_by.uid == user.uid">
-                                            <a href="#" class="text-secondary ml-2" @click.prevent="editRecipe(recipe)">
+                                            <a href="#" class="text-secondary ml-3" @click.prevent="editRecipe(recipe)">
                                                 <font-awesome-icon :icon="['far', 'pen']" fixed-width />
                                             </a>
-                                            <a href="#" class="text-secondary ml-2" @click.prevent="deleteRecipe(recipe)">
+                                            <a href="#" class="text-secondary ml-3" @click.prevent="deleteRecipe(recipe)">
                                                 <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width />
                                             </a>
                                         </div>
@@ -118,12 +118,14 @@ export default {
     },
     computed: {
         ...mapState(['user']),
-        filteredRecipes() {
-            if(!this.search) return _.orderBy(this.recipes, 'created', 'desc');
+        filteredRecipes () {
+            if(!this.search) return _.orderBy(this.recipes, 'created.date_time', 'desc');
 
             return this.recipes.filter(recipe => {
-                if(_.includes(recipe.name.toLowerCase(), this.search.toLowerCase())) {
-                    return recipe
+                if(recipe.name) {
+                    if(_.includes(recipe.name.toLowerCase(), this.search.toLowerCase())) {
+                        return recipe
+                    }
                 }
                 if(recipe.created_by) {
                     if(_.includes(recipe.created_by.email.toLowerCase(), this.search.toLowerCase())) {
@@ -135,7 +137,7 @@ export default {
                 }
                 if(recipe.types) {
                     _.forEach(recipe.types, type => {
-                        if(_.includes(type.type.toLowerCase(), this.search.toLowerCase())) {
+                        if(_.includes(type.toLowerCase(), this.search.toLowerCase())) {
                             return recipe
                         }
                     })
@@ -144,7 +146,7 @@ export default {
         }
     },
     methods: {
-        editRecipe(recipe) {
+        editRecipe (recipe) {
             if((recipe.created_by && recipe.created_by.uid) && (this.user && this.user.uid) && recipe.created_by.uid == this.user.uid) {
                 this.$router.push({name: 'edit-recipe', params: {recipe_key: recipe['.key']}});
             } else if(!recipe.created_by || recipe.created_by !== this.currentUser.uid) {
@@ -158,7 +160,7 @@ export default {
                 });
             }
         },
-        deleteRecipe(recipe) {
+        deleteRecipe (recipe) {
             if((recipe.created_by && recipe.created_by.uid) && (this.user && this.user.uid) && recipe.created_by.uid == this.user.uid) {
                 this.$swal({
                     html: 'Are you sure you want to delete "' + recipe.name + '"?',
@@ -244,31 +246,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-.img-thumbnail {
-    height: 75px;
-    width: 75px;
-    min-width: 75px;
-    min-height: 75px;
-}
-a.favorite-recipe:hover,
-a.favorite-recipe:focus,
-a.unfavorite-recipe:hover,
-a.unfavorite-recipe:focus {
-    color: #dc3545 !important;
-}
-/* .badge + .badge {
-    margin-top: .25rem;
-} */
-/* .edit-recipe-button {
-    border-top-left-radius: 0;
-}
-.delete-recipe-button {
-    border-bottom-left-radius: 0;
-}
-.list-group-item.has-actions {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-} */
-</style>
