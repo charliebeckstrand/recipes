@@ -1,29 +1,58 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+
+// import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
 
 Vue.use(VueRouter)
 
-  const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+const routes = [
+    {
+        path: '/',
+        name: 'Home',
+        redirect: '/recipes'
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: Login
+    },
+    {
+        path: '/recipes',
+        name: 'Recipes',
+        components: {
+            default: () => import('@/views/Recipes.vue'),
+            navbar: () => import('@/components/Navbar.vue')
+        }
+    },
+    {
+        path: '/recipes/:recipe_key/:url',
+        name: 'Recipe',
+        components: {
+            default: () => import('@/views/Recipe.vue'),
+            navbar: () => import('@/components/Navbar.vue')
+        },
+        props: {
+            default: true
+        }
+    },
+    {
+        path: '/recipes/create',
+        name: 'CreateRecipe',
+        components: {
+            default: () => import('@/views/CreateRecipe.vue'),
+            navbar: () => import('@/components/Navbar.vue')
+        },
+        props: {
+            default: true
+        }
+    },
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+    mode: 'history',
+    base: process.env.BASE_URL,
+    routes
 })
 
 export default router

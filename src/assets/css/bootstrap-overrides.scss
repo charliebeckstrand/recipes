@@ -1,0 +1,43 @@
+@import '@/assets/css/colors';
+
+a {
+    &.text-primary {
+        &:focus,
+        &:hover {
+            color: darken($primary, 10%) !important;
+        }
+    }
+    &.text-danger {
+        &:focus,
+        &:hover {
+            color: darken($danger, 10%) !important;
+        }
+    }
+    &.text-info {
+        &:focus,
+        &:hover {
+            color: darken($info, 10%) !important;
+        }
+    }
+}
+
+.btn-success,
+.btn-danger,
+.btn-info,
+.btn-primary {
+    color: $white;
+}
+
+.btn-outline-primary {
+    &:focus,
+    &:hover {
+        background-color: $primary;
+        color: $white;
+    }
+}
+
+.form-control {
+    &:focus {
+        box-shadow: none;
+    }
+}

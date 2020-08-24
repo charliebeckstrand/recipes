@@ -1,0 +1,30 @@
+@import 'colors';
+@import '@/assets/css/variables';
+
+@import '~bootstrap/scss/bootstrap';
+@import 'https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap';
+
+@import 'bootstrap-overrides';
+@import 'vue-multiselect-overrides';
+
+html,
+body,
+#app {
+	height: 100%;
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+	-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+	text-decoration: none;
+	transition: $transition;
+}
+
+[v-tippy],
+[data-tippy] {
+    cursor: help;
+}
