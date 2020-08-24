@@ -2,9 +2,11 @@
 @import '@/assets/css/variables';
 
 @import '~bootstrap/scss/bootstrap';
+@import '~sweetalert2/dist/sweetalert2.min.css';
 @import 'https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap';
 
 @import 'bootstrap-overrides';
+@import 'sweetalert-overrides';
 @import 'vue-multiselect-overrides';
 
 html,

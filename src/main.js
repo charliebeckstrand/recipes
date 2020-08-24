@@ -23,6 +23,9 @@ Vue.use(VueTippy, {
 })
 Vue.component('tippy', TippyComponent)
 
+import VueSweetalert2 from 'vue-sweetalert2'
+Vue.use(VueSweetalert2)
+
 import './assets/css/custom.scss'
 
 Vue.config.productionTip = false

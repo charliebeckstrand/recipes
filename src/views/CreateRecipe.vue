@@ -14,7 +14,7 @@
 
             <form class="create-recipe-form" @submit.prevent>
                 <div class="mb-3">
-                    <input type="text" class="form-control bg-transparent recipe-title border-0 p-0" placeholder="Recipe Title">
+                    <input type="text" v-model="recipe.name" class="form-control bg-transparent recipe-title border-0 p-0" placeholder="Recipe Title">
                 </div>
 
                 <div class="card mb-3">
@@ -22,6 +22,7 @@
                         Description
                     </div>
                     <textarea
+                        v-model="recipe.description"
                         class="form-control bg-transparent border-0"
                         rows="3"
                     />
@@ -97,9 +98,11 @@
                     <button type="button" class="btn btn-success">
                         <font-awesome-icon :icon="['far', 'plus']" fixed-width /> Create Recipe
                     </button>
-                    <router-link :to="{name: 'Home'}" type="button" class="btn btn-danger ml-1">
-                        <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width /> Discard
-                    </router-link>
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-outline-danger ml-1" @click.prevent="discardRecipe">
+                            <font-awesome-icon :icon="['far', 'trash-alt']" fixed-width /> Discard Recipe
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -108,6 +111,8 @@
 
 <script>
 import { mapState } from 'vuex'
+
+import _ from 'lodash'
 
 export default {
     name: 'Login',
@@ -134,14 +139,52 @@ export default {
         },
         removeInstruction (index) {
             this.recipe.instructions.splice(index, 1)
+        },
+        discardRecipe () {
+            this.$swal({
+                html: 'Are you sure you want to discard this recipe?',
+                showCancelButton: true,
+                confirmButtonText: 'Discard Recipe',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    this.$router.push({
+                        name: 'Home'
+                    })
+                }
+            })
         }
     },
     data: () => ({
         recipe: {
             ingredients: [],
             instructions: []
+        },
+        recipe_cache: {
+            ingredients: [],
+            instructions: []
         }
-    })
+    }),
+    beforeRouteLeave (to, from, next) {
+        if (!_.isEqual(this.recipe, this.recipe_cache)) {
+            this.$swal({
+                icon: 'warning',
+                title: 'Uh Oh!',
+                html: 'If you leave this page before creating your recipe, all changes will be lost.',
+                showCancelButton: true,
+                confirmButtonText: 'Discard Recipe',
+                cancelButtonText: 'Keep Editing',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    next()
+                }
+            })
+        } else {
+            next()
+        }
+    }
 }
 </script>
 
