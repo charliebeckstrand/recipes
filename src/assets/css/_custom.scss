@@ -26,12 +26,46 @@ body {
 
 a {
 	text-decoration: none;
-	transition: $transition;
+	transition: $transition;&.text-success {
+		&:focus,
+		&:hover {
+			color: darken($success, 10%) !important;
+		}
+	}
+	&.text-primary {
+		&:focus,
+		&:hover {
+			color: darken($primary, 10%) !important;
+		}
+	}
+	&.text-warning {
+		&:focus,
+		&:hover {
+			color: darken($warning, 10%) !important;
+		}
+	}
+	&.text-danger {
+		&:focus,
+		&:hover {
+			color: darken($danger, 10%) !important;
+		}
+	}
+	&.text-info {
+		&:focus,
+		&:hover {
+			color: darken($info, 10%) !important;
+		}
+	}
+	&.text-pink {
+		&:focus,
+		&:hover {
+			color: darken($pink, 10%);
+		}
+	}
 }
 
-[v-tippy],
-[data-tippy] {
-    cursor: help;
+.text-pink {
+	color: $pink;
 }
 
 .modal {
@@ -59,11 +93,10 @@ a {
     }
 }
 
-.modal {
-	background-color: rgba(0, 0, 0, .5);
-}
+// .modal {
+// 	background-color: rgba(0, 0, 0, .5);
+// }
 
 .modal-backdrop {
-	// transition: ease .25s;
-	background-color: transparent;
+	background-color: rgba(0, 0, 0, .5);
 }

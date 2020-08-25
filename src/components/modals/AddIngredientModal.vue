@@ -163,5 +163,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/css/colors';
+@import '@/assets/css/_colors';
 </style>

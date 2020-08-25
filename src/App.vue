@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <router-view name="navbar" />
-        <router-view />
+        <router-view class="container py-3" />
     </div>
 </template>
 
@@ -17,7 +17,11 @@ export default {
 
     }),
     mounted () {
-        
+
     }
 };
 </script>
+
+<style lang="scss" scoped>
+
+</style>

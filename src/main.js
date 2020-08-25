@@ -6,7 +6,7 @@ import modules from './modules'
 import router from './router'
 import store from './store'
 
-import './assets/css/custom.scss'
+import './assets/css/_custom.scss'
 
 Vue.config.devtools = false
 Vue.config.productionTip = false

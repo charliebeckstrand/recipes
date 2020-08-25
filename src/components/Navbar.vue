@@ -1,54 +1,55 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <div class="container">
-                <router-link class="navbar-brand" :to="{path: '/'}">
-                    <!-- <img src="@/assets/logo.svg" width="40" /> -->
+        <b-navbar toggleable="lg" type="light" variant="light" class="botder-bottom">
+            <b-container>
+                <b-navbar-brand
+                    :to="{
+                        name: 'Recipes'
+                    }"
+                >
                     <img src="@/assets/logo2.svg" width="40">
-                </router-link>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                </b-navbar-brand>
+
+                <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+                <b-collapse id="nav-collapse" is-nav>
+                    <b-navbar-nav class="ml-auto">
+                        <b-nav-item :to="{name: 'Recipes'}">
+                            Recipes
+                        </b-nav-item>
                         <template v-if="currentUser && currentUser.uid">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                            <b-nav-item-dropdown right>
+                                <template v-slot:button-content>
                                     {{currentUser.displayName}}
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <li>
-                                        <a class="dropdown-item" href="#" @click.prevent>
-                                            <font-awesome-icon :icon="['fad', 'user']" fixed-width /> Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#" @click.prevent="logout">
-                                            <font-awesome-icon :icon="['fad', 'sign-out']" fixed-width /> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                                </template>
+                                <b-dropdown-item
+                                    :to="{
+                                        name: 'Dashboard'
+                                    }"
+                                >
+                                    <font-awesome-icon :icon="['fad', 'tachometer']" fixed-width /> Dashboard
+                                </b-dropdown-item>
+                                <b-dropdown-item
+                                    :to="{
+                                        name: 'Profile'
+                                    }"
+                                >
+                                    <font-awesome-icon :icon="['fad', 'user']" fixed-width /> Profile
+                                </b-dropdown-item>
+                                <b-dropdown-item @click.prevent="logout">
+                                    <font-awesome-icon :icon="['fad', 'sign-out']" fixed-width /> Logout
+                                </b-dropdown-item>
+                            </b-nav-item-dropdown>
                         </template>
-
                         <template v-else>
-                            <li class="nav-item">
-                                <router-link :to="{name: 'Login'}" class="nav-link">
-                                    Login
-                                    <!-- <font-awesome-icon :icon="['fad', 'sign-in']" /> -->
-                                </router-link>
-                            </li>
-
-                            <!-- <li class="nav-item">
-                                <router-link :to="{name: 'sign-up'}" class="nav-link">
-                                    Sign Up
-                                </router-link>
-                            </li> -->
+                            <b-nav-item :to="{name: 'Login'}">
+                                Login
+                            </b-nav-item>
                         </template>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+                    </b-navbar-nav>
+                </b-collapse>
+            </b-container>
+        </b-navbar>
     </div>
 </template>
 
@@ -92,8 +93,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/css/colors';
-@import '@/assets/css/variables';
+@import '@/assets/css/_colors';
+@import '@/assets/css/_variables';
 
 .navbar {
     .navbar-brand {

@@ -26,28 +26,42 @@
             </a>
 
             <div>
-                <img :src="active_image" class="border rounded p-1" width="100%">
+                <img :src="active_image" class="border rounded user-select-none" width="100%">
             </div>
 
-            <div v-if="recipe.images && recipe.images.length > 1" class="mt-3">
-                <a
-                    href="#"
-                    v-for="(image, imageIndex) in recipe.images"
-                    :key="imageIndex"
-                    :class="{
-                        'ml-1': imageIndex > 0
-                    }"
-                    @click.prevent="setActiveImage(image.image)"
-                >
-                    <img
-                        :src="image.image"
-                        class="border rounded p-1"
+            <div v-if="thumbnail && images && images.length" class="d-flex align-items-center mt-3">
+                <div v-if="thumbnail">
+                    <a
+                        href="#"
+                        class="d-inline-block border rounded"
                         :class="{
-                            'border-primary': imageActive(image)
+                            'border-primary': imageActive(thumbnail),
+                            'mr-1': images && images.length
                         }"
-                        width="100"
-                    >
-                </a>
+                        style="min-width: 75px; width: 75px; height: 75px; background-size: cover; background-position: center;"
+                        :style="{
+                            backgroundImage: thumbnail ? 'url(' + thumbnail + ')' : ''
+                        }"
+                        @click.prevent="setActiveImage(thumbnail)"
+                    />
+                </div>
+                <div v-if="images && images.length > 1">
+                    <a
+                        href="#"
+                        v-for="(image, imageIndex) in images"
+                        :key="imageIndex"
+                        class="d-inline-block border rounded"
+                        :class="{
+                            'border-primary': imageActive(image.image),
+                            'mr-1': images && images.length
+                        }"
+                        style="min-width: 75px; width: 75px; height: 75px; background-size: cover; background-position: center;"
+                        :style="{
+                            backgroundImage: image.image ? 'url(' + image.image + ')' : ''
+                        }"
+                        @click.prevent="setActiveImage(image.image)"
+                    />
+                </div>
             </div>
         </b-modal>
     </div>
@@ -61,8 +75,9 @@ export default {
     },
     props: {
         value: Boolean,
-        recipe: Object,
-        image: String
+        image: String,
+        thumbnail: String,
+        images: Array
     },
     computed: {
 
@@ -72,7 +87,7 @@ export default {
             this.active_image = image
         },
         imageActive (image) {
-            if (image.image == this.active_image) {
+            if (image == this.active_image) {
                 return true
             }
         },
@@ -99,5 +114,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/css/colors';
+@import '@/assets/css/_colors';
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div class="login h-100">
         <div class="d-flex h-100">
-            <div class="mx-auto my-auto px-3" style="width: 350px;">
+            <div class="m-auto" style="min-width: 350px;">
                 <div class="d-flex">
                     <div class="mx-auto mb-3">
                         <router-link :to="{path: '/'}" class="text-dark">
@@ -41,7 +41,12 @@
                         class="btn btn-dark btn-block"
                         :disabled="logging_in || !email || !password"
                     >
-                        <font-awesome-icon :icon="['fad', 'sign-in']" fixed-width /> Login
+                        <span v-if="logging_in">
+                            <font-awesome-icon :icon="['fal', 'spinner-third']" spin fixed-width />
+                        </span>
+                        <span v-else>
+                            <font-awesome-icon :icon="['fad', 'sign-in']" fixed-width /> Login
+                        </span>
                     </button>
                 </form>
             </div>
@@ -87,9 +92,15 @@ export default {
                     })
                 }
                 else {
-                    this.$router.push({
-                        name: 'Home'
-                    })
+                    if (this.currentUser && this.currentUser.uid) {
+                        this.$router.push({
+                            name: 'Dashboard'
+                        })
+                    } else {
+                        this.$router.push({
+                            name: 'Recipes'
+                        })
+                    }
                 }
 
                 this.logging_in = false

@@ -1,21 +1,14 @@
 <template>
     <div class="recipe">
         <div v-if="loading">
-            <div class="container py-3">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
+            <font-awesome-icon :icon="['fal', 'spinner-third']" size="2x" spin fixed-width />
         </div>
 
-        <div
-            class="container pt-3 pb-4"
-            :class="{'invisible': loading}"
-        >
+        <div :class="{'invisible': loading}">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-1">
                     <li class="breadcrumb-item">
-                        <router-link :to="{path: '/'}">Recipes</router-link>
+                        <router-link :to="{name: 'Recipes'}">Recipes</router-link>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{recipe.name}}
@@ -48,7 +41,7 @@
                     <div class="d-flex align-items-center mt-3">
                         <div class="d-flex align-items-center">
                             <div>
-                                <a href="#" @click.prevent class="text-danger" content="Favorite" v-tippy>
+                                <a href="#" @click.prevent class="text-pink" content="Favorite" v-tippy>
                                     <font-awesome-icon :icon="['far', 'heart']" fixed-width />
                                 </a>
                             </div>
@@ -102,23 +95,43 @@
                 </div>
             </div>
 
-            <div v-if="recipe.images">
+            <div v-if="recipe.thumbnail || recipe.images && recipe.images.length">
                 <hr>
 
                 <div class="d-flex align-items-center">
-                    <div v-if="recipe.images && recipe.images.length" class="flex-grow-1 images mr-3">
+                    <div v-if="recipe.thumbnail" class="mr-1">
+                        <a
+                            href="#"
+                            @click.prevent="showImageModal(recipe.thumbnail)"
+                            class="d-inline-block image border rounded p-1"
+                            style="width: 100px; height: 100px; background-size: cover; background-position: center;"
+                            :style="{
+                                backgroundImage: recipe.thumbnail ? 'url(' + recipe.thumbnail + ')' : ''
+                            }"
+                        />
+                    </div>
+                    <div v-if="recipe.images && recipe.images.length" class="flex-grow-1 images">
                         <div
                             v-for="(image, imageIndex) in recipe.images"
                             :key="imageIndex"
                             class="d-inline-block"
                             :class="{'ml-1': imageIndex > 0}"
                         >
-                            <a
+                            <!-- <a
                                 href="#"
                                 @click.prevent="showImageModal(image.image)"
                             >
-                                <img :src="image.image" class="border p-1 rounded" width="100" />
-                            </a>
+                                <img :src="image.image" class="border p-1 rounded" width="100" height="100" />
+                            </a> -->
+                            <a
+                                href="#"
+                                @click.prevent="showImageModal(image.image)"
+                                class="d-inline-block image border rounded p-1"
+                                style="width: 100px; height: 100px; background-size: cover; background-position: center;"
+                                :style="{
+                                    backgroundImage: image.image ? 'url(' + image.image + ')' : ''
+                                }"
+                            />
                         </div>
                     </div>
                     <!-- <div class="d-flex flex-column ml-auto">
@@ -511,7 +524,8 @@
         <image-modal
             v-model="image_modal"
             :image="image"
-            :recipe="recipe"
+            :thumbnail="recipe.thumbnail"
+            :images="recipe.images"
             @hide="image_modal = false"
         />
     </div>
@@ -621,8 +635,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/css/colors';
-@import '@/assets/css/variables';
+@import '@/assets/css/_colors';
+@import '@/assets/css/_variables';
 
 .recipe-name {
     margin-left: -1rem;

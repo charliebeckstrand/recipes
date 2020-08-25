@@ -220,7 +220,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/css/colors';
+@import '@/assets/css/_colors';
 .icons {
     > div {
         margin-left: 1rem;

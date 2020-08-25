@@ -22,7 +22,7 @@
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
                                 <div>
-                                    <a href="#" @click.prevent class="text-danger" content="Favorite" v-tippy>
+                                    <a href="#" @click.prevent class="text-pink" content="Favorite" v-tippy>
                                         <font-awesome-icon :icon="['far', 'heart']" fixed-width />
                                     </a>
                                 </div>
@@ -42,22 +42,32 @@
 
                             </div>
                         </div>
+                        <router-link
+                            :to="{
+                                name: 'Recipe',
+                                params: {
+                                    recipe_key: recipe['.key'],
+                                    url: permalink
+                                }
+                            }"
+                            class="d-sm-none d-inline-block btn btn-sm btn-outline-primary mt-3"
+                        >
+                            <font-awesome-icon :icon="['fad', 'eye']" fixed-width /> View
+                        </router-link>
                     </div>
                     <!-- <div class="card-footer">
                         test
                     </div> -->
                 </div>
                 <a
-                    v-if="recipe.images"
+                    v-if="recipe.thumbnail"
                     href="#"
-                    style="min-width: 150px; background-size: cover;"
+                    style="min-width: 150px; background-size: cover; background-position: center;"
                     :style="{
-                        backgroundColor: '#f9f9f9',
-                        backgroundPosition: 'center',
-                        backgroundImage: recipe.images ? 'url(' + recipe.images[0].image + ')' : ''
+                        backgroundImage: recipe.thumbnail ? 'url(' + recipe.thumbnail + ')' : ''
                     }"
                     class="rounded-right border-left"
-                    @click.prevent="showImageModal(recipe.images[0].image)"
+                    @click.prevent="showImageModal(recipe.thumbnail)"
                 />
             </div>
         </div>
@@ -65,7 +75,8 @@
         <image-modal
             v-model="image_modal"
             :image="image"
-            :recipe="recipe"
+            :thumbnail="recipe.thumbnail"
+            :images="recipe.images"
             @hide="image_modal = false"
         />
     </div>
