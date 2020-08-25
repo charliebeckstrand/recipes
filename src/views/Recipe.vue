@@ -21,9 +21,6 @@
                 </nav>
 
                 <div class="d-flex align-items-center">
-                    <!-- <div v-if="recipe.thumbnail" class="d-lg-flex d-none mr-3">
-                        <img :src="recipe.thumbnail" class="border p-1 rounded" width="100" />
-                    </div> -->
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center">
                             <div class="mr-3">
@@ -40,32 +37,7 @@
                         <div class="d-flex align-items-center mt-3">
                             <div v-if="recipe.time || recipe.servings || recipe.tags && recipe.tags.length">
                                 <div class="d-flex align-items-center">
-                                    <div
-                                        v-if="recipe.time && recipe.time.total"
-                                        class="badge text-nowrap"
-                                        :class="{
-                                            'bg-success': recipe.time.total <= 15,
-                                            'bg-warning': recipe.time.total > 15 && recipe.time.total < 45,
-                                            'bg-danger': recipe.time.total >= 45
-                                        }"
-                                    >
-                                        <font-awesome-icon
-                                            :icon="['fad', 'clock']"
-                                            fixed-width
-                                        />
-                                        {{recipe.time.total}} minutes
-                                    </div>
-                                    <div
-                                        v-if="recipe.servings"
-                                        class="badge bg-secondary text-white text-nowrap"
-                                        :class="{'ml-1': recipe.time && recipe.time.total}"
-                                    >
-                                        <font-awesome-icon
-                                            :icon="['fad', 'users']"
-                                            fixed-width
-                                        /> {{recipe.servings}} servings
-                                    </div>
-                                    <div v-if="recipe.tags && recipe.tags.length">
+                                    <!-- <div v-if="recipe.tags && recipe.tags.length">
                                         <tippy arrow="false">
                                             <template v-slot:trigger>
                                                 <div
@@ -82,14 +54,8 @@
                                             >
                                                 {{tag.tag}}
                                             </div>
-                                            <!-- <Tag
-                                                v-for="(tag, tagIndex) in recipe.tags"
-                                                :key="tagIndex"
-                                                :tag="tag"
-                                                class="mr-1"
-                                            /> -->
                                         </tippy>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <!-- <div v-if="recipe.tags && recipe.tags.length > 3">
                                     <tippy arrow>
@@ -124,7 +90,6 @@
                             </div>
                             <div
                                 class="d-flex align-items-center"
-                                :class="{'ml-auto': recipe.time || recipe.servings || recipe.tags && recipe.tags.length}"
                             >
                                 <div>
                                     <a href="#" @click.prevent class="text-danger" content="Favorite" v-tippy>
@@ -147,202 +112,320 @@
                     </div>
                 </div>
 
-                <div v-if="recipe.images && recipe.images.length" class="images">
+                <div>
                     <hr>
 
                     <div class="d-flex align-items-center">
-                        <div
-                            v-for="(image, imageIndex) in recipe.images"
-                            :key="imageIndex"
-                            class="d-inline-block"
-                            :class="{'ml-1': imageIndex > 0}"
-                        >
-                            <a href="#" data-toggle="modal" data-target="#imageModal" @click.prevent="setActiveImage(image.image)">
-                                <img :src="image.image" class="border p-1 rounded" width="75" />
-                            </a>
+                        <div v-if="recipe.images && recipe.images.length" class="flex-grow-1 images mr-3">
+                            <div
+                                v-for="(image, imageIndex) in recipe.images"
+                                :key="imageIndex"
+                                class="d-inline-block"
+                                :class="{'ml-1': imageIndex > 0}"
+                            >
+                                <a href="#" data-toggle="modal" data-target="#imageModal" @click.prevent="setActiveImage(image.image)">
+                                    <img :src="image.image" class="border p-1 rounded" width="75" />
+                                </a>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column ml-auto">
+                            <div
+                                v-if="recipe.time && recipe.time.total"
+                                class="badge text-nowrap"
+                                :class="{
+                                    'bg-success': recipe.time.total <= 15,
+                                    'bg-warning': recipe.time.total > 15 && recipe.time.total < 45,
+                                    'bg-danger': recipe.time.total >= 45
+                                }"
+                            >
+                                <font-awesome-icon
+                                    :icon="['fad', 'clock']"
+                                    fixed-width
+                                />
+                                {{recipe.time.total}} minutes
+                            </div>
+                            <div
+                                v-if="recipe.servings"
+                                class="badge bg-secondary text-white text-nowrap mt-1"
+                                :class="{
+                                    'ml-1': recipe.time && recipe.time.total
+                                }"
+                            >
+                                <font-awesome-icon
+                                    :icon="['fad', 'users']"
+                                    fixed-width
+                                /> {{recipe.servings}} servings
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <hr>
+                <hr class="mb-0">
 
-                <!-- <hr :class="{
-                    'd-block': recipe.images && recipe.images.length || recipe.thumbnail,
-                    'd-lg-none': !recipe.images || recipe.images && !recipe.images.length,
-                    'd-none': (!recipe.images || recipe.images && !recipe.images.length) && !recipe.thumbnail
-                }"> -->
+                <section ref="ingredients">
+                    <h3
+                        v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                        data-toggle="collapse"
+                        href="#ingredientsCollapse"
+                        class="p-3 bg-white font-weight-bold text-success user-select-none section-title"
+                    >
+                        <span class="closed">
+                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                        </span>
+                        <span class="open">
+                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                        </span>
+                        Ingredients
+                    </h3>
 
-                <div>
-                    <div class="row">
-                        <div class="col-lg-6 mt-1">
-                            <div>
-                                <h3
-                                    class="mb-3 font-weight-bold text-success"
-                                >
-                                    <!-- <font-awesome-icon :icon="['fad', 'salad']" fixed-width /> -->
-                                    <!-- <font-awesome-icon :icon="['fad', 'utensil-spoon']" fixed-width /> -->
-                                    <font-awesome-icon :icon="['fad', 'utensils']" fixed-width />
-                                    Ingredients
-                                </h3>
-
-                                <!-- <hr> -->
-
-                                <div class="ingredients">
-                                    <div class="list-group">
+                    <div class="collapse show" id="ingredientsCollapse">
+                        <div class="ingredients">
+                            <div
+                                v-for="(ingredient, ingredientIndex) in recipe.ingredients"
+                                :key="ingredientIndex"
+                                class="ingredient rounded"
+                                :class="{
+                                    'checked': ingredient.checked,
+                                    'mt-2': ingredientIndex > 0
+                                }"
+                            >
+                                <div v-if="ingredient.ingredient" class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <span class="font-weight-bolder">{{ingredientIndex + 1}}.</span>
+                                    </div>
+                                    <div class="d-flex align-items-center flex-grow-1">
                                         <div
-                                            v-for="(ingredient, ingredientIndex) in recipe.ingredients"
-                                            :key="ingredientIndex"
-                                            class="list-group-item h6 mb-0 p-0 ingredient"
-                                            :class="{'checked': ingredient.checked}"
+                                            class="d-flex align-items-center font-weight-light py-2 px-3 flex-grow-1 ingredient-text"
+                                            @click.prevent="toggleItemCheck(ingredient)"
                                         >
-                                            <div class="d-flex align-items-center">
-                                                <div
-                                                    class="d-flex align-items-center flex-grow-1 p-3 ingredient-text"
-                                                    @click.prevent="toggleItemCheck(ingredient)"
+                                            <div class="text-nowrap">
+                                                <span>{{ingredient.amount}} {{ingredient.measurement}}</span>
+                                            </div>
+                                            <div class="mx-2 text-info">&bullet;</div>
+                                            <div class="font-weight-bold">
+                                                {{ingredient.ingredient}}
+                                            </div>
+                                        </div>
+                                        <div class="ml-auto px-3">
+                                            <div class="form-check m-0">
+                                                <input
+                                                    type="checkbox"
+                                                    v-model="ingredient.checked"
+                                                    class="form-check-input"
                                                 >
-                                                    <div class="text-nowrap">
-                                                        <span>{{ingredient.amount}} {{ingredient.measurement}}</span>
-                                                    </div>
-                                                    <div class="mx-2 text-info">&bullet;</div>
-                                                    <div class="font-weight-bold">
-                                                        {{ingredient.ingredient}}
-                                                    </div>
-                                                </div>
-
-                                                <div class="ml-auto">
-                                                    <div class="form-check m-0 pr-3">
-                                                        <input class="form-check-input" type="checkbox" v-model="ingredient.checked">
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- <div class="d-flex align-items-center">
+                                    <div
+                                        class="d-flex align-items-center flex-grow-1 p-3 ingredient-text"
+                                        @click.prevent="toggleItemCheck(ingredient)"
+                                    >
+                                        <div class="text-nowrap">
+                                            <span>{{ingredient.amount}} {{ingredient.measurement}}</span>
+                                        </div>
+                                        <div class="mx-2 text-info">&bullet;</div>
+                                        <div class="font-weight-bold">
+                                            {{ingredient.ingredient}}
+                                        </div>
+                                    </div>
+
+                                    <div class="ml-auto">
+                                        <div class="form-check m-0 pr-3">
+                                            <input class="form-check-input" type="checkbox" v-model="ingredient.checked">
+                                        </div>
+                                    </div>
+                                </div> -->
                             </div>
                         </div>
-                        <div class="col-lg-6 mt-lg-1 mt-4">
-                            <div>
-                                <h3 class="mb-3 font-weight-bold text-primary">
-                                    <font-awesome-icon :icon="['fad', 'list-alt']" fixed-width /> Instructions
-                                </h3>
+                    </div>
+                </section>
 
-                                <!-- <hr> -->
+                <section ref="instructions">
+                    <h3
+                        v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                        data-toggle="collapse"
+                        href="#instructionsCollapse"
+                        class="p-3 bg-white font-weight-bold text-primary user-select-none section-title"
+                    >
+                        <span class="closed">
+                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                        </span>
+                        <span class="open">
+                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                        </span>
+                        Instructions
+                    </h3>
 
-                                <div class="instructions">
-                                    <div
-                                        v-for="(instruction, instructionIndex) in recipe.instructions"
-                                        :key="instructionIndex"
-                                        class="instruction rounded checkable"
-                                        :class="{
-                                            'checked': instruction.checked,
-                                            'mt-2': instructionIndex > 0
-                                        }"
-                                    >
-                                        <div v-if="instruction.instruction" class="d-flex align-items-center">
-                                            <div class="ml-3">
-                                                <span class="font-weight-bolder">{{instructionIndex + 1}}.</span>
-                                            </div>
-                                            <div class="d-flex align-items-center flex-grow-1">
-                                                <div
-                                                    class="font-weight-light instruction-text py-2 px-3 flex-grow-1"
-                                                    @click.prevent="toggleItemCheck(instruction)"
+                    <div class="collapse show" id="instructionsCollapse">
+                        <div class="instructions">
+                            <div
+                                v-for="(instruction, instructionIndex) in recipe.instructions"
+                                :key="instructionIndex"
+                                class="instruction rounded"
+                                :class="{
+                                    'checked': instruction.checked,
+                                    'mt-2': instructionIndex > 0
+                                }"
+                            >
+                                <div v-if="instruction.instruction" class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <span class="font-weight-bolder">{{instructionIndex + 1}}.</span>
+                                    </div>
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <div
+                                            class="font-weight-light py-2 px-3 flex-grow-1 instruction-text"
+                                            @click.prevent="toggleItemCheck(instruction)"
+                                        >
+                                            {{instruction.instruction}}
+                                        </div>
+                                        <div class="ml-auto px-3">
+                                            <div class="form-check m-0">
+                                                <input
+                                                    type="checkbox"
+                                                    v-model="instruction.checked"
+                                                    class="form-check-input"
                                                 >
-                                                    {{instruction.instruction}}
-                                                </div>
-                                                <div class="ml-auto px-3">
-                                                    <div class="form-check m-0">
-                                                        <input
-                                                            type="checkbox"
-                                                            v-model="instruction.checked"
-                                                            class="form-check-input"
-                                                        >
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-if="recipe.tips && recipe.tips.length" class="col-lg-6 mt-4">
-                            <div class="tips">
-                                <h3 class="mb-3 font-weight-bold text-warning">
-                                    <font-awesome-icon :icon="['fad', 'lightbulb']" fixed-width /> Tips
-                                </h3>
-
-                                <div class="pl-3 border-left border-warning">
-                                    <div
-                                        v-for="(tip, tipIndex) in recipe.tips"
-                                        :key="tipIndex"
-                                        class="h5 m-0"
-                                        :class="{'mt-2': tipIndex > 0}"
-                                    >
-                                        <div class="d-flex align-items-center">
-                                            <div class="mr-2">
-                                                <span v-if="tip.tip" class="font-weight-bolder text-muted">{{tipIndex + 1}}.</span>
-                                            </div>
-                                            <div class="font-weight-light p-1">
-                                                {{tip.tip}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-if="recipe.nutrition && recipe.nutrition.length" class="col-lg-6 mt-4">
-                            <div class="tips">
-                                <h3 class="mb-3 font-weight-bold text-info">
-                                    <font-awesome-icon :icon="['fad', 'salad']" fixed-width /> Nutrition
-                                </h3>
-
-                                <div class="pl-3 border-left border-info">
-                                    <div
-                                        v-for="(item, nutritionIndex) in recipe.nutrition"
-                                        :key="nutritionIndex"
-                                        class="h5"
-                                        :class="{'mt-2': nutritionIndex > 0}"
-                                    >
-                                        <!-- <div class="d-flex align-items-center">
-                                            <div class="mr-2">
-                                                <span v-if="item.tip" class="font-weight-bolder text-muted">{{tipIndex + 1}}.</span>
-                                            </div>
-                                            <div class="font-weight-light p-1">
-                                                {{tip.tip}}
-                                            </div>
-                                        </div> -->
-                                        <span class="font-weight-bold">{{item.fact}}</span> <span class="text-info">&bull;</span> {{item.amount}} {{item.measurement}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-if="recipe.notes && recipe.notes.length" class="col-lg-6 mt-4">
-                            <div class="tips">
-                                <h3 class="mb-3 font-weight-bold text-danger">
-                                    <font-awesome-icon :icon="['fad', 'pencil']" fixed-width /> Notes
-                                </h3>
-
-                                <div class="pl-3 border-left border-danger">
-                                    <div
-                                        v-for="(note, noteIndex) in recipe.notes"
-                                        :key="noteIndex"
-                                        class="h5"
-                                        :class="{'mt-2': noteIndex > 0}"
-                                    >
-                                        <!-- <div class="d-flex align-items-center">
-                                            <div class="mr-2">
-                                                <span v-if="item.tip" class="font-weight-bolder text-muted">{{tipIndex + 1}}.</span>
-                                            </div>
-                                            <div class="font-weight-light p-1">
-                                                {{tip.tip}}
-                                            </div>
-                                        </div> -->
-                                        {{note}}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                <section v-if="recipe.tips && recipe.tips.length" ref="tips">
+                    <h3
+                        v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                        data-toggle="collapse"
+                        href="#tipsCollapse"
+                        class="p-3 bg-white font-weight-bold text-warning user-select-none section-title"
+                    >
+                        <span class="closed">
+                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                        </span>
+                        <span class="open">
+                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                        </span>
+                        Tips
+                    </h3>
+
+                    <div class="collapse show" id="tipsCollapse">
+                        <div class="tips">
+                            <div
+                                v-for="(tip, tipIndex) in recipe.tips"
+                                :key="tipIndex"
+                                class="tip rounded"
+                                :class="{'mt-2': tipIndex > 0}"
+                            >
+                                <div v-if="tip.tip" class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <span class="font-weight-bolder">{{tipIndex + 1}}.</span>
+                                    </div>
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <div
+                                            class="font-weight-light py-2 px-3 flex-grow-1 tip-text"
+                                        >
+                                            {{tip.tip}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="recipe.nutrition && recipe.nutrition.length" ref="nutrition">
+                    <h3
+                        v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                        data-toggle="collapse"
+                        href="#nutritionCollapse"
+                        class="p-3 bg-white font-weight-bold text-info user-select-none section-title"
+                    >
+                        <span class="closed">
+                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                        </span>
+                        <span class="open">
+                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                        </span>
+                        Nutrition
+                    </h3>
+
+                    <div class="collapse show" id="nutritionCollapse">
+                        <div class="nutritions">
+                            <div
+                                v-for="(item, nutritionIndex) in recipe.nutrition"
+                                :key="nutritionIndex"
+                                class="nutrition rounded"
+                                :class="{'mt-2': nutritionIndex > 0}"
+                            >
+                                <div v-if="item.fact || item.item" class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <span class="font-weight-bolder">{{nutritionIndex + 1}}.</span>
+                                    </div>
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <div
+                                            class="font-weight-light py-2 px-3 flex-grow-1 nutrition-text"
+                                        >
+                                            {{item.fact}} {{item.item}} <span class="text-info">&bull;</span> {{item.amount}} {{item.measurement}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="recipe.notes && recipe.notes.length" ref="notes">
+                    <h3
+                        v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                        data-toggle="collapse"
+                        href="#notesCollapse"
+                        class="p-3 bg-white font-weight-bold text-danger user-select-none section-title"
+                    >
+                        <span class="closed">
+                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                        </span>
+                        <span class="open">
+                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                        </span>
+                        Notes
+                    </h3>
+
+                    <div class="collapse show" id="notesCollapse">
+                        <div class="notes">
+                            <div
+                                v-for="(note, noteIndex) in recipe.notes"
+                                :key="noteIndex"
+                                class="note rounded"
+                                :class="{'mt-2': noteIndex > 0}"
+                            >
+                                <!-- <div class="d-flex align-items-center">
+                                    <div class="mr-2">
+                                        <span v-if="note.note" class="font-weight-bolder text-muted">{{noteIndex + 1}}.</span>
+                                    </div>
+                                    <div class="font-weight-light p-1">
+                                        {{note.note}}
+                                    </div>
+                                </div> -->
+                                <div v-if="note.note" class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <span class="font-weight-bolder">{{noteIndex + 1}}.</span>
+                                    </div>
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <div
+                                            class="font-weight-light py-2 px-3 flex-grow-1 note-text"
+                                        >
+                                            {{note.note}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -479,6 +562,28 @@ export default {
 @import '@/assets/css/colors';
 @import '@/assets/css/variables';
 
+.section-title {
+    cursor: pointer;
+
+    margin-left: -1rem;
+    margin-right: -1rem;
+
+    .closed {
+        display: none;
+    }
+    .open {
+        display: inline-block;
+    }
+    &.collapsed {
+        .closed {
+            display: inline-block;
+        }
+        .open {
+            display: none;
+        }
+    }
+}
+
 .modal {
     .modal-close {
         position: absolute;
@@ -504,33 +609,29 @@ export default {
     }
 }
 
-.filter-button {
-    border: 1px solid #ced4da;
-}
 .images {
     max-width: 100%;
     overflow-x: scroll;
     white-space: nowrap;
 }
+
 .ingredients {
     padding-left: 1rem;
-    border-left: 1px solid $success;
+    border-left: 2px solid $success;
 
     .ingredient {
+        .ingredient-text {
+            cursor: pointer;
+            user-select: none;
+        }
         .form-check-input {
             &:checked {
                 background-color: $success;
                 border-color: darken($success, 5%);
             }
         }
-        .ingredient-text {
-            cursor: pointer;
-            user-select: none;
-        }
         &:nth-child(even) {
-            // background-color: rgba(0, 0, 0, .05);
-            // background-color: lighten($warning, 45%);
-            background-color: lighten($success, 48%);
+            background-color: lighten(#e5f0d9, 7%);
         }
         &.checked {
             .ingredient-text {
@@ -541,20 +642,18 @@ export default {
         }
     }
 }
+
 .instructions {
     padding-left: 1rem;
-    border-left: 1px solid $primary;
+    border-left: 2px solid $primary;
 
     .instruction {
-        &.checkable {
-            .instruction-text {
-                cursor: pointer;
-                user-select: none;
-            }
+        .instruction-text {
+            cursor: pointer;
+            user-select: none;
         }
         &:nth-child(odd) {
-            // background-color: rgba(0, 0, 0, .05);
-            background-color: lighten($primary, 48%);
+            background-color: lighten(#cdeefd, 7%);
         }
         &.checked {
             .instruction-text {
@@ -562,6 +661,39 @@ export default {
                 opacity: .25;
                 text-decoration: line-through;
             }
+        }
+    }
+}
+
+.tips {
+    padding-left: 1rem;
+    border-left: 2px solid $warning;
+
+    .tip {
+        &:nth-child(even) {
+            background-color: lighten(#fcf3cf, 7%);
+        }
+    }
+}
+
+.nutritions {
+    padding-left: 1rem;
+    border-left: 2px solid $info;
+
+    .nutrition {
+        &:nth-child(odd) {
+            background-color: lighten(#d1f2eb, 7%);
+        }
+    }
+}
+
+.notes {
+    padding-left: 1rem;
+    border-left: 2px solid $danger;
+
+    .note {
+        &:nth-child(even) {
+            background-color: lighten(#fadbd8, 7%);
         }
     }
 }

@@ -15,7 +15,7 @@
                     <div class="d-flex aling-items-center">
                         <div
                             v-if="recipe.time && recipe.time.total"
-                            content="Cook Time"
+                            :content="recipe.time.total + ' minutes'"
                             v-tippy
                             class="ml-3"
                             :class="{
@@ -28,19 +28,19 @@
                                 :icon="['fad', 'clock']"
                                 fixed-width
                             />
-                            {{recipe.time.total}}
+                            <!-- {{recipe.time.total}} -->
                         </div>
                         <div
                             v-if="recipe.servings"
-                            class="text-secondary ml-3"
+                            class="text-secondary font-weight-bold ml-3"
                             content="Servings"
                             v-tippy
                         >
-                        <font-awesome-icon
-                            :icon="['fad', 'users']"
-                            fixed-width
-                        />
-                        {{recipe.servings}}
+                        <!-- <font-awesome-icon
+                                :icon="['fad', 'users']"
+                                fixed-width
+                            /> -->
+                            {{recipe.servings}}
                         </div>
                     </div>
                 </div>
