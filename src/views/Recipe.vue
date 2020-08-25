@@ -232,10 +232,9 @@
                                     <div
                                         v-for="(instruction, instructionIndex) in recipe.instructions"
                                         :key="instructionIndex"
-                                        class="instruction rounded"
+                                        class="instruction rounded checkable"
                                         :class="{
                                             'checked': instruction.checked,
-                                            'checkable': instructionCheckable(instruction, instructionIndex),
                                             'mt-2': instructionIndex > 0
                                         }"
                                     >
@@ -246,18 +245,16 @@
                                             <div class="d-flex align-items-center flex-grow-1">
                                                 <div
                                                     class="font-weight-light instruction-text py-2 px-3 flex-grow-1"
-                                                    @click.prevent="toggleItemCheck(instruction, instructionIndex)"
+                                                    @click.prevent="toggleItemCheck(instruction)"
                                                 >
                                                     {{instruction.instruction}}
                                                 </div>
                                                 <div class="ml-auto px-3">
                                                     <div class="form-check m-0">
                                                         <input
-                                                            v-if="instructionCheckable(instruction, instructionIndex)"
                                                             type="checkbox"
                                                             v-model="instruction.checked"
                                                             class="form-check-input"
-                                                            @change="uncheckPreviousInstructions(instruction, instructionIndex)"
                                                         >
                                                     </div>
                                                 </div>
@@ -396,7 +393,6 @@
 import { Tooltip, Dropdown, Modal } from 'bootstrap'
 /* eslint-enable no-unused-vars */
 
-import _ from 'lodash'
 import VueSticky from 'vue-sticky'
 
 import firebase from 'firebase/app'
@@ -417,41 +413,32 @@ export default {
     },
     props: ['recipe_key', 'url'],
     methods: {
-        toggleItemCheck (item, index) {
-            this.uncheckPreviousInstructions(item, index)
-
-            if (
-                index &&
-                !this.instructionCheckable(item, index)
-            ) {
-                return false
-            }
-
+        toggleItemCheck (item) {
             if (item.checked) {
                 this.$set(item, 'checked', false)
             } else {
                 this.$set(item, 'checked', true)
             }
         },
-        uncheckPreviousInstructions (instruction, index) {
-            _.forEach(this.recipe.instructions, (instruction, instructionIndex) => {
-                if (instructionIndex > index) {
-                    this.$set(instruction, 'checked', false)
-                }
-            })
-        },
-        instructionCheckable (instruction, index) {
-            let checkable = false
-
-            if (
-                index == 0 ||
-                !index == 0 && this.recipe.instructions[index - 1].checked
-            ) {
-                checkable = true
-            }
-
-            return checkable
-        },
+        // uncheckPreviousInstructions (instruction, index) {
+        //     _.forEach(this.recipe.instructions, (instruction, instructionIndex) => {
+        //         if (instructionIndex > index) {
+        //             this.$set(instruction, 'checked', false)
+        //         }
+        //     })
+        // },
+        // instructionCheckable (instruction, index) {
+        //     let checkable = false
+        //
+        //     if (
+        //         index == 0 ||
+        //         !index == 0 && this.recipe.instructions[index - 1].checked
+        //     ) {
+        //         checkable = true
+        //     }
+        //
+        //     return checkable
+        // },
         setActiveImage (image) {
             this.active_image = image
         },

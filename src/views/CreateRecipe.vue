@@ -122,8 +122,6 @@
                     </div>
                 </section>
 
-                <hr>
-
                 <section ref="instructions" tabindex="-1">
                     <div class="mb-3">
                         <div
@@ -180,8 +178,6 @@
                         </button>
                     </div>
                 </section>
-
-                <hr>
 
                 <section ref="tips" tabindex="-1">
                     <div class="mb-3">
