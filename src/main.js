@@ -31,6 +31,14 @@ import './assets/css/custom.scss'
 import VueMoment from 'vue-moment'
 Vue.use(VueMoment)
 
+Vue.directive('focus', {
+    inserted (el) {
+        Vue.nextTick(() => {
+            el.focus()
+        })
+    }
+})
+
 Vue.config.productionTip = false
 
 new Vue({

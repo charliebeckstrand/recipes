@@ -204,7 +204,6 @@ export default {
                 confirmButtonColor: '#E74C3C',
                 cancelButtonText: 'Cancel',
                 cancelButtonColor: '#f8f9fa',
-                buttonsStyling: false,
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {

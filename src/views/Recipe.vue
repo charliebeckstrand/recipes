@@ -8,7 +8,7 @@
             </div>
         </div>
         <div v-else>
-            <div class="container my-3">
+            <div class="container mt-3 mb-4">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
@@ -174,7 +174,7 @@
 
                 <div>
                     <div class="row">
-                        <div class="col-lg-6 mb-lg-0 mb-3">
+                        <div class="col-lg-6 mt-1">
                             <div>
                                 <h3
                                     class="mb-3 font-weight-bold text-success"
@@ -220,13 +220,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div
-                            :class="{
-                                'col-lg-6 mb-lg-0': recipe.tips && recipe.tips.length,
-                                'col-lg-6': !recipe.tips || recipe.tips && !recipe.tips.length
-                            }"
-                        >
+                        <div class="col-lg-6 mt-lg-1 mt-4">
                             <div>
                                 <h3 class="mb-3 font-weight-bold text-primary">
                                     <font-awesome-icon :icon="['fad', 'list-alt']" fixed-width /> Instructions
@@ -273,7 +267,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="recipe.tips && recipe.tips.length" class="col-lg-6 mt-3">
+                        <div v-if="recipe.tips && recipe.tips.length" class="col-lg-6 mt-4">
                             <div class="tips">
                                 <h3 class="mb-3 font-weight-bold text-warning">
                                     <font-awesome-icon :icon="['fad', 'lightbulb']" fixed-width /> Tips
@@ -283,7 +277,7 @@
                                     <div
                                         v-for="(tip, tipIndex) in recipe.tips"
                                         :key="tipIndex"
-                                        class="h5"
+                                        class="h5 m-0"
                                         :class="{'mt-2': tipIndex > 0}"
                                     >
                                         <div class="d-flex align-items-center">
@@ -298,9 +292,58 @@
                                 </div>
                             </div>
                         </div>
+                        <div v-if="recipe.nutrition && recipe.nutrition.length" class="col-lg-6 mt-4">
+                            <div class="tips">
+                                <h3 class="mb-3 font-weight-bold text-info">
+                                    <font-awesome-icon :icon="['fad', 'salad']" fixed-width /> Nutrition
+                                </h3>
 
-                        <!-- <pre>{{recipe}}</pre> -->
+                                <div class="pl-3 border-left border-info">
+                                    <div
+                                        v-for="(item, nutritionIndex) in recipe.nutrition"
+                                        :key="nutritionIndex"
+                                        class="h5"
+                                        :class="{'mt-2': nutritionIndex > 0}"
+                                    >
+                                        <!-- <div class="d-flex align-items-center">
+                                            <div class="mr-2">
+                                                <span v-if="item.tip" class="font-weight-bolder text-muted">{{tipIndex + 1}}.</span>
+                                            </div>
+                                            <div class="font-weight-light p-1">
+                                                {{tip.tip}}
+                                            </div>
+                                        </div> -->
+                                        <span class="font-weight-bold">{{item.fact}}</span> <span class="text-info">&bull;</span> {{item.amount}} {{item.measurement}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="recipe.notes && recipe.notes.length" class="col-lg-6 mt-4">
+                            <div class="tips">
+                                <h3 class="mb-3 font-weight-bold text-danger">
+                                    <font-awesome-icon :icon="['fad', 'pencil']" fixed-width /> Notes
+                                </h3>
 
+                                <div class="pl-3 border-left border-danger">
+                                    <div
+                                        v-for="(note, noteIndex) in recipe.notes"
+                                        :key="noteIndex"
+                                        class="h5"
+                                        :class="{'mt-2': noteIndex > 0}"
+                                    >
+                                        <!-- <div class="d-flex align-items-center">
+                                            <div class="mr-2">
+                                                <span v-if="item.tip" class="font-weight-bolder text-muted">{{tipIndex + 1}}.</span>
+                                            </div>
+                                            <div class="font-weight-light p-1">
+                                                {{tip.tip}}
+                                            </div>
+                                        </div> -->
+                                        {{note}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -483,6 +526,9 @@ export default {
     white-space: nowrap;
 }
 .ingredients {
+    padding-left: 1rem;
+    border-left: 1px solid $success;
+
     .ingredient {
         .form-check-input {
             &:checked {
@@ -507,12 +553,11 @@ export default {
             }
         }
     }
-    @media (min-width: 768px) {
-        padding-left: 1rem;
-        border-left: 1px solid $success;
-    }
 }
 .instructions {
+    padding-left: 1rem;
+    border-left: 1px solid $primary;
+
     .instruction {
         &.checkable {
             .instruction-text {
@@ -531,10 +576,6 @@ export default {
                 text-decoration: line-through;
             }
         }
-    }
-    @media (min-width: 768px) {
-        padding-left: 1rem;
-        border-left: 1px solid $primary;
     }
 }
 </style>

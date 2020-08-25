@@ -21,6 +21,14 @@ a {
     }
 }
 
+.btn {
+    &:active,
+    &:focus,
+    &:active:focus {
+        box-shadow: none;
+    }
+}
+
 .btn-success,
 .btn-danger,
 .btn-info,
