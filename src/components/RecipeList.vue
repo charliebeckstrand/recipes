@@ -1,0 +1,137 @@
+<template>
+    <div>
+        <div class="card mb-3">
+            <div class="d-flex">
+                <div class="flex-grow-1">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <router-link
+                                :to="{
+                                    name: 'Recipe',
+                                    params: {
+                                        recipe_key: recipe['.key'],
+                                        url: permalink
+                                    }
+                                }"
+                                class="font-weight-bold"
+                            >
+                                {{recipe.name}}
+                            </router-link>
+                        </h5>
+                        <p class="card-text text-muted my-3">{{recipe.description}}</p>
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <a href="#" @click.prevent class="text-danger" content="Favorite" v-tippy>
+                                        <font-awesome-icon :icon="['far', 'heart']" fixed-width />
+                                    </a>
+                                </div>
+                                <div class="ml-2">
+                                    <a
+                                        href="#"
+                                        class="text-info"
+                                        content="Share"
+                                        v-tippy
+                                        @click.prevent
+                                    >
+                                        <font-awesome-icon :icon="['fad', 'share-alt']" fixed-width />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="card-footer">
+                        test
+                    </div> -->
+                </div>
+                <!-- {{$randomColor()}} -->
+                <div
+                    v-if="recipe.images"
+                    style="min-width: 150px; background-size: cover;"
+                    :style="{
+                        backgroundColor: '#f9f9f9',
+                        backgroundPosition: 'center',
+                        backgroundImage: recipe.images ? 'url(' + recipe.images[0].image + ')' : ''
+                    }"
+                    class="rounded-right border-left"
+                >
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+
+import firebase from 'firebase/app'
+
+// import Tag from '@/components/Tag'
+
+export default {
+    name: 'Recipe',
+    components: {
+        // Tag
+    },
+    computed: {
+        ...mapState({
+            currentUser: state => state.user.user
+        }),
+        permalink () {
+            let string = ''
+
+            if (this.recipe.name) {
+                string = this.recipe.name.toLowerCase()
+            }
+
+            return string.replace(/\s/g, '-');
+        }
+    },
+    props: {
+        recipe: Object
+    },
+    methods: {
+        deleteRecipe (recipe) {
+            let message = null
+
+            if (recipe.name) {
+                message = 'Are you sure you want to delete "' + recipe.name + '"?'
+            } else {
+                message = 'Are you sure you want to delete this recipe?'
+            }
+
+            this.$swal({
+                html: message,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                confirmButtonColor: '#E74C3C',
+                cancelButtonText: 'Cancel',
+                cancelButtonColor: '#f8f9fa',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    firebase.firestore().collection('recipes').doc(recipe['.key']).delete()
+                }
+            })
+        }
+    },
+    data: () => ({
+
+    }),
+    mounted () {
+
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+@import '@/assets/css/colors';
+.icons {
+    > div {
+        margin-left: 1rem;
+    }
+}
+</style>

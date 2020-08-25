@@ -1,10 +1,22 @@
 @import 'colors';
 
 a {
+    &.text-success {
+        &:focus,
+        &:hover {
+            color: darken($success, 10%) !important;
+        }
+    }
     &.text-primary {
         &:focus,
         &:hover {
             color: darken($primary, 10%) !important;
+        }
+    }
+    &.text-warning {
+        &:focus,
+        &:hover {
+            color: darken($warning, 10%) !important;
         }
     }
     &.text-danger {

@@ -31,6 +31,21 @@ import './assets/css/custom.scss'
 import VueMoment from 'vue-moment'
 Vue.use(VueMoment)
 
+import VueScrollTo from 'vue-scrollto'
+Vue.use(VueScrollTo, {
+     container: 'body',
+     duration: 300,
+     easing: 'ease-out',
+     offset: 0,
+     force: true,
+     cancelable: true,
+     onStart: false,
+     onDone: false,
+     onCancel: false,
+     x: false,
+     y: true
+})
+
 Vue.directive('focus', {
     inserted (el) {
         Vue.nextTick(() => {

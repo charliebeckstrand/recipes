@@ -47,12 +47,24 @@
                     /> -->
                 </div>
 
-                <Recipe
+                <!-- <Recipe
                     v-for="(recipe, recipeIndex) in filtered_recipes"
                     :key="recipeIndex"
                     :recipe="recipe"
                     :class="{'mt-3': recipeIndex > 0}"
-                />
+                /> -->
+
+                <div class="row">
+                    <div
+                        v-for="(recipe, recipeIndex) in filtered_recipes"
+                        :key="recipeIndex"
+                        class="col-lg-12"
+                    >
+                        <RecipeList
+                            :recipe="recipe"
+                        />
+                    </div>
+                </div>
 
                 <div v-if="!filtered_recipes.length">
                     <div class="alert alert-danger">
@@ -75,12 +87,12 @@ import 'firebase/firestore'
 
 import meals from '@/common/meals'
 
-import Recipe from '@/components/Recipe'
+import RecipeList from '@/components/RecipeList'
 
 export default {
     name: 'Home',
     components: {
-        Recipe
+        RecipeList
     },
     computed: {
         ...mapState({

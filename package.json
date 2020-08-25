@@ -28,6 +28,7 @@
     "vue-moment": "^4.1.0",
     "vue-multiselect": "^2.1.6",
     "vue-router": "^3.2.0",
+    "vue-scrollto": "^2.18.2",
     "vue-sticky": "^3.3.4",
     "vue-sweetalert2": "^3.0.6",
     "vue-tippy": "^4.7.0",

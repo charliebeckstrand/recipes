@@ -28,7 +28,7 @@
                                 :icon="['fad', 'clock']"
                                 fixed-width
                             />
-                            <!-- {{recipe.time.total}} -->
+                            {{recipe.time.total}}
                         </div>
                         <div
                             v-if="recipe.servings"
@@ -36,18 +36,16 @@
                             content="Servings"
                             v-tippy
                         >
-                        <!-- <font-awesome-icon
-                                :icon="['fad', 'users']"
+                            <font-awesome-icon
+                                :icon="['fad', 'utensil-spoon']"
                                 fixed-width
-                            /> -->
+                            />
                             {{recipe.servings}}
                         </div>
                     </div>
                 </div>
             </div>
-            <div
-                class="card-body"
-            >
+            <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div v-if="recipe.images && recipe.images.length" class="d-md-flex d-none">
                         <img :src="recipe.images[0].image" class="border p-1 rounded mr-3" width="75" />
@@ -134,10 +132,10 @@
                         <small class="text-muted">
                             <div class="d-md-flex align-items-center">
                                 <div>
-                                    <a href="#" class="text-secondary" @click.prevent>{{recipe.created_by.displayName}}</a>
+                                    <a href="#" class="text-secondary text-nowrap" @click.prevent>{{recipe.created_by.displayName}}</a>
                                 </div>
-                                <div class="d-md-flex d-none mx-1">&middot;</div>
-                                <div class="font-weight-light">{{recipe.created.date_time | moment("from", "now")}}</div>
+                                <!-- <div class="d-md-flex d-none mx-1">&middot;</div>
+                                <div class="font-weight-light">{{recipe.created.date_time | moment("from", "now")}}</div> -->
                             </div>
                         </small>
                     </div>
