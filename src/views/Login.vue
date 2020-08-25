@@ -60,6 +60,11 @@
                         </template>
                     </b-button> -->
                 </form>
+                <div class="mt-3 text-center">
+                  <button type="button" class="btn btn-light border border-dark">
+                    <font-awesome-icon :icon="['fab', 'google']" />
+                  </button>
+                </div>
             </div>
         </div>
     </div>
@@ -70,6 +75,11 @@ import { mapState } from 'vuex'
 
 import firebase from 'firebase/app'
 import 'firebase/auth'
+
+// Font Awesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faGoogle } from '@fortawesome/free-brands-svg-icons'
+library.add(faGoogle)
 
 export default {
     name: 'Login',
