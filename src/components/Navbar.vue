@@ -12,7 +12,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                         <template v-if="currentUser && currentUser.uid">
-                            <li class="nav-item dropdown ml-3">
+                            <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
                                     {{currentUser.displayName}}
                                 </a>
@@ -71,7 +71,7 @@ export default {
             firebase.auth().signOut()
             .then(() => {
                 this.$store.commit('setUser', {})
-                
+
                 this.$router.push({
                     name: 'Login'
                 })

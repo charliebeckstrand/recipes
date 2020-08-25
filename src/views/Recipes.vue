@@ -67,8 +67,8 @@
 <script>
 import { mapState } from 'vuex'
 
-import VueSticky from 'vue-sticky'
 import _ from 'lodash'
+import VueSticky from 'vue-sticky'
 
 import firebase from 'firebase/app'
 import 'firebase/firestore'
@@ -87,7 +87,9 @@ export default {
             currentUser: state => state.user.user
         }),
         filtered_recipes () {
-            return _.filter(this.recipes, recipe => {
+            let recipes = []
+
+            recipes = _.filter(this.recipes, recipe => {
                 let search_match = false
 
                 if (!_.some(this.filters.search)) {
@@ -127,7 +129,11 @@ export default {
                 return search_match && meal_match
             })
 
-            // recipes = _.orderBy(this.recipes, 'name')
+            recipes = recipes.sort((a, b) => {
+                return new Date(b.created.date_time) - new Date(a.created.date_time)
+            })
+
+            return recipes
         }
     },
     directives: {

@@ -40,4 +40,28 @@ a {
     &:focus {
         box-shadow: none;
     }
+    &.is-invalid {
+        &:focus {
+            box-shadow: none;
+        }
+
+        &::-webkit-input-placeholder {
+            color: $danger;
+        }
+
+        &::placeholder {
+            color: $danger;
+            opacity: 1;
+        }
+
+        &:-ms-input-placeholder {
+            color: $danger;
+            opacity: 1;
+        }
+
+        &::-ms-input-placeholder {
+            color: $danger;
+            opacity: 1;
+        }
+    }
 }

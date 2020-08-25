@@ -5,9 +5,6 @@
         >
             <div
                 class="card-header"
-                :class="{
-                    'bg-white border-bottom-0': !recipe.description && !recipe.images,
-                }"
             >
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 mr-3">
@@ -17,7 +14,7 @@
                     </div>
                     <div class="d-flex aling-items-center">
                         <div
-                            v-if="recipe.time.total"
+                            v-if="recipe.time && recipe.time.total"
                             content="Cook Time"
                             v-tippy
                             class="ml-3"
@@ -62,6 +59,9 @@
                     >
                         {{recipe.description}}
                     </div>
+                    <div v-else class="text-warning">
+                        no description
+                    </div>
                     <div
                         class="ml-auto"
                     >
@@ -89,8 +89,7 @@
                                 <a
                                     href="#"
                                     class="ml-3"
-                                    content="Edit"
-                                    v-tippy
+                                    title="Edit"
                                     @click.prevent
                                 >
                                     <font-awesome-icon :icon="['fad', 'edit']" fixed-width />
@@ -98,9 +97,8 @@
                                 <a
                                     href="#"
                                     class="text-danger ml-3"
-                                    content="Delete"
-                                    v-tippy
-                                    @click.prevent
+                                    title="Delete"
+                                    @click.prevent="deleteRecipe(recipe)"
                                 >
                                     <font-awesome-icon :icon="['fad', 'trash']" fixed-width />
                                 </a>
@@ -109,6 +107,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- <pre>{{recipe}}</pre> -->
+
             <div
                 v-if="recipe.images && recipe.images.length"
                 class="d-md-none d-block card-body border-top"
@@ -160,11 +161,9 @@
 <script>
 import { mapState } from 'vuex'
 
-import Vue from 'vue'
+import firebase from 'firebase/app'
 
 import Tag from '@/components/Tag'
-
-Vue.use(require('vue-moment'))
 
 export default {
     name: 'Recipe',
@@ -176,13 +175,43 @@ export default {
             currentUser: state => state.user.user
         }),
         permalink () {
-            let string = this.recipe.name.toLowerCase()
+            let string = ''
+
+            if (this.recipe.name) {
+                string = this.recipe.name.toLowerCase()
+            }
 
             return string.replace(/\s/g, '-');
         }
     },
     props: {
         recipe: Object
+    },
+    methods: {
+        deleteRecipe (recipe) {
+            let message = null
+
+            if (recipe.name) {
+                message = 'Are you sure you want to delete "' + recipe.name + '"?'
+            } else {
+                message = 'Are you sure you want to delete this recipe?'
+            }
+
+            this.$swal({
+                html: message,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                confirmButtonColor: '#E74C3C',
+                cancelButtonText: 'Cancel',
+                cancelButtonColor: '#f8f9fa',
+                buttonsStyling: false,
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    firebase.firestore().collection('recipes').doc(recipe['.key']).delete()
+                }
+            })
+        }
     },
     data: () => ({
 

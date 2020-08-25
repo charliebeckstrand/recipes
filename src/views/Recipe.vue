@@ -27,21 +27,21 @@
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center">
                             <div class="mr-3">
-                                <h1 class="mb-2 font-weight-bold">
+                                <h1 class="mb-0 font-weight-bold">
                                     {{recipe.name}}
                                 </h1>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <div v-if="recipe.description" class="text-muted mr-5">
+                        <div v-if="recipe.description" class="d-flex align-items-center mt-2">
+                            <div class="text-muted mr-5">
                                 <div class="font-weight-light">{{recipe.description}}</div>
                             </div>
                         </div>
                         <div class="d-flex align-items-center mt-3">
-                            <div>
+                            <div v-if="recipe.time || recipe.servings || recipe.tags && recipe.tags.length">
                                 <div class="d-flex align-items-center">
                                     <div
-                                        v-if="recipe.time.total"
+                                        v-if="recipe.time && recipe.time.total"
                                         class="badge text-nowrap"
                                         :class="{
                                             'bg-success': recipe.time.total <= 15,
@@ -122,7 +122,10 @@
                                     />
                                 </div> -->
                             </div>
-                            <div class="d-flex align-items-center ml-auto">
+                            <div
+                                class="d-flex align-items-center"
+                                :class="{'ml-auto': recipe.time || recipe.servings || recipe.tags && recipe.tags.length}"
+                            >
                                 <div>
                                     <a href="#" @click.prevent class="text-danger" content="Favorite" v-tippy>
                                         <font-awesome-icon :icon="['far', 'heart']" fixed-width />
@@ -270,7 +273,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div v-if="recipe.tips && recipe.tips.length" class="col-lg-6 mt-3">
+                        <div v-if="recipe.tips && recipe.tips.length" class="col-lg-6 mt-3">
                             <div class="tips">
                                 <h3 class="mb-3 font-weight-bold text-warning">
                                     <font-awesome-icon :icon="['fad', 'lightbulb']" fixed-width /> Tips
@@ -294,7 +297,10 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
+
+                        <!-- <pre>{{recipe}}</pre> -->
+
                     </div>
                 </div>
             </div>

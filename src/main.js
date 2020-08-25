@@ -28,6 +28,9 @@ Vue.use(VueSweetalert2)
 
 import './assets/css/custom.scss'
 
+import VueMoment from 'vue-moment'
+Vue.use(VueMoment)
+
 Vue.config.productionTip = false
 
 new Vue({

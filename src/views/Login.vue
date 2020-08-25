@@ -36,7 +36,11 @@
                             placeholder="Password"
                         >
                     </div>
-                    <button type="submit" class="btn btn-dark btn-block">
+                    <button
+                        type="submit"
+                        class="btn btn-dark btn-block"
+                        :disabled="logging_in"
+                    >
                         <span v-if="logging_in">
                             <div class="spinner-border spinner-border-sm" role="status">
                                 <span class="sr-only">Loading...</span>
