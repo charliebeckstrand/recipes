@@ -14,3 +14,7 @@ dom.watch() // This will kick of the initial replacement of i to svg tags and co
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('font-awesome-layers', FontAwesomeLayers)
+
+export default {
+
+}

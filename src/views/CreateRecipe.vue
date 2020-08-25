@@ -425,14 +425,7 @@
                         class="btn btn-success"
                         :disabled="creating"
                     >
-                        <div v-if="creating">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                        </div>
-                        <div v-else>
-                            <font-awesome-icon :icon="['far', 'plus']" fixed-width /> Create Recipe
-                        </div>
+                        <font-awesome-icon :icon="['far', 'plus']" fixed-width /> Create Recipe
                     </button>
                     <div class="ml-auto">
                         <a

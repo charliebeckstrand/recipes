@@ -41,14 +41,7 @@
                         class="btn btn-dark btn-block"
                         :disabled="logging_in"
                     >
-                        <span v-if="logging_in">
-                            <div class="spinner-border spinner-border-sm" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                        </span>
-                        <span v-else>
-                            Login
-                        </span>
+                        Login
                     </button>
                     <!-- <b-form-group class="mb-1">
                         <b-form-input type="email" :class="{'is-invalid': invalid_email}" placeholder="Email" v-model="email" @input="invalid_email = false" v-focus="focus_email" @focus="focus_email = true" @blur="focus_email = false"></b-form-input>
