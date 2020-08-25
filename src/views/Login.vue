@@ -39,7 +39,7 @@
                     <button
                         type="submit"
                         class="btn btn-dark btn-block"
-                        :disabled="logging_in"
+                        :disabled="logging_in || !email || !password"
                     >
                         Login
                     </button>
@@ -111,7 +111,11 @@ export default {
                 this.logging_in = false
             })
             .catch(error => {
-                this.error = error
+                this.logging_in = false
+
+                if (error) {
+                    this.error = error
+                }
 
                 if (error.code == "auth/user-not-found") {
                     this.invalid_email = true
@@ -119,14 +123,12 @@ export default {
                 if (error.code == "auth/wrong-password") {
                     this.invalid_password = true
                 }
-
-                this.logging_in = false
             })
         }
     },
     data: () => ({
-        email: null,
-        password: null,
+        email: '',
+        password: '',
 
         invalid_email: false,
         invalid_password: false,
