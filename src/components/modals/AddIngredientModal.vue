@@ -2,14 +2,15 @@
     <div>
         <b-modal
             :visible="value"
-            @cancel="close"
-            @close="close"
-            @shown="shown"
-            @hidden="hidden"
             centered
             no-fade
             :no-close-on-backdrop="has_ingredient"
             :no-close-on-esc="has_ingredient"
+            @shown="shown"
+            @hidden="hidden"
+            @hide="hide"
+            @cancel="hide"
+            @close="hide"
         >
             <template #modal-header>
                 <h5 class="modal-title">Add Ingredient</h5>
@@ -20,7 +21,7 @@
                     href="#"
                     class="modal-close"
                     aria-label="Close"
-                    @click.prevent="close"
+                    @click.prevent="hide"
                 >
                     <font-awesome-layers>
                         <font-awesome-icon icon="circle" class="background" transform="shrink-1" />
@@ -133,13 +134,13 @@ export default {
 
             return valid
         },
-        // modal methods
+        // modal event methods
         shown () {
             if (this.$refs.ingredient) {
                 this.$refs.ingredient.focus()
             }
         },
-        close () {
+        hide () {
             this.$emit('hide')
         },
         hidden () {

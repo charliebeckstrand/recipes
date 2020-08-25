@@ -113,7 +113,10 @@
                             class="d-inline-block"
                             :class="{'ml-1': imageIndex > 0}"
                         >
-                            <a href="#" data-toggle="modal" data-target="#imageModal" @click.prevent="setActiveImage(image.image)">
+                            <a
+                                href="#"
+                                @click.prevent="showImageModal(image.image)"
+                            >
                                 <img :src="image.image" class="border p-1 rounded" width="100" />
                             </a>
                         </div>
@@ -505,44 +508,12 @@
             </section>
         </div>
 
-        <!-- Image Modal -->
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <a href="#" class="modal-close" data-dismiss="modal" aria-label="Close">
-                            <font-awesome-layers>
-                                <font-awesome-icon icon="circle" class="background" transform="shrink-1" />
-                                <font-awesome-icon :icon="['fas', 'times-circle']" class="foreground" />
-                            </font-awesome-layers>
-                        </a>
-                        <div class="mb-3">
-                            <img :src="active_image" class="border rounded p-1" width="100%">
-                        </div>
-
-                        <a
-                            href="#"
-                            v-for="(image, imageIndex) in recipe.images"
-                            :key="imageIndex"
-                            :class="{
-                                'ml-1': imageIndex > 0
-                            }"
-                            @click.prevent="setActiveImage(image.image)"
-                        >
-                            <img
-                                :src="image.image"
-                                class="border rounded p-1"
-                                :class="{
-                                    'border-primary': imageActive(image)
-                                }"
-                                width="100"
-                            >
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <image-modal
+            v-model="image_modal"
+            :image="image"
+            :recipe="recipe"
+            @hide="image_modal = false"
+        />
     </div>
 </template>
 
@@ -556,13 +527,15 @@ import VueSticky from 'vue-sticky'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
+import ImageModal from '@/components/modals/ImageModal'
+
 // import Tag from '@/components/Tag'
 
 export default {
     name: 'Recipe',
     components: {
         // Tag
-
+        ImageModal
     },
     computed: {
 
@@ -572,6 +545,10 @@ export default {
     },
     props: ['recipe_key', 'url'],
     methods: {
+        showImageModal (image) {
+            this.image = image
+            this.image_modal = true
+        },
         toggleItemCheck (item) {
             if (item.checked) {
                 this.$set(item, 'checked', false)
@@ -598,14 +575,6 @@ export default {
         //
         //     return checkable
         // },
-        setActiveImage (image) {
-            this.active_image = image
-        },
-        imageActive (image) {
-            if (image.image == this.active_image) {
-                return true
-            }
-        },
         setRecipeNameHeight () {
             if (
                 this.$refs &&
@@ -617,8 +586,10 @@ export default {
     },
     data: () => ({
         recipe_name_height: null,
-        active_image: null,
-        loading: false
+        image: null,
+
+        loading: false,
+        image_modal: false
     }),
     firestore () {
         return {

@@ -47,9 +47,9 @@
                         test
                     </div> -->
                 </div>
-                <!-- {{$randomColor()}} -->
-                <div
+                <a
                     v-if="recipe.images"
+                    href="#"
                     style="min-width: 150px; background-size: cover;"
                     :style="{
                         backgroundColor: '#f9f9f9',
@@ -57,10 +57,17 @@
                         backgroundImage: recipe.images ? 'url(' + recipe.images[0].image + ')' : ''
                     }"
                     class="rounded-right border-left"
-                >
-                </div>
+                    @click.prevent="showImageModal(recipe.images[0].image)"
+                />
             </div>
         </div>
+
+        <image-modal
+            v-model="image_modal"
+            :image="image"
+            :recipe="recipe"
+            @hide="image_modal = false"
+        />
     </div>
 </template>
 
@@ -71,10 +78,13 @@ import firebase from 'firebase/app'
 
 // import Tag from '@/components/Tag'
 
+import ImageModal from '@/components/modals/ImageModal'
+
 export default {
     name: 'Recipe',
     components: {
         // Tag
+        ImageModal
     },
     computed: {
         ...mapState({
@@ -94,6 +104,10 @@ export default {
         recipe: Object
     },
     methods: {
+        showImageModal (image) {
+            this.image = image
+            this.image_modal = true
+        },
         deleteRecipe (recipe) {
             let message = null
 
@@ -119,7 +133,9 @@ export default {
         }
     },
     data: () => ({
+        image: null,
 
+        image_modal: false
     }),
     mounted () {
 
