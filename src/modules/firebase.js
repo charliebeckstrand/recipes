@@ -17,7 +17,3 @@ let config = {
 }
 
 firebase.initializeApp(config)
-
-export default {
-
-}

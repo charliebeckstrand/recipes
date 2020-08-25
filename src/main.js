@@ -1,68 +1,20 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+import directives from './directives'
+import modules from './modules'
 import router from './router'
 import store from './store'
-import bootstrap from './plugins/bootstrap'
-import firebase from './plugins/firebase'
-import fontawesome from './plugins/fontawesome'
-import lodash from './plugins/lodash'
-import multiselect from './plugins/vue-multiselect'
-
-import VueTippy, { TippyComponent } from 'vue-tippy'
-Vue.use(VueTippy, {
-    animation: 'fade',
-    placement: 'bottom',
-    // arrow: true,
-    arrowType: 'round',
-    flip: true,
-    flipBehavior: ['bottom', 'top'],
-    flipOnUpdate: true,
-    // delay: [250, 0],
-    hideOnClick: false
-})
-Vue.component('tippy', TippyComponent)
-
-import VueSweetalert2 from 'vue-sweetalert2'
-Vue.use(VueSweetalert2)
 
 import './assets/css/custom.scss'
 
-import VueMoment from 'vue-moment'
-Vue.use(VueMoment)
-
-import VueScrollTo from 'vue-scrollto'
-Vue.use(VueScrollTo, {
-     container: 'body',
-     duration: 300,
-     easing: 'ease-out',
-     offset: 0,
-     force: true,
-     cancelable: true,
-     onStart: false,
-     onDone: false,
-     onCancel: false,
-     x: false,
-     y: true
-})
-
-Vue.directive('focus', {
-    inserted (el) {
-        Vue.nextTick(() => {
-            el.focus()
-        })
-    }
-})
-
+Vue.config.devtools = false
 Vue.config.productionTip = false
 
 new Vue({
+    directives,
+    modules,
     router,
     store,
-    bootstrap,
-    firebase,
-    fontawesome,
-    lodash,
-    multiselect,
     render: h => h(App)
 }).$mount('#app')

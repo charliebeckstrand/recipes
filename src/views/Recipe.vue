@@ -9,7 +9,7 @@
         </div>
 
         <div
-            class="container pt-3 pb-5"
+            class="container pt-3 pb-4"
             :class="{'invisible': loading}"
         >
             <nav aria-label="breadcrumb">
@@ -166,13 +166,14 @@
                         class="toggle-icon"
                     >
                         <span class="closed">
-                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
                         </span>
                         <span class="open">
-                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
                         </span>
                     </span>
-                    <a
+                    Ingredients
+                    <!-- <a
                         href="#"
                         v-scroll-to="{
                             el: '#ingredients',
@@ -181,7 +182,7 @@
                         class="text-success"
                     >
                         Ingredients
-                    </a>
+                    </a> -->
                 </h3>
 
                 <div class="collapse show" id="ingredientsCollapse">
@@ -262,13 +263,13 @@
                         class="toggle-icon"
                     >
                         <span class="closed">
-                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
                         </span>
                         <span class="open">
-                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
                         </span>
                     </span>
-                    <a
+                    <!-- <a
                         href="#"
                         v-scroll-to="{
                             el: '#instructions',
@@ -277,7 +278,8 @@
                         class="text-primary"
                     >
                         Instructions
-                    </a>
+                    </a> -->
+                    Instructions
                 </h3>
 
                 <div class="collapse show" id="instructionsCollapse">
@@ -332,13 +334,13 @@
                         class="toggle-icon"
                     >
                         <span class="closed">
-                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
                         </span>
                         <span class="open">
-                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
                         </span>
                     </span>
-                    <a
+                    <!-- <a
                         href="#"
                         v-scroll-to="{
                             el: '#tips',
@@ -347,7 +349,8 @@
                         class="text-warning"
                     >
                         Tips
-                    </a>
+                    </a> -->
+                    Tips
                 </h3>
 
                 <div class="collapse show" id="tipsCollapse">
@@ -389,13 +392,13 @@
                         class="toggle-icon"
                     >
                         <span class="closed">
-                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
                         </span>
                         <span class="open">
-                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
                         </span>
                     </span>
-                    <a
+                    <!-- <a
                         href="#"
                         v-scroll-to="{
                             el: '#nutrition',
@@ -404,7 +407,8 @@
                         class="text-info"
                     >
                         Nutrition
-                    </a>
+                    </a> -->
+                    Nutrition
                 </h3>
 
                 <div class="collapse show" id="nutritionCollapse">
@@ -448,13 +452,13 @@
                         class="toggle-icon"
                     >
                         <span class="closed">
-                            <font-awesome-icon :icon="['fad', 'plus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
                         </span>
                         <span class="open">
-                            <font-awesome-icon :icon="['fad', 'minus']" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
                         </span>
                     </span>
-                    <a
+                    <!-- <a
                         href="#"
                         v-scroll-to="{
                             el: '#notes',
@@ -463,7 +467,8 @@
                         class="text-danger"
                     >
                         Notes
-                    </a>
+                    </a> -->
+                    Notes
                 </h3>
 
                 <div class="collapse show" id="notesCollapse">
@@ -506,10 +511,9 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <a href="#" class="modal-close" data-dismiss="modal" aria-label="Close">
-                            <!-- <font-awesome-icon :icon="['fas', 'times-circle']" /> -->
                             <font-awesome-layers>
-                                <font-awesome-icon icon="circle" class="background" />
-                                <font-awesome-icon :icon="['fas', 'times-circle']" class="foreground" transform="shrink-1" />
+                                <font-awesome-icon icon="circle" class="background" transform="shrink-1" />
+                                <font-awesome-icon :icon="['fas', 'times-circle']" class="foreground" />
                             </font-awesome-layers>
                         </a>
                         <div class="mb-3">
@@ -603,16 +607,11 @@ export default {
             }
         },
         setRecipeNameHeight () {
-            let height = null
-
             if (
                 this.$refs &&
                 this.$refs.recipename
             ) {
-                height = this.$refs.recipename.offsetHeight
-                this.recipe_name_height = height
-
-                console.log(height)
+                this.recipe_name_height =  this.$refs.recipename.offsetHeight
             }
         }
     },
@@ -678,31 +677,6 @@ export default {
             }
             .open {
                 display: none;
-            }
-        }
-    }
-}
-
-.modal {
-    .modal-close {
-        position: absolute;
-        right: -1.125rem;
-        top: -1.125rem;
-        font-size: 2.25rem;
-        line-height: 1;
-        border-radius: 100%;
-        border: 0;
-        .background {
-            color: $white;
-        }
-        .foreground {
-            transition: $transition;
-            color: $danger;
-        }
-        &:focus,
-        &:hover {
-            .foreground {
-                color: darken($danger, 10%);
             }
         }
     }

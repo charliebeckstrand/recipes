@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="container my-3">
+        <div class="container pt-3 pb-4">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
@@ -13,7 +13,7 @@
             </nav>
 
             <form class="create-recipe-form" @submit.prevent="createRecipe">
-                <div class="mb-3">
+                <div>
                     <input
                         ref="name"
                         type="text"
@@ -24,15 +24,16 @@
                         }"
                         placeholder="Recipe Name"
                     >
+
                     <div
                         v-if="validating && !recipe.name"
-                        class="alert alert-danger mt-3 text-danger"
+                        class="text-danger my-3"
                     >
-                        Recipe Name is required
+                        &bull; Recipe Name is required
                     </div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mt-3">
                     <textarea
                         ref="description"
                         v-model="recipe.description"
@@ -45,7 +46,10 @@
                 <section ref="ingredients" tabindex="-1">
                     <div class="mb-3">
                         <div
-                            v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                            v-sticky="{
+                                zIndex: 10,
+                                stickyTop: 0
+                            }"
                             class="p-3 bg-white sticky"
                         >
                             <h3 class="m-0 text-success font-weight-bold">
@@ -54,11 +58,14 @@
                         </div>
 
                         <div class="pl-3 border-left border-success">
-                            <div v-if="recipe.ingredients.length" class="ingredients">
+                            <!-- <div v-if="recipe.ingredients.length" class="ingredients">
                                 <div
                                     v-for="(ingredient, ingredientIndex) in recipe.ingredients"
                                     :key="ingredientIndex"
-                                    :class="{'mt-1': ingredientIndex > 0}"
+                                    :class="{
+                                        'mt-1': ingredientIndex > 0,
+                                        'mt-3': ingredientIndex > 0 && validating
+                                    }"
                                 >
                                     <div class="input-group">
                                         <input
@@ -93,7 +100,7 @@
 
                                     <div
                                         v-if="validating && !ingredient.ingredient || validating && !ingredient.amount || validating && !ingredient.measurement"
-                                        class="alert alert-danger text-danger mt-3"
+                                        class="text-danger mt-3"
                                     >
                                         <ul class="pl-3 mb-0">
                                             <li v-if="validating && !ingredient.ingredient">Ingredient is required</li>
@@ -102,21 +109,24 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
-                        <div v-if="!validating && !recipe.ingredients.length" class="alert border-success text-success mb-0">
+                        <div v-if="!recipe.ingredients.length" class="alert border-success text-success mb-0">
                             0 ingredients added
                         </div>
                         <div
-                            v-else-if="validating && !recipe.ingredients.length"
-                            class="alert alert-danger text-danger mb-0"
+                            v-if="validating && !recipe.ingredients.length"
+                            class="text-danger mt-3"
                         >
-                            At least 1 ingredient is required
+                            &bull; At least 1 ingredient is required
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <button type="button" class="btn btn-sm btn-success" @click.prevent="addIngredient">
+                        <!-- <button type="button" class="btn btn-sm btn-success" @click.prevent="addIngredient">
+                            <font-awesome-icon :icon="['fad', 'plus-square']" fixed-width /> Add Ingredient
+                        </button> -->
+                        <button type="button" class="btn btn-sm btn-success" @click="newIngredient">
                             <font-awesome-icon :icon="['fad', 'plus-square']" fixed-width /> Add Ingredient
                         </button>
                     </div>
@@ -125,7 +135,10 @@
                 <section ref="instructions" tabindex="-1">
                     <div class="mb-3">
                         <div
-                            v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                            v-sticky="{
+                                zIndex: 10,
+                                stickyTop: 0
+                            }"
                             class="p-3 bg-white sticky"
                         >
                             <h3 class="m-0 text-primary font-weight-bold">
@@ -138,12 +151,16 @@
                                 <div
                                     v-for="(instruction, instructionIndex) in recipe.instructions"
                                     :key="instructionIndex"
-                                    :class="{'mt-1': instructionIndex > 0}"
+                                    :class="{
+                                        'mt-1': instructionIndex > 0,
+                                        'mt-3': instructionIndex > 0 && validating
+                                    }"
                                 >
                                     <div class="input-group">
                                         <textarea
                                             v-model="instruction.instruction"
                                             class="form-control"
+                                            :class="{'is-invalid': validating && !instruction.instruction}"
                                             :placeholder="'Step ' + (instructionIndex + 1)"
                                             v-focus
                                         />
@@ -151,24 +168,23 @@
                                             <font-awesome-icon :icon="['far', 'minus']" fixed-width />
                                         </button>
                                     </div>
-
                                     <div
                                         v-if="validating && !instruction.instruction"
-                                        class="alert alert-danger text-danger mt-3"
+                                        class="text-danger mt-3"
                                     >
-                                        Instruction is required
+                                        &bull; Instruction is required
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div v-if="!validating && !recipe.instructions.length" class="alert border-primary text-primary mb-0">
+                        <div v-if="!recipe.instructions.length" class="alert border-primary text-primary mb-0">
                             0 instructions added
                         </div>
                         <div
-                            v-else-if="validating && !recipe.instructions.length"
-                            class="alert alert-danger text-danger mb-0"
+                            v-if="validating && !recipe.instructions.length"
+                            class="text-danger mt-3"
                         >
-                            At least 1 instruction is required
+                            &bull; At least 1 instruction is required
                         </div>
                     </div>
 
@@ -182,7 +198,10 @@
                 <section ref="tips" tabindex="-1">
                     <div class="mb-3">
                         <div
-                            v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                            v-sticky="{
+                                zIndex: 10,
+                                stickyTop: 0
+                            }"
                             class="p-3 bg-white sticky"
                         >
                             <h3 class="m-0 text-warning font-weight-bold">
@@ -195,12 +214,16 @@
                                 <div
                                     v-for="(tip, tipIndex) in recipe.tips"
                                     :key="tipIndex"
-                                    :class="{'mt-1': tipIndex > 0}"
+                                    :class="{
+                                        'mt-1': tipIndex > 0,
+                                        'mt-3': tipIndex > 0 && validating
+                                    }"
                                 >
                                     <div class="input-group">
                                         <textarea
                                             v-model="tip.tip"
                                             class="form-control"
+                                            :class="{'is-invalid': validating && !tip.tip}"
                                             :placeholder="'Tip ' + (tipIndex + 1)"
                                             v-focus
                                          />
@@ -211,9 +234,9 @@
 
                                     <div
                                         v-if="validating && !tip.tip"
-                                        class="alert alert-danger text-danger mt-3"
+                                        class="text-danger mt-3"
                                     >
-                                        Tip is required
+                                        &bull; Tip is required
                                     </div>
                                 </div>
                             </div>
@@ -235,7 +258,10 @@
                 <section ref="nutrition" tabindex="-1">
                     <div class="mb-3">
                         <div
-                            v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                            v-sticky="{
+                                zIndex: 10,
+                                stickyTop: 0
+                            }"
                             class="p-3 bg-white sticky"
                         >
                             <h3 class="m-0 text-info font-weight-bold">
@@ -248,7 +274,10 @@
                                 <div
                                     v-for="(item, nutritionIndex) in recipe.nutrition"
                                     :key="nutritionIndex"
-                                    :class="{'mt-1': nutritionIndex > 0}"
+                                    :class="{
+                                        'mt-1': nutritionIndex > 0,
+                                        'mt-3': nutritionIndex > 0 && validating
+                                    }"
                                 >
                                     <div class="input-group">
                                         <input
@@ -256,6 +285,7 @@
                                             v-model="item.item"
                                             aria-label="Fact"
                                             class="form-control"
+                                            :class="{'is-invalid': validating && !item.item}"
                                             placeholder="Item"
                                             v-focus
                                         >
@@ -264,6 +294,7 @@
                                             v-model="item.amount"
                                             aria-label="Amount"
                                             class="form-control"
+                                            :class="{'is-invalid': validating && !item.amount}"
                                             placeholder="Amount"
                                         >
                                         <input
@@ -271,6 +302,7 @@
                                             v-model="item.measurement"
                                             aria-label="Measurement"
                                             class="form-control"
+                                            :class="{'is-invalid': validating && !item.measurement}"
                                             placeholder="Measurment"
                                         >
                                         <input
@@ -278,6 +310,7 @@
                                             v-model="item.daily_value"
                                             aria-label="% of Daily Value"
                                             class="form-control"
+                                            :class="{'is-invalid': validating && !item.daily_value}"
                                             placeholder="% of Daily Value"
                                         >
                                         <button type="button" class="btn btn-outline-danger" @click.prevent="removeNutrition(nutritionIndex)">
@@ -287,7 +320,7 @@
 
                                     <div
                                         v-if="validating && !item.item || validating && !item.amount || validating && !item.measurement || validating && !item.daily_value"
-                                        class="alert alert-danger text-danger mt-3"
+                                        class="text-danger mt-3"
                                     >
                                         <ul class="pl-3 mb-0">
                                             <li v-if="validating && !item.item">Item is required</li>
@@ -316,7 +349,10 @@
                 <section ref="notes" tabindex="-1">
                     <div class="mb-3">
                         <div
-                            v-sticky="{ zIndex: 10, stickyTop: 0 }"
+                            v-sticky="{
+                                zIndex: 10,
+                                stickyTop: 0
+                            }"
                             class="p-3 bg-white sticky"
                         >
                             <h3 class="m-0 text-danger font-weight-bold">
@@ -329,12 +365,16 @@
                                 <div
                                     v-for="(note, noteIndex) in recipe.notes"
                                     :key="noteIndex"
-                                    :class="{'mt-1': noteIndex > 0}"
+                                    :class="{
+                                        'mt-1': noteIndex > 0,
+                                        'mt-3': noteIndex > 0 && validating
+                                    }"
                                 >
                                     <div class="input-group">
                                         <textarea
                                             v-model="note.note"
                                             class="form-control"
+                                            :class="{'is-invalid': validating && !note.note}"
                                             :placeholder="'Note ' + (noteIndex + 1)"
                                             v-focus
                                         />
@@ -345,9 +385,9 @@
 
                                     <div
                                         v-if="validating && !note.note"
-                                        class="alert alert-danger text-danger mt-3"
+                                        class="text-danger mt-3"
                                     >
-                                        Note is required
+                                        &bull; Note is required
                                     </div>
                                 </div>
                             </div>
@@ -368,7 +408,7 @@
 
                 <div class="mt-5">
                     <div class="row">
-                        <div class="col-lg">
+                        <div class="col-lg mb-lg-0 mb-3">
                             <input
                                 ref="preptime"
                                 type="number"
@@ -377,7 +417,7 @@
                                 placeholder="Prep Time"
                             >
                         </div>
-                        <div class="col-lg">
+                        <div class="col-lg mb-lg-0 mb-3">
                             <input
                                 ref="cooktime"
                                 type="number"
@@ -409,7 +449,7 @@
                     >
                     <div
                         v-if="validating && !recipe.services"
-                        class="alert alert-danger mt-3 text-danger"
+                        class="text-danger mt-3"
                     >
                         Servings is required
                     </div>
@@ -435,22 +475,30 @@
                 </div>
             </form>
         </div>
+
+        <add-ingredient-modal
+            v-model="add_ingredient_modal"
+            @add="addIngredient"
+            @hide="add_ingredient_modal = false"
+        />
+
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 
-import _ from 'lodash'
 import VueSticky from 'vue-sticky'
 
 import firebase from 'firebase/app'
 import moment from 'moment'
 
+import AddIngredientModal from '@/components/modals/AddIngredientModal'
+
 export default {
     name: 'Login',
     components: {
-
+        AddIngredientModal
     },
     computed: {
         ...mapState({
@@ -461,8 +509,13 @@ export default {
         'sticky': VueSticky,
     },
     methods: {
-        addIngredient () {
-            this.recipe.ingredients.push({})
+        newIngredient () {
+            this.add_ingredient_modal = true
+        },
+        addIngredient (ingredient) {
+            this.recipe.ingredients.push(ingredient)
+
+            this.add_ingredient_modal = false
         },
         removeIngredient (index) {
             this.recipe.ingredients.splice(index, 1)
@@ -627,9 +680,12 @@ export default {
             time: {}
         },
 
+        ingredient: {},
         recipe_cache: {},
 
         moment: moment,
+
+        add_ingredient_modal: false,
 
         validating: false,
         creating: false
@@ -678,6 +734,7 @@ export default {
     min-height: auto;
 }
 
+.recipe-name,
 .sticky {
     margin-left: -1rem;
     margin-right: -1rem;

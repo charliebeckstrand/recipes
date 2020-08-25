@@ -4,7 +4,7 @@
             <div class="container">
                 <router-link class="navbar-brand" :to="{path: '/'}">
                     <!-- <img src="@/assets/logo.svg" width="40" /> -->
-                    <img src="https://image.flaticon.com/icons/svg/522/522293.svg" width="40">
+                    <img src="@/assets/logo2.svg" width="40">
                 </router-link>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -58,6 +58,10 @@ import { mapState } from 'vuex'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
+
+import { Dropdown } from 'bootstrap'
+
+Array.from(document.querySelectorAll('.dropdown')).forEach(dropdownNode => new Dropdown(dropdownNode))
 
 export default {
     name: 'Navbar',

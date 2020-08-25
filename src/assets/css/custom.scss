@@ -21,6 +21,7 @@ body {
 	-webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 	scroll-behavior: smooth;
+	font-weight: normal;
 }
 
 a {
@@ -31,4 +32,38 @@ a {
 [v-tippy],
 [data-tippy] {
     cursor: help;
+}
+
+.modal {
+    .modal-close {
+        position: absolute;
+        right: -1.25rem;
+        top: -1.25rem;
+        font-size: 2.5rem;
+        line-height: 1;
+        border-radius: 100%;
+        border: 0;
+        .background {
+            color: $white;
+        }
+        .foreground {
+            transition: $transition;
+            color: $danger;
+        }
+        &:focus,
+        &:hover {
+            .foreground {
+                color: darken($danger, 10%);
+            }
+        }
+    }
+}
+
+.modal {
+	background-color: rgba(0, 0, 0, .5);
+}
+
+.modal-backdrop {
+	// transition: ease .25s;
+	background-color: transparent;
 }

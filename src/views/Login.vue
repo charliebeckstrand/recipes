@@ -5,7 +5,7 @@
                 <div class="d-flex">
                     <div class="mx-auto mb-3">
                         <router-link :to="{path: '/'}" class="text-dark">
-                            <img src="@/assets/logo.svg" width="50">
+                            <img src="@/assets/logo2.svg" width="50">
                         </router-link>
                     </div>
                 </div>
@@ -41,24 +41,8 @@
                         class="btn btn-dark btn-block"
                         :disabled="logging_in || !email || !password"
                     >
-                        Login
+                        <font-awesome-icon :icon="['fad', 'sign-in']" fixed-width /> Login
                     </button>
-                    <!-- <b-form-group class="mb-1">
-                        <b-form-input type="email" :class="{'is-invalid': invalid_email}" placeholder="Email" v-model="email" @input="invalid_email = false" v-focus="focus_email" @focus="focus_email = true" @blur="focus_email = false"></b-form-input>
-                    </b-form-group>
-                    <b-form-group class="mb-1">
-                        <b-form-input type="password" :class="{'is-invalid': invalid_password}" placeholder="Password" v-model="password" @input="invalid_password = false"></b-form-input>
-                    </b-form-group>
-                    <b-button type="submit" :class="{'btn-dark': email && password, 'btn-light': !email || !password}" :disabled="!email || !password || !resolved" block>
-                        <template v-if="resolved">
-                            Login
-                        </template>
-                        <template v-else>
-                            <div class="spinner-border spinner-border-sm" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                        </template>
-                    </b-button> -->
                 </form>
             </div>
         </div>

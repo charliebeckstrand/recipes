@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <div v-if="loading">
-            <div class="container my-3">
+            <div class="container py-3">
                 <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
@@ -24,7 +24,7 @@
                 </div>
             </div> -->
 
-            <div class="container my-3">
+            <div class="container pt-3 pb-4">
                 <div v-if="currentUser && currentUser.uid" class="d-flex mb-3">
                     <div class="ml-auto">
                         <div>
@@ -54,16 +54,14 @@
                     :class="{'mt-3': recipeIndex > 0}"
                 /> -->
 
-                <div class="row">
-                    <div
-                        v-for="(recipe, recipeIndex) in filtered_recipes"
-                        :key="recipeIndex"
-                        class="col-lg-12"
-                    >
-                        <RecipeList
-                            :recipe="recipe"
-                        />
-                    </div>
+                <div
+                    v-for="(recipe, recipeIndex) in filtered_recipes"
+                    :key="recipeIndex"
+                    :class="{'mt-3': recipeIndex > 0}"
+                >
+                    <RecipeList
+                        :recipe="recipe"
+                    />
                 </div>
 
                 <div v-if="!filtered_recipes.length">
@@ -79,7 +77,6 @@
 <script>
 import { mapState } from 'vuex'
 
-import _ from 'lodash'
 import VueSticky from 'vue-sticky'
 
 import firebase from 'firebase/app'
