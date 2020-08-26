@@ -35,14 +35,13 @@
                     <div class="ml-auto user-select-none">
                         <a
                             href="#"
-                            content="Copy to Clipboard"
-                            v-tippy
+                            title="Copy to Clipboard"
                             :class="{'text-success disabled': copying_to_clipboard}"
                             @click.prevent="copyToClipboard"
                             :disabled="copying_to_clipboard"
                         >
-                            <div v-if="copying_to_clipboard">
-                                <font-awesome-icon :icon="['fad', 'check']" fixed-width />
+                            <div v-if="copying_to_clipboard" class="text-nowrap">
+                                <font-awesome-icon :icon="['fas', 'check']" fixed-width /> copied
                             </div>
                             <div v-else>
                                 <font-awesome-icon :icon="['fad', 'clipboard']" fixed-width />
@@ -98,6 +97,15 @@ export default {
             copy(this.permalink, {
                 asHtml: false
             })
+
+            // this.$swal({
+            //     toast: true,
+            //     icon: 'success',
+            //     html: 'Copied to clipboard',
+            //     position: 'top-end',
+            //     showConfirmButton: false,
+            //     timer: 3000,
+            // })
 
             this.copying_to_clipboard = true
 

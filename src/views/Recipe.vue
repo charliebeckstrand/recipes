@@ -1,11 +1,16 @@
 <template>
     <div class="recipe">
         <div v-if="loading">
-            <!-- <font-awesome-icon :icon="['fal', 'spinner-third']" size="2x" spin fixed-width /> -->
-            <content-placeholders :rounded="true">
+            <font-awesome-icon
+                :icon="['fal', 'spinner-third']"
+                size="2x"
+                spin
+                fixed-width
+            />
+            <!-- <content-placeholders :rounded="true">
                 <content-placeholders-heading :img="false" />
                 <content-placeholders-text :lines="3" />
-            </content-placeholders>
+            </content-placeholders> -->
         </div>
 
         <div :class="{'invisible': loading}">
@@ -40,24 +45,13 @@
                     <div class="d-flex align-items-center mt-3">
                         <div class="d-flex align-items-center">
                             <div>
-                                <a
-                                    href="#"
-                                    class="text-pink"
-                                    title="Favorite"
-                                    @click.prevent
-                                >
-                                    <font-awesome-icon :icon="['far', 'heart']" fixed-width />
-                                </a>
+                                <favorite-recipe-icon :recipe_key="recipe['.key']" />
                             </div>
                             <div class="ml-2">
-                                <a
-                                    href="#"
-                                    class="text-info"
-                                    title="Share"
-                                    @click.prevent="shareRecipe"
-                                >
-                                    <font-awesome-icon :icon="['fad', 'share-alt']" fixed-width />
-                                </a>
+                                <share-recipe-icon
+                                    :recipe_key="recipe['.key']"
+                                    :parsed_name="url"
+                                />
                             </div>
                         </div>
                         <!-- <div class="d-flex align-items-center ml-auto">
@@ -424,12 +418,6 @@
             </section>
         </div>
 
-        <share-recipe-modal
-            v-model="share_recipe_modal"
-            :permalink="permalink"
-            @hide="share_recipe_modal = false"
-        />
-
         <image-modal
             v-model="image_modal"
             :image="image"
@@ -444,7 +432,8 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
-import ShareRecipeModal from '@/components/modals/ShareRecipeModal'
+import FavoriteRecipeIcon from '@/components/FavoriteRecipeIcon'
+import ShareRecipeIcon from '@/components/ShareRecipeIcon'
 import ImageModal from '@/components/modals/ImageModal'
 
 // import Tag from '@/components/Tag'
@@ -453,29 +442,15 @@ export default {
     name: 'Recipe',
     components: {
         // Tag
-        ShareRecipeModal,
+        FavoriteRecipeIcon,
+        ShareRecipeIcon,
         ImageModal
     },
     computed: {
-        permalink () {
-            let permalink = null
 
-            if (
-                this.url &&
-                this.recipe_key &&
-                process.env.VUE_APP_API_URL
-            ) {
-                permalink = process.env.VUE_APP_API_URL + '/recipes/' + this.recipe_key + '/' + this.url
-            }
-
-            return permalink
-        }
     },
     props: ['recipe_key', 'url'],
     methods: {
-        shareRecipe () {
-            this.share_recipe_modal = true
-        },
         showImageModal (image) {
             this.image = image
             this.image_modal = true
@@ -516,35 +491,59 @@ export default {
         }
     },
     data: () => ({
+        recipe: {},
+
         recipe_name_height: null,
         image: null,
 
-        loading: true,
-        share_recipe_modal: false,
-        image_modal: false
+        image_modal: false,
+
+        loading: false
     }),
     firestore () {
         return {
-            recipe: {
-                ref: firebase.firestore().collection('recipes').doc(this.recipe_key),
-                resolve: (response) => {
-                    if (response) {
-                        this.loading = false
-
-                        this.setRecipeNameHeight()
-                    }
-                },
-                reject: (error) => {
-                    this.loading = false
-
-                    if (error) {
-                        console.log(error)
-                    }
-                }
-            }
+            // recipe: {
+            //     ref: firebase.firestore().collection('recipes').doc(this.recipe_key),
+            //     resolve: (response) => {
+            //         if (response) {
+            //             this.loading = false
+            //
+            //             this.setRecipeNameHeight()
+            //         }
+            //     },
+            //     reject: (error) => {
+            //         this.loading = false
+            //
+            //         if (error) {
+            //             console.log(error)
+            //         }
+            //     }
+            // }
         }
     },
-    mounted () {
+    created () {
+        this.loading = true
+
+        this.$binding(
+            'recipes', firebase.firestore()
+            .collection('recipes')
+            .doc(this.recipe_key)
+        )
+        .then(recipe => {
+            if (recipe) {
+                this.recipe = recipe
+                this.setRecipeNameHeight()
+            }
+
+            this.loading = false
+
+            this.$binding(
+                'recipes', firebase.firestore()
+                .collection('recipes')
+                .orderBy('created.date')
+            )
+        })
+
         window.addEventListener('resize', this.setRecipeNameHeight)
     }
 }

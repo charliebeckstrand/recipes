@@ -7,15 +7,24 @@
             }"
             class="bg-white py-3 sticky-title"
         >
-            <h1
-                class="font-weight-bold"
-            >
-                Recipes
-            </h1>
+            <div class="d-flex align-items-center">
+                <div>
+                    <h1
+                        class="font-weight-bold mb-0"
+                    >
+                        Recipes
+                    </h1>
+                </div>
+                <!-- <div class="ml-auto">
+                    <a href="#" class="h1 m-0 text-secondary" @click.prevent>
+                        <font-awesome-icon :icon="['fad', 'search']" />
+                    </a>
+                </div> -->
+            </div>
         </div>
 
         <div v-if="loading">
-            <div
+            <!-- <div
                 v-for="(item, itemIndex) in 3"
                 :key="itemIndex"
                 class="card recipe-placeholder"
@@ -42,7 +51,13 @@
                         </content-placeholders>
                     </div>
                 </div>
-            </div>
+            </div> -->
+            <font-awesome-icon
+                :icon="['fal', 'spinner-third']"
+                size="2x"
+                spin
+                fixed-width
+            />
         </div>
         <div v-else>
             <!-- <div class="mb-3">
@@ -83,15 +98,22 @@
                 </div>
             </div>
 
+            <!-- <nav class="mt-3" aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav> -->
+
         </div>
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-
-import firebase from 'firebase/app'
-import 'firebase/firestore'
+import { db } from '@/db'
 
 import meals from '@/common/meals'
 
@@ -104,49 +126,69 @@ export default {
     },
     computed: {
         ...mapState({
-            currentUser: state => state.user.user
+            currentUser: state => state.user.user,
+            // recipes: state => state.recipes.recipes
         }),
-        filtered_recipes () {
-            let recipes = []
+        // filtered_recipes () {
+        //     let recipes = []
+        //
+        //     recipes = _.filter(this.recipes, recipe => {
+        //         let search_match = false
+        //
+        //         if (!_.some(this.filters.search)) {
+        //             search_match = true
+        //         } else if (
+        //             this.filters.search &&
+        //             recipe.name &&
+        //             recipe.name.toLowerCase().indexOf(this.filters.search) > -1
+        //         ) {
+        //             search_match = true
+        //         }
+        //
+        //         let meal_match = false
+        //
+        //         if (!_.some(this.filters.meals)) {
+        //             meal_match = true
+        //         } else if (
+        //             this.filters.meals &&
+        //             this.filters.meals.length
+        //         ) {
+        //             _.forEach(this.filters.meals, meal => {
+        //                 _.forEach(recipe.tags, tag => {
+        //                     if (tag.tag == meal.value) {
+        //                         meal_match = true
+        //                     }
+        //                 })
+        //             })
+        //         }
+        //
+        //         return search_match && meal_match
+        //     })
+        //
+        //     recipes = recipes.sort((a, b) => {
+        //         return new Date(b.created.date_time) - new Date(a.created.date_time)
+        //     })
+        //
+        //     return recipes
+        // }
+    },
+    methods: {
+        getRecipes () {
+            this.$binding(
+                'recipes', db
+                .collection('recipes')
+                .orderBy('created.date', 'desc')
+            )
+            .then((recipes) => {
+                this.recipes = recipes
 
-            recipes = _.filter(this.recipes, recipe => {
-                let search_match = false
-
-                if (!_.some(this.filters.search)) {
-                    search_match = true
-                } else if (
-                    this.filters.search &&
-                    recipe.name &&
-                    recipe.name.toLowerCase().indexOf(this.filters.search) > -1
-                ) {
-                    search_match = true
-                }
-
-                let meal_match = false
-
-                if (!_.some(this.filters.meals)) {
-                    meal_match = true
-                } else if (
-                    this.filters.meals &&
-                    this.filters.meals.length
-                ) {
-                    _.forEach(this.filters.meals, meal => {
-                        _.forEach(recipe.tags, tag => {
-                            if (tag.tag == meal.value) {
-                                meal_match = true
-                            }
-                        })
-                    })
-                }
-
-                return search_match && meal_match
+                this.loading = false
             })
 
-            recipes = recipes.sort((a, b) => {
-                return new Date(b.created.date_time) - new Date(a.created.date_time)
-            })
-
-            return recipes
+            // this.$store.dispatch('getRecipes')
+            // .then(() => {
+            //      this.loading = false
+            // })
         }
     },
     data: () => ({
@@ -154,26 +196,12 @@ export default {
 
         filters: {},
 
-        loading: true
+        loading: false
     }),
-    firestore () {
-        return {
-            recipes: {
-                ref: firebase.firestore().collection('recipes'),
-                resolve: (response) => {
-                    if (response) {
-                        this.loading = false
-                    }
-                },
-                reject: (error) => {
-                    this.loading = false
+    created () {
+        this.loading = true
 
-                    if (error) {
-                        console.log(error)
-                    }
-                }
-            }
-        }
+        this.getRecipes()
     }
 }
 </script>

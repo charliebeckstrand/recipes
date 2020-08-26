@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+import db from './db'
 import directives from './directives'
 import modules from './modules'
 import router from './router'
@@ -12,6 +13,7 @@ Vue.config.devtools = false
 Vue.config.productionTip = false
 
 new Vue({
+    db,
     directives,
     modules,
     router,

@@ -19,38 +19,44 @@ a {
 	        border-color: $primary;
 	    }
 	}
+	&.text-secondary {
+		&:active,
+		&:hover {
+			color: darken($muted, 10%) !important;
+		}
+	}
 	&.text-success {
-		&:focus,
+		&:active,
 		&:hover {
 			color: darken($success, 10%) !important;
 		}
 	}
 	&.text-primary {
-		&:focus,
+		&:active,
 		&:hover {
 			color: darken($primary, 10%) !important;
 		}
 	}
 	&.text-warning {
-		&:focus,
+		&:active,
 		&:hover {
 			color: darken($warning, 10%) !important;
 		}
 	}
 	&.text-danger {
-		&:focus,
+		&:active,
 		&:hover {
 			color: darken($danger, 10%) !important;
 		}
 	}
 	&.text-info {
-		&:focus,
+		&:active,
 		&:hover {
 			color: darken($info, 10%) !important;
 		}
 	}
 	&.text-pink {
-		&:focus,
+		&:active,
 		&:hover {
 			color: darken($pink, 10%);
 		}
@@ -90,9 +96,14 @@ a {
     }
 }
 
-// .modal {
-// 	background-color: rgba(0, 0, 0, .5);
-// }
+.dropdown-toggle::after {
+	display: none;
+}
+
+.dropdown-item:active {
+	background-color: #f8f9fa;
+	color: inherit;
+}
 
 .modal-backdrop {
 	background-color: rgba(0, 0, 0, .5);

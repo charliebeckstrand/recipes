@@ -20,7 +20,7 @@
                 </b-navbar-toggle>
 
                 <b-collapse id="nav-collapse" is-nav>
-                    <b-navbar-nav class="my-2 align-items-lg-center ml-auto">
+                    <b-navbar-nav class="my-lg-0 my-3 align-items-lg-center ml-auto">
                         <!-- <b-nav-item :to="{name: 'Recipes'}">
                             Recipes
                         </b-nav-item> -->
@@ -114,15 +114,6 @@ export default {
 </script>
 
 <style lang="scss">
-.navbar {
-    .dropdown-toggle::after {
-        display: none;
-    }
-    .dropdown-item:active {
-        background-color: #f8f9fa;
-        color: inherit;
-    }
-}
 </style>
 
 <style lang="scss" scoped>
