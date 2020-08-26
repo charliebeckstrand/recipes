@@ -1,102 +1,12 @@
 @import 'colors';
 @import 'variables';
+@import 'fonts';
 
 @import '~bootstrap/scss/bootstrap';
 @import '~sweetalert2/dist/sweetalert2.min.css';
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+@import 'styles';
 
 @import 'bootstrap-overrides';
 @import 'sweetalert-overrides';
 @import 'vue-multiselect-overrides';
-
-html,
-body,
-#app {
-	height: 100%;
-}
-
-body {
-	font-family: 'Poppins', sans-serif;
-	-webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-	scroll-behavior: smooth;
-	font-weight: normal;
-}
-
-a {
-	text-decoration: none;
-	transition: $transition;&.text-success {
-		&:focus,
-		&:hover {
-			color: darken($success, 10%) !important;
-		}
-	}
-	&.text-primary {
-		&:focus,
-		&:hover {
-			color: darken($primary, 10%) !important;
-		}
-	}
-	&.text-warning {
-		&:focus,
-		&:hover {
-			color: darken($warning, 10%) !important;
-		}
-	}
-	&.text-danger {
-		&:focus,
-		&:hover {
-			color: darken($danger, 10%) !important;
-		}
-	}
-	&.text-info {
-		&:focus,
-		&:hover {
-			color: darken($info, 10%) !important;
-		}
-	}
-	&.text-pink {
-		&:focus,
-		&:hover {
-			color: darken($pink, 10%);
-		}
-	}
-}
-
-.text-pink {
-	color: $pink;
-}
-
-.modal {
-    .modal-close {
-        position: absolute;
-        right: -1.25rem;
-        top: -1.25rem;
-        font-size: 2.5rem;
-        line-height: 1;
-        border-radius: 100%;
-        border: 0;
-        .background {
-            color: $white;
-        }
-        .foreground {
-            transition: $transition;
-            color: $danger;
-        }
-        &:focus,
-        &:hover {
-            .foreground {
-                color: darken($danger, 10%);
-            }
-        }
-    }
-}
-
-// .modal {
-// 	background-color: rgba(0, 0, 0, .5);
-// }
-
-.modal-backdrop {
-	background-color: rgba(0, 0, 0, .5);
-}

@@ -84,10 +84,11 @@ const router = new VueRouter({
         if (savedPosition) {
             return savedPosition
         } else {
-            return {
-                x: 0,
-                y: 0
-            }
+            // return {
+            //     x: 0,
+            //     y: 0
+            // }
+            window.scrollTo(0, 0)
         }
     }
 })

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-navbar toggleable="lg" type="light" variant="light" class="botder-bottom">
+        <b-navbar toggleable="lg" type="light" variant="light">
             <b-container>
                 <b-navbar-brand
                     :to="{
@@ -10,18 +10,39 @@
                     <img src="@/assets/logo2.svg" width="40">
                 </b-navbar-brand>
 
-                <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+                <b-navbar-toggle target="nav-collapse" class="p-0">
+                    <div class="open">
+                        <font-awesome-icon :icon="['far', 'bars']" size="lg" fixed-width />
+                    </div>
+                    <div class="closed">
+                        <font-awesome-icon :icon="['fal', 'bars']" size="lg" fixed-width />
+                    </div>
+                </b-navbar-toggle>
 
                 <b-collapse id="nav-collapse" is-nav>
-                    <b-navbar-nav class="ml-auto">
-                        <b-nav-item :to="{name: 'Recipes'}">
+                    <b-navbar-nav class="my-2 align-items-lg-center ml-auto">
+                        <!-- <b-nav-item :to="{name: 'Recipes'}">
                             Recipes
-                        </b-nav-item>
+                        </b-nav-item> -->
                         <template v-if="currentUser && currentUser.uid">
-                            <b-nav-item-dropdown right>
+                            <b-nav-item-dropdown class="ml-lg-1 ml-0" right>
                                 <template v-slot:button-content>
-                                    {{currentUser.displayName}}
+                                    <!-- <font-awesome-icon :icon="['fad', 'user-circle']" fixed-width /> -->
+                                    <div class="d-flex align-items-center">
+                                        <div class="d-lg-inline-flex d-none mr-2">
+                                            <v-gravatar :email="currentUser.email" width="30" class="rounded-circle" />
+                                        </div>
+                                        <div class="d-lg-none d-inline-flex mr-2">
+                                            {{currentUser.displayName}}
+                                        </div>
+                                        <div>
+                                            <font-awesome-icon :icon="['fas', 'caret-down']" />
+                                        </div>
+                                    </div>
                                 </template>
+                                <b-dropdown-header class="d-lg-block d-none">
+                                    {{currentUser.displayName}}
+                                </b-dropdown-header>
                                 <b-dropdown-item
                                     :to="{
                                         name: 'Dashboard'
@@ -43,7 +64,7 @@
                         </template>
                         <template v-else>
                             <b-nav-item :to="{name: 'Login'}">
-                                Login
+                                <font-awesome-icon :icon="['fad', 'sign-in']" fixed-width /> Login
                             </b-nav-item>
                         </template>
                     </b-navbar-nav>
@@ -92,6 +113,18 @@ export default {
 }
 </script>
 
+<style lang="scss">
+.navbar {
+    .dropdown-toggle::after {
+        display: none;
+    }
+    .dropdown-item:active {
+        background-color: #f8f9fa;
+        color: inherit;
+    }
+}
+</style>
+
 <style lang="scss" scoped>
 @import '@/assets/css/_colors';
 @import '@/assets/css/_variables';
@@ -106,6 +139,29 @@ export default {
 
     .nav-link {
         // text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    .navbar-toggler {
+        .open {
+            display: none;
+        }
+        .closed {
+            display: block;
+        }
+        &.not-collapsed {
+            .open {
+                display: block;
+            }
+            .closed {
+                display: none;
+            }
+        }
+        border-color: transparent;
+        &:focus {
+            box-shadow: none;
+            // outline: 5px auto -webkit-focus-ring-color;
+        }
     }
 }
 </style>

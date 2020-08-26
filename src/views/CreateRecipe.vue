@@ -1,16 +1,5 @@
 <template>
     <div class="create-recipe">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <router-link :to="{path: '/'}">Recipes</router-link>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Create Recipe
-                </li>
-            </ol>
-        </nav>
-
         <form class="create-recipe-form" @submit.prevent="createRecipe">
             <div>
                 <input
@@ -485,8 +474,6 @@
 <script>
 import { mapState } from 'vuex'
 
-import VueSticky from 'vue-sticky'
-
 import firebase from 'firebase/app'
 import moment from 'moment'
 
@@ -501,9 +488,6 @@ export default {
         ...mapState({
             currentUser: state => state.user.user
         }),
-    },
-    directives: {
-        'sticky': VueSticky,
     },
     methods: {
         newIngredient () {

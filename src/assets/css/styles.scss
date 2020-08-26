@@ -1,0 +1,113 @@
+html,
+body {
+	height: 100%;
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+	-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+	scroll-behavior: smooth;
+	font-weight: normal;
+}
+
+a {
+	text-decoration: none;
+	transition: $transition;
+	&.img-thumbnail {
+	    &:hover {
+	        border-color: $primary;
+	    }
+	}
+	&.text-success {
+		&:focus,
+		&:hover {
+			color: darken($success, 10%) !important;
+		}
+	}
+	&.text-primary {
+		&:focus,
+		&:hover {
+			color: darken($primary, 10%) !important;
+		}
+	}
+	&.text-warning {
+		&:focus,
+		&:hover {
+			color: darken($warning, 10%) !important;
+		}
+	}
+	&.text-danger {
+		&:focus,
+		&:hover {
+			color: darken($danger, 10%) !important;
+		}
+	}
+	&.text-info {
+		&:focus,
+		&:hover {
+			color: darken($info, 10%) !important;
+		}
+	}
+	&.text-pink {
+		&:focus,
+		&:hover {
+			color: darken($pink, 10%);
+		}
+	}
+}
+
+:focus {
+	outline: none;
+}
+
+.text-pink {
+	color: $pink;
+}
+
+.modal {
+    .modal-close {
+        position: absolute;
+        right: -1.25rem;
+        top: -1.25rem;
+        font-size: 2.5rem;
+        line-height: 1;
+        border-radius: 100%;
+        border: 0;
+        .background {
+            color: $white;
+        }
+        .foreground {
+            transition: $transition;
+            color: $danger;
+        }
+        &:focus,
+        &:hover {
+            .foreground {
+                color: darken($danger, 10%);
+            }
+        }
+    }
+}
+
+// .modal {
+// 	background-color: rgba(0, 0, 0, .5);
+// }
+
+.modal-backdrop {
+	background-color: rgba(0, 0, 0, .5);
+}
+
+.vue-content-placeholders + .vue-content-placeholders {
+	margin-top: 1rem;
+}
+
+.vue-content-placeholders-text__line {
+	&:last-child {
+		margin: 0;
+	}
+}
+
+.sticky-title {
+	margin-top: -1rem;
+}

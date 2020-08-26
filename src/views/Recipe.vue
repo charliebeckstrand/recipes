@@ -1,31 +1,30 @@
 <template>
     <div class="recipe">
         <div v-if="loading">
-            <font-awesome-icon :icon="['fal', 'spinner-third']" size="2x" spin fixed-width />
+            <!-- <font-awesome-icon :icon="['fal', 'spinner-third']" size="2x" spin fixed-width /> -->
+            <content-placeholders :rounded="true">
+                <content-placeholders-heading :img="false" />
+                <content-placeholders-text :lines="3" />
+            </content-placeholders>
         </div>
 
         <div :class="{'invisible': loading}">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item">
-                        <router-link :to="{name: 'Recipes'}">Recipes</router-link>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        {{recipe.name}}
-                    </li>
-                </ol>
-            </nav>
-
             <div
                 ref="recipename"
                 v-sticky="{
                     zIndex: 11,
                     stickyTop: 0
                 }"
-                class="p-3 bg-white d-flex align-items-center recipe-name"
+                class="d-flex align-items-center bg-white py-3 sticky-title"
             >
                 <div class="mr-3">
-                    <h1 class="mb-0 font-weight-bold">
+                    <h1 class="font-weight-bold mb-0">
+                        <!-- <a
+                            v-if=""
+                            href="#"
+                        >
+                            <font-awesome-icon :icon="['fad', 'arrow-left']" />
+                        </a> -->
                         {{recipe.name}}
                     </h1>
                 </div>
@@ -41,17 +40,21 @@
                     <div class="d-flex align-items-center mt-3">
                         <div class="d-flex align-items-center">
                             <div>
-                                <a href="#" @click.prevent class="text-pink" content="Favorite" v-tippy>
+                                <a
+                                    href="#"
+                                    class="text-pink"
+                                    title="Favorite"
+                                    @click.prevent
+                                >
                                     <font-awesome-icon :icon="['far', 'heart']" fixed-width />
                                 </a>
                             </div>
                             <div class="ml-2">
                                 <a
                                     href="#"
-                                    content="Share"
-                                    v-tippy
                                     class="text-info"
-                                    @click.prevent
+                                    title="Share"
+                                    @click.prevent="shareRecipe"
                                 >
                                     <font-awesome-icon :icon="['fad', 'share-alt']" fixed-width />
                                 </a>
@@ -102,12 +105,12 @@
                     <div v-if="recipe.thumbnail" class="mr-1">
                         <a
                             href="#"
-                            @click.prevent="showImageModal(recipe.thumbnail)"
-                            class="d-inline-block image border rounded p-1"
+                            class="d-inline-block img-thumbnail p-1"
                             style="width: 100px; height: 100px; background-size: cover; background-position: center;"
                             :style="{
                                 backgroundImage: recipe.thumbnail ? 'url(' + recipe.thumbnail + ')' : ''
                             }"
+                            @click.prevent="showImageModal(recipe.thumbnail)"
                         />
                     </div>
                     <div v-if="recipe.images && recipe.images.length" class="flex-grow-1 images">
@@ -117,20 +120,14 @@
                             class="d-inline-block"
                             :class="{'ml-1': imageIndex > 0}"
                         >
-                            <!-- <a
-                                href="#"
-                                @click.prevent="showImageModal(image.image)"
-                            >
-                                <img :src="image.image" class="border p-1 rounded" width="100" height="100" />
-                            </a> -->
                             <a
                                 href="#"
-                                @click.prevent="showImageModal(image.image)"
-                                class="d-inline-block image border rounded p-1"
+                                class="d-inline-block img-thumbnail"
                                 style="width: 100px; height: 100px; background-size: cover; background-position: center;"
                                 :style="{
                                     backgroundImage: image.image ? 'url(' + image.image + ')' : ''
                                 }"
+                                @click.prevent="showImageModal(image.image)"
                             />
                         </div>
                     </div>
@@ -174,34 +171,16 @@
                         zIndex: 10,
                         stickyTop: recipe_name_height
                     }"
-                    class="p-3 bg-white font-weight-bold text-success user-select-none section-title"
+                    class="py-3 bg-white font-weight-bold text-success user-select-none section-title"
+                    v-b-toggle.ingredientsCollapse
+                    tabindex="-1"
                 >
-                    <span
-                        data-toggle="collapse"
-                        href="#ingredientsCollapse"
-                        class="toggle-icon"
-                    >
-                        <span class="closed">
-                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
-                        </span>
-                        <span class="open">
-                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
-                        </span>
-                    </span>
+                    <font-awesome-icon :icon="['fas', 'caret-right']" class="closed" fixed-width />
+                    <font-awesome-icon :icon="['fas', 'caret-down']" class="open" fixed-width />
                     Ingredients
-                    <!-- <a
-                        href="#"
-                        v-scroll-to="{
-                            el: '#ingredients',
-                            offset: - recipe_name_height
-                        }"
-                        class="text-success"
-                    >
-                        Ingredients
-                    </a> -->
                 </h3>
 
-                <div class="collapse show" id="ingredientsCollapse">
+                <b-collapse id="ingredientsCollapse" visible>
                     <div class="ingredients">
                         <div
                             v-for="(ingredient, ingredientIndex) in recipe.ingredients"
@@ -262,7 +241,7 @@
                             </div> -->
                         </div>
                     </div>
-                </div>
+                </b-collapse>
             </section>
 
             <section id="instructions" ref="instructions">
@@ -271,34 +250,15 @@
                         zIndex: 10,
                         stickyTop: recipe_name_height
                     }"
-                    class="p-3 bg-white font-weight-bold text-primary user-select-none section-title"
+                    class="py-3 bg-white font-weight-bold text-primary user-select-none section-title"
+                    v-b-toggle.instructionsCollapse
                 >
-                    <span
-                        data-toggle="collapse"
-                        href="#instructionsCollapse"
-                        class="toggle-icon"
-                    >
-                        <span class="closed">
-                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
-                        </span>
-                        <span class="open">
-                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
-                        </span>
-                    </span>
-                    <!-- <a
-                        href="#"
-                        v-scroll-to="{
-                            el: '#instructions',
-                            offset: - recipe_name_height
-                        }"
-                        class="text-primary"
-                    >
-                        Instructions
-                    </a> -->
+                    <font-awesome-icon :icon="['fas', 'caret-right']" class="closed" fixed-width />
+                    <font-awesome-icon :icon="['fas', 'caret-down']" class="open" fixed-width />
                     Instructions
                 </h3>
 
-                <div class="collapse show" id="instructionsCollapse">
+                <b-collapse id="instructionsCollapse" visible>
                     <div class="instructions">
                         <div
                             v-for="(instruction, instructionIndex) in recipe.instructions"
@@ -333,7 +293,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </b-collapse>
             </section>
 
             <section v-if="recipe.tips && recipe.tips.length" id="tips" ref="tips">
@@ -342,34 +302,15 @@
                         zIndex: 10,
                         stickyTop: recipe_name_height
                     }"
-                    class="p-3 bg-white font-weight-bold text-warning user-select-none section-title"
+                    class="py-3 bg-white font-weight-bold text-warning user-select-none section-title"
+                    v-b-toggle.tipsCollapse
                 >
-                    <span
-                        data-toggle="collapse"
-                        href="#tipsCollapse"
-                        class="toggle-icon"
-                    >
-                        <span class="closed">
-                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
-                        </span>
-                        <span class="open">
-                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
-                        </span>
-                    </span>
-                    <!-- <a
-                        href="#"
-                        v-scroll-to="{
-                            el: '#tips',
-                            offset: - recipe_name_height
-                        }"
-                        class="text-warning"
-                    >
-                        Tips
-                    </a> -->
+                    <font-awesome-icon :icon="['fas', 'caret-right']" class="closed" fixed-width />
+                    <font-awesome-icon :icon="['fas', 'caret-down']" class="open" fixed-width />
                     Tips
                 </h3>
 
-                <div class="collapse show" id="tipsCollapse">
+                <b-collapse id="tipsCollapse" visible>
                     <div class="tips">
                         <div
                             v-for="(tip, tipIndex) in recipe.tips"
@@ -391,7 +332,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </b-collapse>
             </section>
 
             <section v-if="recipe.nutrition && recipe.nutrition.length" id="nutrition" ref="nutrition">
@@ -400,34 +341,15 @@
                         zIndex: 10,
                         stickyTop: recipe_name_height
                     }"
-                    class="p-3 bg-white font-weight-bold text-info user-select-none section-title"
+                    class="py-3 bg-white font-weight-bold text-info user-select-none section-title"
+                    v-b-toggle.nutritionCollapse
                 >
-                    <span
-                        data-toggle="collapse"
-                        href="#nutritionCollapse"
-                        class="toggle-icon"
-                    >
-                        <span class="closed">
-                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
-                        </span>
-                        <span class="open">
-                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
-                        </span>
-                    </span>
-                    <!-- <a
-                        href="#"
-                        v-scroll-to="{
-                            el: '#nutrition',
-                            offset: - recipe_name_height
-                        }"
-                        class="text-info"
-                    >
-                        Nutrition
-                    </a> -->
+                    <font-awesome-icon :icon="['fas', 'caret-right']" class="closed" fixed-width />
+                    <font-awesome-icon :icon="['fas', 'caret-down']" class="open" fixed-width />
                     Nutrition
                 </h3>
 
-                <div class="collapse show" id="nutritionCollapse">
+                <b-collapse id="nutritionCollapse" visible>
                     <div class="nutritions">
                         <div
                             v-for="(item, nutritionIndex) in recipe.nutrition"
@@ -451,7 +373,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </b-collapse>
             </section>
 
             <section v-if="recipe.notes && recipe.notes.length" id="notes" ref="notes">
@@ -460,34 +382,15 @@
                         zIndex: 10,
                         stickyTop: recipe_name_height
                     }"
-                    class="p-3 bg-white font-weight-bold text-danger user-select-none section-title"
+                    class="py-3 bg-white font-weight-bold text-danger user-select-none section-title"
+                    v-b-toggle.notesCollapse
                 >
-                    <span
-                        data-toggle="collapse"
-                        href="#notesCollapse"
-                        class="toggle-icon"
-                    >
-                        <span class="closed">
-                            <font-awesome-icon :icon="['fas', 'caret-right']" fixed-width />
-                        </span>
-                        <span class="open">
-                            <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
-                        </span>
-                    </span>
-                    <!-- <a
-                        href="#"
-                        v-scroll-to="{
-                            el: '#notes',
-                            offset: - recipe_name_height
-                        }"
-                        class="text-danger"
-                    >
-                        Notes
-                    </a> -->
+                    <font-awesome-icon :icon="['fas', 'caret-right']" class="closed" fixed-width />
+                    <font-awesome-icon :icon="['fas', 'caret-down']" class="open" fixed-width />
                     Notes
                 </h3>
 
-                <div class="collapse show" id="notesCollapse">
+                <b-collapse id="notesCollapse" visible>
                     <div class="notes">
                         <div
                             v-for="(note, noteIndex) in recipe.notes"
@@ -517,9 +420,15 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </b-collapse>
             </section>
         </div>
+
+        <share-recipe-modal
+            v-model="share_recipe_modal"
+            :permalink="permalink"
+            @hide="share_recipe_modal = false"
+        />
 
         <image-modal
             v-model="image_modal"
@@ -532,15 +441,10 @@
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
-import { Tooltip, Dropdown, Modal } from 'bootstrap'
-/* eslint-enable no-unused-vars */
-
-import VueSticky from 'vue-sticky'
-
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
+import ShareRecipeModal from '@/components/modals/ShareRecipeModal'
 import ImageModal from '@/components/modals/ImageModal'
 
 // import Tag from '@/components/Tag'
@@ -549,16 +453,29 @@ export default {
     name: 'Recipe',
     components: {
         // Tag
+        ShareRecipeModal,
         ImageModal
     },
     computed: {
+        permalink () {
+            let permalink = null
 
-    },
-    directives: {
-        'sticky': VueSticky,
+            if (
+                this.url &&
+                this.recipe_key &&
+                process.env.VUE_APP_API_URL
+            ) {
+                permalink = process.env.VUE_APP_API_URL + '/recipes/' + this.recipe_key + '/' + this.url
+            }
+
+            return permalink
+        }
     },
     props: ['recipe_key', 'url'],
     methods: {
+        shareRecipe () {
+            this.share_recipe_modal = true
+        },
         showImageModal (image) {
             this.image = image
             this.image_modal = true
@@ -602,7 +519,8 @@ export default {
         recipe_name_height: null,
         image: null,
 
-        loading: false,
+        loading: true,
+        share_recipe_modal: false,
         image_modal: false
     }),
     firestore () {
@@ -627,8 +545,6 @@ export default {
         }
     },
     mounted () {
-        this.loading = true
-
         window.addEventListener('resize', this.setRecipeNameHeight)
     }
 }
@@ -638,31 +554,22 @@ export default {
 @import '@/assets/css/_colors';
 @import '@/assets/css/_variables';
 
-.recipe-name {
-    margin-left: -1rem;
-    margin-right: -1rem;
-}
-
 .section-title {
-    margin-left: -1rem;
-    margin-right: -1rem;
-
-    .toggle-icon {
-        cursor: pointer;
-
+    cursor: pointer;
+    &.collapsed {
+        .closed {
+            display: inline-block;
+        }
+        .open {
+            display: none;
+        }
+    }
+    &.not-collapsed {
         .closed {
             display: none;
         }
         .open {
             display: inline-block;
-        }
-        &.collapsed {
-            .closed {
-                display: inline-block;
-            }
-            .open {
-                display: none;
-            }
         }
     }
 }

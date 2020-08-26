@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <router-view name="navbar" />
-        <router-view class="container py-3" />
+        <router-view class="container pt-3 mb-5" />
     </div>
 </template>
 
@@ -23,5 +23,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+#app {
+    height: 100%;
+}
 </style>

@@ -1,178 +1,140 @@
 <template>
     <div>
-        <div
-            class="card"
-        >
-            <div
-                class="card-header"
-            >
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1 mr-3">
-                        <router-link :to="{name: 'Recipe', params: {recipe_key: recipe['.key'], url: permalink}}" class="font-weight-bold">
-                            {{recipe.name}}
-                        </router-link>
-                    </div>
-                    <div class="d-flex aling-items-center">
-                        <div
-                            v-if="recipe.time && recipe.time.total"
-                            :content="recipe.time.total + ' minutes'"
-                            v-tippy
-                            class="ml-3"
-                            :class="{
-                                'text-success': recipe.time.total <= 15,
-                                'text-warning': recipe.time.total > 15 && recipe.time.total < 45,
-                                'text-danger': recipe.time.total >= 45
-                            }"
-                        >
-                            <font-awesome-icon
-                                :icon="['fad', 'clock']"
-                                fixed-width
-                            />
-                            {{recipe.time.total}}
-                        </div>
-                        <div
-                            v-if="recipe.servings"
-                            class="text-secondary font-weight-bold ml-3"
-                            content="Servings"
-                            v-tippy
-                        >
-                            <font-awesome-icon
-                                :icon="['fad', 'utensil-spoon']"
-                                fixed-width
-                            />
-                            {{recipe.servings}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div v-if="recipe.images && recipe.images.length" class="d-md-flex d-none">
-                        <img :src="recipe.images[0].image" class="border p-1 rounded mr-3" width="75" />
-                    </div>
-                    <div
-                        v-if="recipe.description"
-                        class="text-muted font-weight-light"
-                        :class="{'mr-3': recipe.created_by && recipe.created_by.uid == currentUser.uid}"
-                    >
-                        {{recipe.description}}
-                    </div>
-                    <div v-else class="text-warning">
-                        no description
-                    </div>
-                    <div
-                        class="ml-auto"
-                    >
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <a href="#" @click.prevent class="text-danger" content="Favorite" v-tippy>
-                                    <font-awesome-icon :icon="['far', 'heart']" fixed-width />
-                                </a>
-                            </div>
-                            <div class="ml-3">
-                                <a
-                                    href="#"
-                                    class="text-info"
-                                    content="Share"
-                                    v-tippy
-                                    @click.prevent
-                                >
-                                    <font-awesome-icon :icon="['fad', 'share-alt']" fixed-width />
-                                </a>
-                            </div>
-                            <div
-                                v-if="recipe.created_by && recipe.created_by.uid == currentUser.uid"
-                                class="d-flex flex-nowrap ml-auto"
+        <div class="card recipe">
+            <div class="d-flex">
+                <div class="flex-grow-1">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <router-link
+                                :to="{
+                                    name: 'Recipe',
+                                    params: {
+                                        recipe_key: recipe['.key'],
+                                        url: url_name
+                                    }
+                                }"
+                                class="font-weight-bold"
                             >
-                                <a
-                                    href="#"
-                                    class="ml-3"
-                                    title="Edit"
-                                    @click.prevent
-                                >
-                                    <font-awesome-icon :icon="['fad', 'edit']" fixed-width />
-                                </a>
-                                <a
-                                    href="#"
-                                    class="text-danger ml-3"
-                                    title="Delete"
-                                    @click.prevent="deleteRecipe(recipe)"
-                                >
-                                    <font-awesome-icon :icon="['fad', 'trash']" fixed-width />
-                                </a>
+                                {{recipe.name}}
+                            </router-link>
+                        </h5>
+                        <p class="card-text text-muted my-3">
+                            <!-- {{recipe.description}} -->
+                            <v-clamp
+                                autoresize
+                                :max-lines="3"
+                            >
+                                {{recipe.description}}
+                                <template #after="{ toggle, expanded, clamped }">
+                                    <button
+                                        v-if="expanded || clamped"
+                                        class="btn btn-sm btn-link"
+                                        @click="toggle"
+                                    >
+                                        <span v-if="expanded">hide</span>
+                                        <span v-if="clamped">show</span>
+                                    </button>
+                                </template>
+                            </v-clamp>
+                        </p>
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <a
+                                        href="#"
+                                        class="text-pink"
+                                        title="Favorite"
+                                        @click.prevent
+                                    >
+                                        <font-awesome-icon :icon="['far', 'heart']" fixed-width />
+                                    </a>
+                                </div>
+                                <div class="ml-2">
+                                    <a
+                                        href="#"
+                                        class="text-info"
+                                        title="Share"
+                                        @click.prevent="shareRecipe"
+                                    >
+                                        <font-awesome-icon :icon="['fad', 'share-alt']" fixed-width />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- <pre>{{recipe}}</pre> -->
-
-            <div
-                v-if="recipe.images && recipe.images.length"
-                class="d-md-none d-block card-body border-top"
-            >
-                <div
-                    class="images"
-                    :class="{'mr-3': recipe.description}"
-                >
-                    <div
-                        v-for="(image, imageIndex) in recipe.images"
-                        :key="imageIndex"
-                        class="d-inline-block"
-                        :class="{'ml-1': imageIndex > 0}"
-                    >
-                        <img :src="image.image" class="border p-1 rounded" width="75" />
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="d-flex align-items-center">
-                    <div class="mr-3">
-                        <small class="text-muted">
-                            <div class="d-md-flex align-items-center">
-                                <div>
-                                    <a href="#" class="text-secondary text-nowrap" @click.prevent>{{recipe.created_by.displayName}}</a>
-                                </div>
-                                <!-- <div class="d-md-flex d-none mx-1">&middot;</div>
-                                <div class="font-weight-light">{{recipe.created.date_time | moment("from", "now")}}</div> -->
-                            </div>
-                        </small>
-                    </div>
-                    <div class="ml-auto text-right">
-                        <span
-                            v-for="(tag, tagIndex) in recipe.tags"
-                            :key="tagIndex"
+                        <!-- <router-link
+                            :to="{
+                                name: 'Recipe',
+                                params: {
+                                    recipe_key: recipe['.key'],
+                                    url: url_name
+                                }
+                            }"
+                            class="d-sm-none d-inline-block btn btn-sm btn-outline-primary mt-3"
                         >
-                            <Tag
-                                :tag="tag"
-                                :class="{'ml-1': tagIndex > 0}"
-                            />
-                        </span>
+                            <font-awesome-icon :icon="['fad', 'eye']" fixed-width /> View
+                        </router-link> -->
                     </div>
+                    <!-- <div class="card-footer">
+                        test
+                    </div> -->
                 </div>
+                <a
+                    v-if="recipe.thumbnail"
+                    href="#"
+                    :style="{
+                        backgroundImage: recipe.thumbnail ? 'url(' + recipe.thumbnail + ')' : ''
+                    }"
+                    class="rounded-right border-left recipe-thumbnail"
+                    @click.prevent="showImageModal(recipe.thumbnail)"
+                />
             </div>
         </div>
+
+        <share-recipe-modal
+            v-model="share_recipe_modal"
+            :permalink="permalink"
+            @hide="share_recipe_modal = false"
+        />
+
+        <image-modal
+            v-model="image_modal"
+            :image="image"
+            :thumbnail="recipe.thumbnail"
+            :images="recipe.images"
+            @hide="image_modal = false"
+        />
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 
+import VClamp from 'vue-clamp'
+
 import firebase from 'firebase/app'
 
-import Tag from '@/components/Tag'
+// import Tag from '@/components/Tag'
+
+import ImageModal from '@/components/modals/ImageModal'
+import ShareRecipeModal from '@/components/modals/ShareRecipeModal'
 
 export default {
     name: 'Recipe',
     components: {
-        Tag
+        VClamp,
+
+        // Tag
+        ImageModal,
+        ShareRecipeModal
     },
     computed: {
         ...mapState({
             currentUser: state => state.user.user
         }),
-        permalink () {
+        url_name () {
             let string = ''
 
             if (this.recipe.name) {
@@ -180,12 +142,32 @@ export default {
             }
 
             return string.replace(/\s/g, '-');
+        },
+        permalink () {
+            let permalink = null
+
+            if (
+                this.url_name &&
+                this.recipe['.key'] &&
+                process.env.VUE_APP_API_URL
+            ) {
+                permalink = process.env.VUE_APP_API_URL + '/recipes/' + this.recipe['.key'] + '/' + this.url_name
+            }
+
+            return permalink
         }
     },
     props: {
         recipe: Object
     },
     methods: {
+        showImageModal (image) {
+            this.image = image
+            this.image_modal = true
+        },
+        shareRecipe () {
+            this.share_recipe_modal = true
+        },
         deleteRecipe (recipe) {
             let message = null
 
@@ -211,7 +193,10 @@ export default {
         }
     },
     data: () => ({
+        image: null,
 
+        image_modal: false,
+        share_recipe_modal: false
     }),
     mounted () {
 
@@ -221,9 +206,17 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/css/_colors';
-.icons {
-    > div {
-        margin-left: 1rem;
+.recipe {
+    .recipe-thumbnail {
+        min-width: 150px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    @media (max-width: 991px) {
+        .recipe-thumbnail {
+            min-width: 125px;
+        }
     }
 }
 </style>

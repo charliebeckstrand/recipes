@@ -29,13 +29,13 @@
                 <img :src="active_image" class="border rounded user-select-none" width="100%">
             </div>
 
-            <div v-if="thumbnail && images && images.length" class="d-flex align-items-center mt-3">
+            <div v-if="thumbnail && images && images.length || !thumbnail && images && images.length > 1" class="d-flex align-items-center mt-3">
                 <div v-if="thumbnail">
                     <a
                         href="#"
-                        class="d-inline-block border rounded"
+                        class="d-inline-block img-thumbnail"
                         :class="{
-                            'border-primary': imageActive(thumbnail),
+                            'border-dark': imageActive(thumbnail),
                             'mr-1': images && images.length
                         }"
                         style="min-width: 75px; width: 75px; height: 75px; background-size: cover; background-position: center;"
@@ -45,14 +45,14 @@
                         @click.prevent="setActiveImage(thumbnail)"
                     />
                 </div>
-                <div v-if="images && images.length > 1">
+                <div v-if="images && images.length">
                     <a
                         href="#"
                         v-for="(image, imageIndex) in images"
                         :key="imageIndex"
-                        class="d-inline-block border rounded"
+                        class="d-inline-block img-thumbnail"
                         :class="{
-                            'border-primary': imageActive(image.image),
+                            'border-dark': imageActive(image.image),
                             'mr-1': images && images.length
                         }"
                         style="min-width: 75px; width: 75px; height: 75px; background-size: cover; background-position: center;"
