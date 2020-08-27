@@ -1,11 +1,11 @@
 <template>
     <div class="login h-100">
         <div class="d-flex h-100">
-            <div class="mx-auto my-auto px-3" style="width: 350px;">
+            <div class="m-auto" style="min-width: 350px;">
                 <div class="d-flex">
                     <div class="mx-auto mb-3">
                         <router-link :to="{path: '/'}" class="text-dark">
-                            <img src="@/assets/logo.svg" width="50">
+                            <img src="@/assets/logo2.svg" width="50">
                         </router-link>
                     </div>
                 </div>
@@ -39,26 +39,15 @@
                     <button
                         type="submit"
                         class="btn btn-dark btn-block"
-                        :disabled="logging_in"
+                        :disabled="logging_in || !email || !password"
                     >
-                        Login
+                        <span v-if="logging_in">
+                            <font-awesome-icon :icon="['fal', 'spinner-third']" spin fixed-width />
+                        </span>
+                        <span v-else>
+                            <font-awesome-icon :icon="['fad', 'sign-in']" fixed-width /> Login
+                        </span>
                     </button>
-                    <!-- <b-form-group class="mb-1">
-                        <b-form-input type="email" :class="{'is-invalid': invalid_email}" placeholder="Email" v-model="email" @input="invalid_email = false" v-focus="focus_email" @focus="focus_email = true" @blur="focus_email = false"></b-form-input>
-                    </b-form-group>
-                    <b-form-group class="mb-1">
-                        <b-form-input type="password" :class="{'is-invalid': invalid_password}" placeholder="Password" v-model="password" @input="invalid_password = false"></b-form-input>
-                    </b-form-group>
-                    <b-button type="submit" :class="{'btn-dark': email && password, 'btn-light': !email || !password}" :disabled="!email || !password || !resolved" block>
-                        <template v-if="resolved">
-                            Login
-                        </template>
-                        <template v-else>
-                            <div class="spinner-border spinner-border-sm" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                        </template>
-                    </b-button> -->
                 </form>
                 <div class="mt-3 text-center">
                   <button type="button" class="btn btn-light border border-dark">
@@ -113,15 +102,25 @@ export default {
                     })
                 }
                 else {
-                    this.$router.push({
-                        name: 'Home'
-                    })
+                    if (this.currentUser && this.currentUser.uid) {
+                        this.$router.push({
+                            name: 'Dashboard'
+                        })
+                    } else {
+                        this.$router.push({
+                            name: 'Recipes'
+                        })
+                    }
                 }
 
                 this.logging_in = false
             })
             .catch(error => {
-                this.error = error
+                this.logging_in = false
+
+                if (error) {
+                    this.error = error
+                }
 
                 if (error.code == "auth/user-not-found") {
                     this.invalid_email = true
@@ -129,14 +128,12 @@ export default {
                 if (error.code == "auth/wrong-password") {
                     this.invalid_password = true
                 }
-
-                this.logging_in = false
             })
         }
     },
     data: () => ({
-        email: null,
-        password: null,
+        email: '',
+        password: '',
 
         invalid_email: false,
         invalid_password: false,

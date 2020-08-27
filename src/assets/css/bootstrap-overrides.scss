@@ -1,32 +1,15 @@
 @import 'colors';
 
-a {
-    &.text-primary {
-        &:focus,
-        &:hover {
-            color: darken($primary, 10%) !important;
-        }
-    }
-    &.text-danger {
-        &:focus,
-        &:hover {
-            color: darken($danger, 10%) !important;
-        }
-    }
-    &.text-info {
-        &:focus,
-        &:hover {
-            color: darken($info, 10%) !important;
-        }
-    }
-}
-
 .btn {
     &:active,
     &:focus,
     &:active:focus {
         box-shadow: none;
     }
+}
+
+.btn-link {
+    text-decoration: none;
 }
 
 .btn-success,
@@ -70,6 +53,14 @@ a {
         &::-ms-input-placeholder {
             color: $danger;
             opacity: 1;
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    .modal {
+        .modal-dialog {
+            max-width: calc(100% - 30px);
         }
     }
 }

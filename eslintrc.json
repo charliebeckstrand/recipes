@@ -1,0 +1,24 @@
+{
+    "env": {
+        "es6": true,
+        "node": true
+    },
+
+    "plugins": [
+        "import",
+        "node",
+        "promise",
+        "standard"
+    ],
+
+    "globals": {
+        "document": "readonly",
+        "navigator": "readonly",
+        "window": "readonly",
+        "_": true
+    },
+
+    "vue/no-undef": ["error", {
+        "knownMembers": ["_"]
+    }]
+}

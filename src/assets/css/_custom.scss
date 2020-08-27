@@ -1,0 +1,12 @@
+@import 'colors';
+@import 'variables';
+@import 'fonts';
+
+@import '~bootstrap/scss/bootstrap';
+// @import '~sweetalert2/dist/sweetalert2.min.css';
+
+@import 'styles';
+
+@import 'bootstrap-overrides';
+@import 'sweetalert-overrides';
+@import 'vue-multiselect-overrides';

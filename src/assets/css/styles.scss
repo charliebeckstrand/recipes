@@ -1,0 +1,134 @@
+html,
+body {
+	height: 100%;
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+	-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+	scroll-behavior: smooth;
+	font-weight: normal;
+}
+
+a {
+	text-decoration: none;
+	transition: $transition;
+	&.text-dark {
+		&:active,
+		&:hover {
+			color: darken($dark, 10%) !important;
+		}
+	}
+	&.text-secondary {
+		&:active,
+		&:hover {
+			color: darken($muted, 10%) !important;
+		}
+	}
+	&.text-success {
+		&:active,
+		&:hover {
+			color: darken($success, 10%) !important;
+		}
+	}
+	&.text-primary {
+		&:active,
+		&:hover {
+			color: darken($primary, 10%) !important;
+		}
+	}
+	&.text-warning {
+		&:active,
+		&:hover {
+			color: darken($warning, 10%) !important;
+		}
+	}
+	&.text-danger {
+		&:active,
+		&:hover {
+			color: darken($danger, 10%) !important;
+		}
+	}
+	&.text-info {
+		&:active,
+		&:hover {
+			color: darken($info, 10%) !important;
+		}
+	}
+	&.text-pink {
+		&:active,
+		&:hover {
+			color: darken($pink, 10%);
+		}
+	}
+	&.img-thumbnail {
+		&:hover {
+			border-color: $primary;
+		}
+	}
+}
+
+:focus {
+	outline: none;
+}
+
+.page {
+	padding-bottom: 2.5rem;
+}
+
+.text-pink {
+	color: $pink;
+}
+
+.modal {
+    .modal-close {
+        position: absolute;
+        right: -1.25rem;
+        top: -1.25rem;
+        font-size: 2.5rem;
+        line-height: 1;
+        border-radius: 100%;
+        border: 0;
+        .background {
+            color: $white;
+        }
+        .foreground {
+            transition: $transition;
+            color: $danger;
+        }
+        &:focus,
+        &:hover {
+            .foreground {
+                color: darken($danger, 10%);
+            }
+        }
+    }
+}
+
+.dropdown-toggle::after {
+	display: none;
+}
+
+.dropdown-item:active {
+	background-color: #f8f9fa;
+	color: inherit;
+}
+
+.modal-backdrop {
+	background-color: rgba(0, 0, 0, .5);
+}
+
+.vue-content-placeholders + .vue-content-placeholders {
+	margin-top: 1rem;
+}
+
+.vue-content-placeholders-text__line {
+	&:last-child {
+		margin: 0;
+	}
+}
+
+.sticky-title {
+	// margin-top: -1rem;
+}
