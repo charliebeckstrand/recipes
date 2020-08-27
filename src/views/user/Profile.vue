@@ -1,5 +1,5 @@
 <template>
-    <div class="profile">
+    <div class="profile page">
         <div
             v-sticky="{
                 zIndex: 11,

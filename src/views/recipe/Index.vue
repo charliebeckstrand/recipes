@@ -1,16 +1,12 @@
 <template>
-    <div class="recipe">
-        <div v-if="loading">
+    <div class="recipe page">
+        <div v-if="loading" class="page-loading py-3">
             <font-awesome-icon
                 :icon="['fal', 'spinner-third']"
                 size="2x"
                 spin
                 fixed-width
             />
-            <!-- <content-placeholders :rounded="true">
-                <content-placeholders-heading :img="false" />
-                <content-placeholders-text :lines="3" />
-            </content-placeholders> -->
         </div>
 
         <div :class="{'invisible': loading}">
@@ -20,38 +16,39 @@
                     zIndex: 11,
                     stickyTop: 0
                 }"
-                class="d-flex align-items-center bg-white py-3 sticky-title"
+                class="bg-white py-3 sticky-title"
             >
-                <div class="mr-3">
-                    <h1 class="font-weight-bold mb-0">
-                        <!-- <a
-                            v-if=""
-                            href="#"
-                        >
-                            <font-awesome-icon :icon="['fad', 'arrow-left']" />
-                        </a> -->
-                        {{recipe.name}}
-                    </h1>
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1 mr-3">
+                        <h1 class="font-weight-bold mb-0">
+                            {{recipe.name}}
+                        </h1>
+                    </div>
+                    <div class="ml-auto">
+                        <!-- THIS IS ONLY FOR PRINTING -->
+                        <img :src="recipe.thumbnail" class="d-none img-thumbnail print-thumbnail" />
+                    </div>
                 </div>
             </div>
 
             <div class="d-flex align-items-center">
                 <div class="flex-grow-1">
-                    <div v-if="recipe.description" class="d-flex align-items-center">
-                        <div class="text-muted mr-5">
-                            <div class="font-weight-light">{{recipe.description}}</div>
-                        </div>
+                    <div v-if="recipe.description" class="text-muted">
+                        <div class="font-weight-light">{{recipe.description}}</div>
                     </div>
                     <div class="d-flex align-items-center mt-3">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center icons">
                             <div>
-                                <favorite-recipe-icon :recipe_key="recipe['.key']" />
+                                <favorite-recipe-icon :recipe_id="recipe.id" />
                             </div>
                             <div class="ml-2">
                                 <share-recipe-icon
-                                    :recipe_key="recipe['.key']"
-                                    :parsed_name="url"
+                                    :recipe_id="recipe.id"
+                                    :recipe_name="recipe_name"
                                 />
+                            </div>
+                            <div class="ml-2">
+                                <print-recipe-icon :recipe="recipe" />
                             </div>
                         </div>
                         <!-- <div class="d-flex align-items-center ml-auto">
@@ -95,11 +92,11 @@
             <div v-if="recipe.thumbnail || recipe.images && recipe.images.length">
                 <hr>
 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center images">
                     <div v-if="recipe.thumbnail" class="mr-1">
                         <a
                             href="#"
-                            class="d-inline-block img-thumbnail p-1"
+                            class="d-inline-block img-thumbnail image"
                             style="width: 100px; height: 100px; background-size: cover; background-position: center;"
                             :style="{
                                 backgroundImage: recipe.thumbnail ? 'url(' + recipe.thumbnail + ')' : ''
@@ -107,7 +104,7 @@
                             @click.prevent="showImageModal(recipe.thumbnail)"
                         />
                     </div>
-                    <div v-if="recipe.images && recipe.images.length" class="flex-grow-1 images">
+                    <div v-if="recipe.images && recipe.images.length" class="flex-grow-1">
                         <div
                             v-for="(image, imageIndex) in recipe.images"
                             :key="imageIndex"
@@ -116,7 +113,7 @@
                         >
                             <a
                                 href="#"
-                                class="d-inline-block img-thumbnail"
+                                class="d-inline-block img-thumbnail image"
                                 style="width: 100px; height: 100px; background-size: cover; background-position: center;"
                                 :style="{
                                     backgroundImage: image.image ? 'url(' + image.image + ')' : ''
@@ -125,36 +122,36 @@
                             />
                         </div>
                     </div>
-                    <!-- <div class="d-flex flex-column ml-auto">
-                        <div
-                            v-if="recipe.time && recipe.time.total"
-                            class="badge text-nowrap"
-                            :class="{
-                                'bg-success': recipe.time.total <= 15,
-                                'bg-warning': recipe.time.total > 15 && recipe.time.total < 45,
-                                'bg-danger': recipe.time.total >= 45
-                            }"
-                        >
-                            <font-awesome-icon
-                                :icon="['fad', 'clock']"
-                                fixed-width
-                            />
-                            {{recipe.time.total}} minutes
-                        </div>
-                        <div
-                            v-if="recipe.servings"
-                            class="badge bg-secondary text-white text-nowrap mt-1"
-                            :class="{
-                                'ml-1': recipe.time && recipe.time.total
-                            }"
-                        >
-                            <font-awesome-icon
-                                :icon="['fad', 'utensil-spoon']"
-                                fixed-width
-                            /> {{recipe.servings}} servings
-                        </div>
-                    </div> -->
                 </div>
+                <!-- <div class="d-flex flex-column ml-auto">
+                    <div
+                        v-if="recipe.time && recipe.time.total"
+                        class="badge text-nowrap"
+                        :class="{
+                            'bg-success': recipe.time.total <= 15,
+                            'bg-warning': recipe.time.total > 15 && recipe.time.total < 45,
+                            'bg-danger': recipe.time.total >= 45
+                        }"
+                    >
+                        <font-awesome-icon
+                            :icon="['fad', 'clock']"
+                            fixed-width
+                        />
+                        {{recipe.time.total}} minutes
+                    </div>
+                    <div
+                        v-if="recipe.servings"
+                        class="badge bg-secondary text-white text-nowrap mt-1"
+                        :class="{
+                            'ml-1': recipe.time && recipe.time.total
+                        }"
+                    >
+                        <font-awesome-icon
+                            :icon="['fad', 'utensil-spoon']"
+                            fixed-width
+                        /> {{recipe.servings}} servings
+                    </div>
+                </div> -->
             </div>
 
             <hr class="mb-0">
@@ -175,7 +172,7 @@
                 </h3>
 
                 <b-collapse id="ingredientsCollapse" visible>
-                    <div class="ingredients">
+                    <div class="items ingredients">
                         <div
                             v-for="(ingredient, ingredientIndex) in recipe.ingredients"
                             :key="ingredientIndex"
@@ -191,7 +188,7 @@
                                 </div> -->
                                 <div class="d-flex align-items-center flex-grow-1">
                                     <div
-                                        class="d-flex align-items-center font-weight-light py-2 px-3 flex-grow-1 ingredient-text"
+                                        class="d-flex align-items-center font-weight-light py-2 px-3 flex-grow-1 text ingredient-text"
                                         @click.prevent="toggleItemCheck(ingredient)"
                                     >
                                         <div class="text-nowrap">
@@ -253,23 +250,23 @@
                 </h3>
 
                 <b-collapse id="instructionsCollapse" visible>
-                    <div class="instructions">
+                    <div class="items instructions">
                         <div
                             v-for="(instruction, instructionIndex) in recipe.instructions"
                             :key="instructionIndex"
-                            class="instruction rounded"
+                            class="rounded instruction"
                             :class="{
                                 'checked': instruction.checked,
                                 'mt-2': instructionIndex > 0
                             }"
                         >
                             <div v-if="instruction.instruction" class="d-flex align-items-center">
-                                <div class="ml-3">
+                                <div class="ml-3 number instruction-number">
                                     <span class="font-weight-bolder">{{instructionIndex + 1}}.</span>
                                 </div>
                                 <div class="d-flex align-items-center flex-grow-1">
                                     <div
-                                        class="font-weight-light py-2 px-3 flex-grow-1 instruction-text"
+                                        class="font-weight-light py-2 px-3 flex-grow-1 text instruction-text"
                                         @click.prevent="toggleItemCheck(instruction)"
                                     >
                                         {{instruction.instruction}}
@@ -305,20 +302,20 @@
                 </h3>
 
                 <b-collapse id="tipsCollapse" visible>
-                    <div class="tips">
+                    <div class="items tips">
                         <div
                             v-for="(tip, tipIndex) in recipe.tips"
                             :key="tipIndex"
-                            class="tip rounded"
+                            class="rounded tip"
                             :class="{'mt-2': tipIndex > 0}"
                         >
                             <div v-if="tip.tip" class="d-flex align-items-center">
-                                <div class="ml-3">
+                                <div class="ml-3 number tip-number">
                                     <span class="font-weight-bolder">{{tipIndex + 1}}.</span>
                                 </div>
                                 <div class="d-flex align-items-center flex-grow-1">
                                     <div
-                                        class="font-weight-light py-2 px-3 flex-grow-1 tip-text"
+                                        class="font-weight-light py-2 px-3 flex-grow-1 text tip-text"
                                     >
                                         {{tip.tip}}
                                     </div>
@@ -344,20 +341,20 @@
                 </h3>
 
                 <b-collapse id="nutritionCollapse" visible>
-                    <div class="nutritions">
+                    <div class="items nutritions">
                         <div
                             v-for="(item, nutritionIndex) in recipe.nutrition"
                             :key="nutritionIndex"
-                            class="nutrition rounded"
+                            class="rounded nutrition"
                             :class="{'mt-2': nutritionIndex > 0}"
                         >
                             <div v-if="item.fact || item.item" class="d-flex align-items-center">
-                                <div class="ml-3">
+                                <div class="ml-3 number nutrition-number">
                                     <span class="font-weight-bolder">{{nutritionIndex + 1}}.</span>
                                 </div>
                                 <div class="d-flex align-items-center flex-grow-1">
                                     <div
-                                        class="d-flex align-items-center py-2 px-3 flex-grow-1 nutrition-text"
+                                        class="d-flex align-items-center py-2 px-3 flex-grow-1 text nutrition-text"
                                     >
                                         <div class="font-weight-light">{{item.fact}} {{item.item}}</div>
                                         <!-- <span class="text-info">&bull;</span>  -->
@@ -385,11 +382,11 @@
                 </h3>
 
                 <b-collapse id="notesCollapse" visible>
-                    <div class="notes">
+                    <div class="items notes">
                         <div
                             v-for="(note, noteIndex) in recipe.notes"
                             :key="noteIndex"
-                            class="note rounded"
+                            class="rounded note"
                             :class="{'mt-2': noteIndex > 0}"
                         >
                             <!-- <div class="d-flex align-items-center">
@@ -401,12 +398,12 @@
                                 </div>
                             </div> -->
                             <div v-if="note.note" class="d-flex align-items-center">
-                                <div class="ml-3">
+                                <div class="ml-3 number note-number">
                                     <span class="font-weight-bolder">{{noteIndex + 1}}.</span>
                                 </div>
                                 <div class="d-flex align-items-center flex-grow-1">
                                     <div
-                                        class="font-weight-light py-2 px-3 flex-grow-1 note-text"
+                                        class="font-weight-light py-2 px-3 flex-grow-1 text note-text"
                                     >
                                         {{note.note}}
                                     </div>
@@ -432,8 +429,10 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
-import FavoriteRecipeIcon from '@/components/FavoriteRecipeIcon'
-import ShareRecipeIcon from '@/components/ShareRecipeIcon'
+import FavoriteRecipeIcon from '@/components/icons/FavoriteRecipeIcon'
+import ShareRecipeIcon from '@/components/icons/ShareRecipeIcon'
+import PrintRecipeIcon from '@/components/icons/PrintRecipeIcon'
+
 import ImageModal from '@/components/modals/ImageModal'
 
 // import Tag from '@/components/Tag'
@@ -444,13 +443,34 @@ export default {
         // Tag
         FavoriteRecipeIcon,
         ShareRecipeIcon,
+        PrintRecipeIcon,
+
         ImageModal
     },
     computed: {
 
     },
-    props: ['recipe_key', 'url'],
+    props: {
+        recipe_id: String,
+        recipe_name: String
+    },
     methods: {
+        getRecipe () {
+            this.loading = true
+
+            this.$binding(
+                'recipes', firebase.firestore()
+                .collection('recipes')
+                .orderBy('created.date')
+            )
+            .then(recipes => {
+                this.recipe = _.find(recipes, {id: this.recipe_id})
+
+                this.setRecipeNameHeight()
+
+                 this.loading = false
+            })
+        },
         showImageModal (image) {
             this.image = image
             this.image_modal = true
@@ -462,25 +482,6 @@ export default {
                 this.$set(item, 'checked', true)
             }
         },
-        // uncheckPreviousInstructions (instruction, index) {
-        //     _.forEach(this.recipe.instructions, (instruction, instructionIndex) => {
-        //         if (instructionIndex > index) {
-        //             this.$set(instruction, 'checked', false)
-        //         }
-        //     })
-        // },
-        // instructionCheckable (instruction, index) {
-        //     let checkable = false
-        //
-        //     if (
-        //         index == 0 ||
-        //         !index == 0 && this.recipe.instructions[index - 1].checked
-        //     ) {
-        //         checkable = true
-        //     }
-        //
-        //     return checkable
-        // },
         setRecipeNameHeight () {
             if (
                 this.$refs &&
@@ -500,54 +501,103 @@ export default {
 
         loading: false
     }),
-    firestore () {
-        return {
-            // recipe: {
-            //     ref: firebase.firestore().collection('recipes').doc(this.recipe_key),
-            //     resolve: (response) => {
-            //         if (response) {
-            //             this.loading = false
-            //
-            //             this.setRecipeNameHeight()
-            //         }
-            //     },
-            //     reject: (error) => {
-            //         this.loading = false
-            //
-            //         if (error) {
-            //             console.log(error)
-            //         }
-            //     }
-            // }
-        }
-    },
+    // firestore () {
+    //     return {
+    //         recipe: {
+    //             ref: firebase.firestore().collection('recipes').doc(this.recipe_id),
+    //             resolve: (response) => {
+    //                 if (response) {
+    //                     this.loading = false
+    //
+    //                     this.setRecipeNameHeight()
+    //                 }
+    //             },
+    //             reject: (error) => {
+    //                 this.loading = false
+    //
+    //                 if (error) {
+    //                     console.log(error)
+    //                 }
+    //             }
+    //         }
+    //     }
+    // },
     created () {
-        this.loading = true
-
-        this.$binding(
-            'recipes', firebase.firestore()
-            .collection('recipes')
-            .doc(this.recipe_key)
-        )
-        .then(recipe => {
-            if (recipe) {
-                this.recipe = recipe
-                this.setRecipeNameHeight()
-            }
-
-            this.loading = false
-
-            this.$binding(
-                'recipes', firebase.firestore()
-                .collection('recipes')
-                .orderBy('created.date')
-            )
-        })
+        this.getRecipe()
 
         window.addEventListener('resize', this.setRecipeNameHeight)
     }
 }
 </script>
+
+<style lang="scss">
+@import '@/assets/css/_colors';
+
+@media print {
+    // .no-print,
+    // .no-print * {
+    //     display: none !important;
+    // }
+
+    .navbar {
+        display: none !important;
+    }
+
+    .print-thumbnail {
+        display: block !important;
+        max-width: 100px;
+    }
+
+    .images {
+        display: none !important;
+    }
+
+    .text-success,
+    .text-primary,
+    .text-warning,
+    .text-info,
+    .text-danger {
+        color: #000000 !important;
+    }
+
+    .section-title {
+        padding: 0 !important;
+    }
+
+    .collapse > div {
+        border-left: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    section {
+        .items {
+            margin-top: 1rem !important;
+            .number {
+                margin-left: 0 !important;
+                margin-right: 1rem !important;
+            }
+            .text {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
+        padding-bottom: 1rem !important;
+    }
+
+    hr {
+        display: none !important;
+        height: 0 !important;
+    }
+
+    .icons,
+    .checkbox,
+    .form-check,
+    .open,
+    .closed {
+        display: none !important;
+    }
+}
+</style>
 
 <style lang="scss" scoped>
 @import '@/assets/css/_colors';

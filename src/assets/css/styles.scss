@@ -14,10 +14,11 @@ body {
 a {
 	text-decoration: none;
 	transition: $transition;
-	&.img-thumbnail {
-	    &:hover {
-	        border-color: $primary;
-	    }
+	&.text-dark {
+		&:active,
+		&:hover {
+			color: darken($dark, 10%) !important;
+		}
 	}
 	&.text-secondary {
 		&:active,
@@ -61,10 +62,19 @@ a {
 			color: darken($pink, 10%);
 		}
 	}
+	&.img-thumbnail {
+		&:hover {
+			border-color: $primary;
+		}
+	}
 }
 
 :focus {
 	outline: none;
+}
+
+.page {
+	padding-bottom: 2.5rem;
 }
 
 .text-pink {
@@ -120,5 +130,5 @@ a {
 }
 
 .sticky-title {
-	margin-top: -1rem;
+	// margin-top: -1rem;
 }

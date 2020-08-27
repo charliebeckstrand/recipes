@@ -27,15 +27,16 @@
                 </a>
             </template>
 
-            <h6 class="p-3 border rounded text-dark">
+            <h6 class="p-3 border rounded">
                 <div class="d-flex align-items-center">
-                    <div class="copyable-link mr-3">
+                    <div class="copyable-link font-weight-bold text-muted mr-3">
                         {{permalink}}
                     </div>
                     <div class="ml-auto user-select-none">
-                        <a
-                            href="#"
+                        <button
+                            type="button"
                             title="Copy to Clipboard"
+                            class="btn btn-link p-0"
                             :class="{'text-success disabled': copying_to_clipboard}"
                             @click.prevent="copyToClipboard"
                             :disabled="copying_to_clipboard"
@@ -46,7 +47,7 @@
                             <div v-else>
                                 <font-awesome-icon :icon="['fad', 'clipboard']" fixed-width />
                             </div>
-                        </a>
+                        </button>
                     </div>
                 </div>
             </h6>

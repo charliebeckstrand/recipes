@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard">
+    <div class="dashboard page">
         <div
             v-sticky="{
                 zIndex: 11,
@@ -16,9 +16,7 @@
                     </h1>
                 </div>
                 <div class="ml-auto">
-                    <router-link class="btn btn-success" :to="{name: 'CreateRecipe'}">
-                        <font-awesome-icon :icon="['far', 'plus']" /> Create Recipe
-                    </router-link>
+                    
                 </div>
             </div>
         </div>

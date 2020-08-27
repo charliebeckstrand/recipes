@@ -1,5 +1,5 @@
 <template>
-    <div class="recipes">
+    <div class="recipes page">
         <div
             v-sticky="{
                 zIndex: 11,
@@ -23,35 +23,7 @@
             </div>
         </div>
 
-        <div v-if="loading">
-            <!-- <div
-                v-for="(item, itemIndex) in 3"
-                :key="itemIndex"
-                class="card recipe-placeholder"
-                :class="{'mt-3': itemIndex > 0}"
-            >
-                <div class="d-flex">
-                    <div class="flex-grow-1">
-                        <div class="card-body">
-                            <div class="card-title mb-3">
-                                <content-placeholders :rounded="true">
-                                    <content-placeholders-heading :img="false" :lines="1" />
-                                </content-placeholders>
-                            </div>
-                            <div class="card-text m-0">
-                                <content-placeholders :rounded="true">
-                                    <content-placeholders-text :lines="2" />
-                                </content-placeholders>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="recipe-image">
-                        <content-placeholders class="h-100" :rounded="false">
-                            <content-placeholders-img class="h-100" />
-                        </content-placeholders>
-                    </div>
-                </div>
-            </div> -->
+        <div v-if="loading" class="page-loading pb-3">
             <font-awesome-icon
                 :icon="['fal', 'spinner-third']"
                 size="2x"
@@ -117,7 +89,7 @@ import { db } from '@/db'
 
 import meals from '@/common/meals'
 
-import Recipe from '@/components/Recipe'
+import Recipe from '@/components/recipe/Card'
 
 export default {
     name: 'Home',

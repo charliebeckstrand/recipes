@@ -9,8 +9,8 @@
                                 :to="{
                                     name: 'Recipe',
                                     params: {
-                                        recipe_key: recipe['.key'] ? recipe['.key'] : null,
-                                        url: parsed_name
+                                        recipe_id: recipe.id ? recipe.id : null,
+                                        recipe_name: recipe_name
                                     }
                                 }"
                                 class="font-weight-bold"
@@ -51,12 +51,12 @@
                                     </a>
                                 </div>
                                 <div>
-                                    <favorite-recipe-icon :recipe_key="recipe['.key']" />
+                                    <favorite-recipe-icon :recipe_id="recipe.id" />
                                 </div>
                                 <div class="ml-2">
                                     <share-recipe-icon
-                                        :recipe_key="recipe['.key']"
-                                        :parsed_name="parsed_name"
+                                        :recipe_id="recipe.id"
+                                        :recipe_name="recipe_name"
                                     />
                                 </div>
                                 <div v-if="currentUser && (recipe.created_by.uid == currentUser.uid)" class="ml-2">
@@ -66,7 +66,7 @@
                                         toggle-class="text-secondary p-0"
                                     >
                                         <template v-slot:button-content>
-                                            <font-awesome-icon :icon="['fad', 'ellipsis-v']" fixed-width />
+                                            <font-awesome-icon :icon="['fas', 'ellipsis-v']" fixed-width />
                                             <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
                                         </template>
                                         <b-dropdown-item>
@@ -125,8 +125,9 @@ import VClamp from 'vue-clamp'
 
 import firebase from 'firebase/app'
 
-import FavoriteRecipeIcon from '@/components/FavoriteRecipeIcon'
-import ShareRecipeIcon from '@/components/ShareRecipeIcon'
+import FavoriteRecipeIcon from '@/components/icons/FavoriteRecipeIcon'
+import ShareRecipeIcon from '@/components/icons/ShareRecipeIcon'
+
 import ImageModal from '@/components/modals/ImageModal'
 
 // import Tag from '@/components/Tag'
@@ -146,7 +147,7 @@ export default {
             currentUser: state => state.user.user,
             vue_app_environment: state => state.vue_app_environment
         }),
-        parsed_name () {
+        recipe_name () {
             let string = ''
 
             if (this.recipe.name) {
@@ -191,7 +192,7 @@ export default {
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {
-                    firebase.firestore().collection('recipes').doc(recipe['.key']).delete()
+                    firebase.firestore().collection('recipes').doc(recipe.id).delete()
                 }
             })
         }

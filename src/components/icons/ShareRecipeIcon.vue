@@ -30,19 +30,19 @@ export default {
             let permalink = null
 
             if (
-                this.recipe_key &&
-                this.parsed_name &&
+                this.recipe_id &&
+                this.recipe_name &&
                 process.env.VUE_APP_API_URL
             ) {
-                permalink = process.env.VUE_APP_API_URL + '/recipes/' + this.recipe_key + '/' + this.parsed_name
+                permalink = process.env.VUE_APP_API_URL + '/recipes/' + this.recipe_id + '/' + this.recipe_name
             }
 
             return permalink
         }
     },
     props: {
-        parsed_name: String,
-        recipe_key: String
+        recipe_name: String,
+        recipe_id: String
     },
     methods: {
         shareRecipe () {

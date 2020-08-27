@@ -40,10 +40,10 @@ const routes = [
         }
     },
     {
-        path: '/recipes/:recipe_key/:url',
+        path: '/recipes/:recipe_id/:recipe_name',
         name: 'Recipe',
         components: {
-            default: () => import('@/views/Recipe.vue'),
+            default: () => import('@/views/recipe/Index.vue'),
             navbar: () => import('@/components/Navbar.vue')
         },
         props: {

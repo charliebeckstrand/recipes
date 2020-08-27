@@ -27,18 +27,31 @@ export default {
             favorite_recipes: state => state.user.favorite_recipes
         }),
         favorited () {
-            return this.favorite_recipes.includes(this.recipe_key)
+            return this.favorite_recipes.includes(this.recipe_id)
         }
     },
     props: {
-        recipe_key: String
+        recipe_id: String
     },
     methods: {
         favoriteRecipe () {
-            if (_.includes(this.favorite_recipes, this.recipe_key)) {
-                this.$store.commit('removeFavoriteRecipe', this.recipe_key)                
+            if (_.includes(this.favorite_recipes, this.recipe_id)) {
+                this.$swal({
+                    icon: 'warning',
+                    html: 'Are you sure you want to unfavorite this recipe?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Unfavorite',
+                    confirmButtonColor: '#F06292',
+                    cancelButtonText: 'Cancel',
+                    cancelButtonColor: '#f8f9fa',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.value) {
+                        this.$store.commit('removeFavoriteRecipe', this.recipe_id)
+                    }
+                })
             } else {
-                this.$store.commit('addFavoriteRecipe', this.recipe_key)
+                this.$store.commit('addFavoriteRecipe', this.recipe_id)
             }
         },
     },
