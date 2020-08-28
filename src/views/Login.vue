@@ -23,7 +23,7 @@
                             type="email"
                             v-model="email"
                             class="form-control"
-                            :class="{'is-invalid': invalid_email}"
+                            :class="{'is-invalid': invalid_email || validating && !email}"
                             placeholder="Email"
                         >
                     </div>
@@ -32,17 +32,17 @@
                             type="password"
                             v-model="password"
                             class="form-control"
-                            :class="{'is-invalid': invalid_password}"
+                            :class="{'is-invalid': invalid_password || validating && !password}"
                             placeholder="Password"
                         >
                     </div>
                     <button
                         type="submit"
                         class="btn btn-dark btn-block"
-                        :disabled="logging_in || !email || !password"
+                        :disabled="logging_in"
                     >
                         <span v-if="logging_in">
-                            <font-awesome-icon :icon="['fal', 'spinner-third']" spin fixed-width />
+                            <Spinner />
                         </span>
                         <span v-else>
                             <font-awesome-icon :icon="['fad', 'sign-in']" fixed-width /> Login
@@ -60,21 +60,25 @@ import { mapState } from 'vuex'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
+import Spinner from '@/components/Spinner'
+
 export default {
     name: 'Login',
     data: () => ({
+        error: {},
+
         email: '',
         password: '',
+
+        validating: false,
 
         invalid_email: false,
         invalid_password: false,
 
-        logging_in: false,
-
-        error: {}
+        logging_in: false
     }),
     components: {
-
+        Spinner
     },
     computed: {
         ...mapState({
@@ -86,50 +90,58 @@ export default {
     },
     methods: {
         async signInWithEmailAndPassword () {
-            this.logging_in = true
+            this.validating = true
 
-            await firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-            .then(response => {
-                if (response) {
-                    this.$store.commit('setUser', response.user)
-                }
+            if (
+                this.email &&
+                this.password
+            ) {
+                this.logging_in = true
 
-                if (
-                    this.$route.query &&
-                    this.$route.query.redirect
-                ) {
-                    this.$router.push({
-                        path: this.$route.query.redirect
-                    })
-                }
-                else {
-                    if (this.currentUser && this.currentUser.uid) {
+                await firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+                .then(response => {
+                    if (response) {
+                        this.$store.commit('setUser', response.user)
+                    }
+
+                    if (
+                        this.$route.query &&
+                        this.$route.query.redirect
+                    ) {
                         this.$router.push({
-                            name: 'UserDashboard'
-                        })
-                    } else {
-                        this.$router.push({
-                            name: 'Recipes'
+                            path: this.$route.query.redirect
                         })
                     }
-                }
+                    else {
+                        if (this.currentUser && this.currentUser.uid) {
+                            this.$router.push({
+                                name: 'MyRecipes'
+                            })
+                        } else {
+                            this.$router.push({
+                                name: 'Recipes'
+                            })
+                        }
+                    }
 
-                this.logging_in = false
-            })
-            .catch(error => {
-                this.logging_in = false
+                    this.validating = false
+                    this.logging_in = false
+                })
+                .catch(error => {
+                    this.logging_in = false
 
-                if (error) {
-                    this.error = error
-                }
+                    if (error) {
+                        this.error = error
+                    }
 
-                if (error.code == "auth/user-not-found") {
-                    this.invalid_email = true
-                }
-                if (error.code == "auth/wrong-password") {
-                    this.invalid_password = true
-                }
-            })
+                    if (error.code == "auth/user-not-found") {
+                        this.invalid_email = true
+                    }
+                    if (error.code == "auth/wrong-password") {
+                        this.invalid_password = true
+                    }
+                })
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
             :visible="value"
             centered
             no-fade
+            hide-header
             :no-close-on-backdrop="has_ingredient"
             :no-close-on-esc="has_ingredient"
             @show="show"
@@ -13,23 +14,24 @@
             @cancel="hide"
             @close="hide"
         >
-            <template #modal-header>
-                <h5 class="modal-title">Add Ingredient</h5>
-                <!-- <button type="button" class="modal-close" data-dismiss="modal" aria-label="Close">
-                    <font-awesome-icon :icon="['far', 'times']" />
-                </button> -->
-                <a
-                    href="#"
-                    class="modal-close"
-                    aria-label="Close"
-                    @click.prevent="hide"
-                >
-                    <font-awesome-layers>
-                        <font-awesome-icon icon="circle" class="background" transform="shrink-1" />
-                        <font-awesome-icon :icon="['fas', 'times-circle']" class="foreground" />
-                    </font-awesome-layers>
-                </a>
-            </template>
+            <!-- <template #modal-header>
+                <h5 class="modal-title">
+                    <div v-if="ingredient">Edit Ingredient</div>
+                    <div v-else>Add Ingredient</div>
+                </h5>
+            </template> -->
+
+            <a
+                href="#"
+                class="modal-close"
+                aria-label="Close"
+                @click.prevent="hide"
+            >
+                <font-awesome-layers>
+                    <font-awesome-icon icon="circle" class="background" transform="shrink-1" />
+                    <font-awesome-icon :icon="['fas', 'times-circle']" class="foreground" />
+                </font-awesome-layers>
+            </a>
 
             <div class="mb-3">
                 <label for="ingredient" class="form-label">Amount</label>
@@ -70,7 +72,7 @@
                     type="text"
                     v-model="editable_ingredient.ingredient"
                     aria-label="Ingredient"
-                    class="form-control"
+                    class="form-control font-weight-bold"
                     :class="{'is-invalid': validating && !editable_ingredient.ingredient}"
                     v-focus
                 >
@@ -141,12 +143,7 @@ export default {
         validated () {
             let valid = true
 
-            if (!this.editable_ingredient.ingredient) {
-                valid = false
-                if (this.$refs.ingredient) {
-                    this.$refs.ingredient.focus()
-                }
-            } else if (!this.editable_ingredient.amount) {
+            if (!this.editable_ingredient.amount) {
                 valid = false
                 if (this.$refs.amount) {
                     this.$refs.amount.focus()
@@ -155,6 +152,11 @@ export default {
                 valid = false
                 if (this.$refs.measurement) {
                     this.$refs.measurement.focus()
+                }
+            } else if (!this.editable_ingredient.ingredient) {
+                valid = false
+                if (this.$refs.ingredient) {
+                    this.$refs.ingredient.focus()
                 }
             }
 

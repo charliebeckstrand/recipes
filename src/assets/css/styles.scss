@@ -64,7 +64,16 @@ a {
 	}
 	&.img-thumbnail {
 		&:hover {
-			border-color: $primary;
+			border-color: $secondary;
+		}
+	}
+}
+
+.btn-link {
+	&.text-danger {
+		&:active,
+		&:hover {
+			color: darken($danger, 10%) !important;
 		}
 	}
 }
@@ -145,4 +154,9 @@ a {
 	> * + * {
 		margin-top: 1rem;
 	}
+}
+
+.drag-handle {
+    cursor: pointer;
+    user-select: none;
 }

@@ -80,6 +80,10 @@
     }
     .swal2-styled.swal2-confirm {
         background-color: $danger;
+        max-width: 300px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     .swal2-styled.swal2-cancel + .swal2-styled.swal2-confirm,

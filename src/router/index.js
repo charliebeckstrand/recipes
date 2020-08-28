@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import store from '@/store'
+
+// import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 
 Vue.use(VueRouter)
@@ -11,13 +14,14 @@ const routes = [
         name: 'Login',
         component: Login
     },
+    // {
+    //     path: '/',
+    //     name: 'Home',
+    //     component: Home
+    // },
     {
         path: '/',
         name: 'Home',
-        // components: {
-        //     default: () => import('@/views/Home.vue'),
-        //     navbar: () => import('@/components/Navbar.vue')
-        // }
         redirect: '/recipes'
     },
     {
@@ -62,25 +66,61 @@ const routes = [
         }
     },
     // user
+    // {
+    //     path: '/dashboard',
+    //     name: 'UserDashboard',
+    //     redirect: '/dashboard/my-recipes',
+    //     children: [
+    //         {
+    //             path: '/dashboard/my-recipes',
+    //             components: {
+    //                 default: () => import('@/views/user/dashboard/MyRecipes.vue'),
+    //                 navbar: () => import('@/components/Navbar.vue')
+    //             },
+    //         }
+    //     ],
+    //     components: {
+    //         default: () => import('@/views/user/dashboard/Index.vue'),
+    //         navbar: () => import('@/components/Navbar.vue')
+    //     },
+    //     props: {
+    //         default: true
+    //     },
+    //     meta: {
+    //         requiresAuth: true
+    //     }
+    // },
     {
-        path: '/dashboard',
-        name: 'UserDashboard',
-        redirect: '/dashboard/my-recipes',
+        path: '/user',
+        name: 'User',
+        redirect: '/user/profile',
         children: [
             {
-                path: '/dashboard/my-recipes',
+                path: '/user/profile',
+                name: 'Profile',
                 components: {
-                    default: () => import('@/views/user/dashboard/MyRecipes.vue'),
+                    default: () => import('@/views/user/Profile.vue'),
+                    navbar: () => import('@/components/Navbar.vue')
+                },
+            },
+            {
+                path: '/user/my-recipes',
+                name: 'MyRecipes',
+                components: {
+                    default: () => import('@/views/user/MyRecipes.vue'),
                     navbar: () => import('@/components/Navbar.vue')
                 },
             }
         ],
         components: {
-            default: () => import('@/views/user/dashboard/Index.vue'),
+            default: () => import('@/views/user/Index.vue'),
             navbar: () => import('@/components/Navbar.vue')
         },
         props: {
             default: true
+        },
+        meta: {
+            requiresAuth: true
         }
     },
     {
@@ -92,6 +132,9 @@ const routes = [
         },
         props: {
             default: true
+        },
+        meta: {
+            requiresAuth: true
         }
     },
 ]
@@ -112,6 +155,20 @@ const router = new VueRouter({
             window.scrollTo(0, 0)
         }
     }
+})
+
+router.beforeEach((to, from, next) => {
+    if (
+        to.matched.some(record => record.meta.requiresAuth) &&
+        (!store.state.user.user || store.state.user.user && !store.state.user.user.uid)
+    ) {
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath }
+        })
+    }
+
+    next()
 })
 
 export default router

@@ -76,7 +76,8 @@
 @media (max-width: 575px) {
     .modal {
         .modal-dialog {
-            max-width: calc(100% - 30px);
+            // max-width: calc(100% - 30px);
+            margin: 30px;
         }
     }
 }

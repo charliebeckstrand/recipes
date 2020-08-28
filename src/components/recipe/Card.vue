@@ -45,7 +45,9 @@
                             style="word-break: break-word !important;"
                         />
 
-                        <div class="d-flex align-items-center">
+                        <div
+                            class="d-flex align-items-center"
+                        >
                             <div class="d-flex align-items-center">
                                 <div>
                                     <favorite-recipe-icon :recipe_id="recipe.id" />
@@ -65,7 +67,7 @@
                                             title="Debug"
                                             @click.prevent="debug(recipe)"
                                         >
-                                            <font-awesome-icon :icon="recipe.debugging ? ['fas', 'brackets'] : ['fad', 'brackets']" fixed-width />
+                                            <font-awesome-icon :icon="recipe.debugging ? ['fas', 'code'] : ['fad', 'code']" fixed-width />
                                         </a>
                                     </div>
                                     <b-dropdown
@@ -86,19 +88,20 @@
                                     </b-dropdown>
                                 </div>
                             </div>
-                            <div class="ml-auto">
-                                <div class="d-flex align-items-center">
+                            <div
+                                class="ml-auto"
+                            >
+                                <!-- <div class="d-flex align-items-center">
                                     <div
-                                        class="mr-2"
                                         :content="recipe.created_by.displayName"
                                         v-tippy
                                     >
-                                        <v-gravatar :email="recipe.created_by.email" width="15" class="rounded-circle" />
+                                        <v-gravatar :email="recipe.created_by.email" width="16" class="d-block rounded-circle" />
                                     </div>
-                                    <span class="small text-muted">
+                                    <div class="small text-muted ml-sm-2">
                                         {{moment(recipe.created).fromNow()}}
-                                    </span>
-                                </div>
+                                    </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -123,6 +126,13 @@
                 </prism>
             </div>
         </div>
+
+        <simple-recipe-modal
+            v-model="simple_recipe_modal"
+            :recipe="recipe"
+            @update="updateRecipe"
+            @hide="simple_recipe_modal = false"
+        />
 
         <recipe-modal
             v-model="recipe_modal"
@@ -156,7 +166,9 @@ import firebase from 'firebase/app'
 import FavoriteRecipeIcon from '@/components/icons/FavoriteRecipeIcon'
 import ShareRecipeIcon from '@/components/icons/ShareRecipeIcon'
 
+import SimpleRecipeModal from '@/components/modals/SimpleRecipeModal'
 import RecipeModal from '@/components/modals/RecipeModal'
+
 import ImageModal from '@/components/modals/ImageModal'
 
 // import Tag from '@/components/Tag'
@@ -170,7 +182,9 @@ export default {
 
         moment: moment,
 
+        simple_recipe_modal: false,
         recipe_modal: false,
+
         image_modal: false
     }),
     components: {
@@ -180,7 +194,9 @@ export default {
         FavoriteRecipeIcon,
         ShareRecipeIcon,
 
+        SimpleRecipeModal,
         RecipeModal,
+
         ImageModal
     },
     computed: {
@@ -213,8 +229,15 @@ export default {
             this.image = image
             this.image_modal = true
         },
-        editRecipe () {
-            this.recipe_modal = true
+        editRecipe (recipe) {
+            if (
+                recipe.type &&
+                recipe.type == 'simple'
+            ) {
+                this.simple_recipe_modal = true
+            } else {
+                this.recipe_modal = true
+            }
         },
         updateRecipe (recipe) {
             const updated = this.moment().format()
@@ -227,6 +250,7 @@ export default {
             .doc(recipe.id)
             .set(recipe)
             .then(() => {
+                this.simple_recipe_modal = false
                 this.recipe_modal = false
 
                 this.$set(recipe, 'updating', false)

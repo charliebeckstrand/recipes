@@ -40,7 +40,7 @@
             <editor-menu-bar
                 :editor="editor"
                 v-slot="{ commands, isActive }"
-                class="mb-1"
+                class="mb-1 editor-menu-bar"
             >
                 <div>
                     <b-button-group>
@@ -65,11 +65,18 @@
                         >
                             <font-awesome-icon :icon="['fas', 'underline']" />
                         </b-button>
-                        <b-dropdown variant="light">
+                        <b-button
+                            :class="{ 'active': isActive.heading({ level: 4 }) }"
+                            variant="light"
+                            @click="commands.heading({ level: 4 })"
+                        >
+                            <font-awesome-icon :icon="['fas', 'heading']" />
+                        </b-button>
+                        <!-- <b-dropdown variant="light">
                             <template v-slot:button-content>
                                 <font-awesome-icon :icon="['fas', 'heading']" />
                             </template>
-                            <!-- <b-dropdown-item
+                            <b-dropdown-item
                                 :active="isActive.heading({ level: 1 })"
                                 @click="commands.heading({ level: 1 })"
                             >
@@ -80,7 +87,7 @@
                                 @click="commands.heading({ level: 2 })"
                             >
                                 <font-awesome-icon :icon="['fas', 'h2']" fixed-width />
-                            </b-dropdown-item> -->
+                            </b-dropdown-item>
                             <b-dropdown-item
                                 :active="isActive.heading({ level: 3 })"
                                 @click="commands.heading({ level: 3 })"
@@ -93,7 +100,7 @@
                             >
                                 <font-awesome-icon :icon="['fas', 'h4']" fixed-width />
                             </b-dropdown-item>
-                        </b-dropdown>
+                        </b-dropdown> -->
                         <b-button
                             :class="{ 'active': isActive.bullet_list() }"
                             variant="light"
@@ -127,7 +134,7 @@
 
         <editor-content
             :editor="editor"
-            class="editor-content py-3 px-3 border rounded"
+            class="editor-content form-control"
             :class="{
 
             }"
@@ -274,25 +281,36 @@ export default {
 	}
 }
 
+.editor-content {
+    &.form-control {
+        padding: 0;
+    }
+}
+
 .ProseMirror {
-	// p,
-	// ul,
-	// ol {
-	// 	margin: 0;
-	// }
-	// p + *,
-	// ul + *,
-	// ol + *,
-	// * + p,
-	// * + ul,
-	// * + ol {
-	// 	margin-top: 1rem;
-	// }
+    padding: 1rem;
 	> * {
 		margin: 0;
 	}
 	> * + * {
 		margin-top: 1rem;
 	}
+    li:last-child {
+        p {
+            margin: 0;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .tiptap {
+        .editor-menu-bar {
+            .btn {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+                border-radius: 0.2rem;
+            }
+        }
+    }
 }
 </style>

@@ -21,13 +21,8 @@
             </div>
         </div>
 
-        <div v-if="loading" class="page-loading pb-3">
-            <font-awesome-icon
-                :icon="['fal', 'spinner-third']"
-                size="2x"
-                spin
-                fixed-width
-            />
+        <div v-if="loading" class="pb-3">
+            <Spinner size="2x" />
         </div>
         <div v-else>
             <!-- <div class="mb-3">
@@ -88,6 +83,8 @@ import { mapState } from 'vuex'
 
 import meals from '@/common/meals'
 
+import Spinner from '@/components/Spinner'
+
 import Recipe from '@/components/recipe/Card'
 
 export default {
@@ -100,6 +97,7 @@ export default {
         loading: false
     }),
     components: {
+        Spinner,
         Recipe
     },
     computed: {

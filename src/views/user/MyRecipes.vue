@@ -1,6 +1,6 @@
 <template>
     <div class="dashboard page">
-        <!-- <div
+        <div
             v-sticky="{
                 zIndex: 11,
                 stickyTop: 0
@@ -19,15 +19,10 @@
 
                 </div>
             </div>
-        </div> -->
+        </div>
 
         <div v-if="loading">
-            <font-awesome-icon
-                :icon="['fal', 'spinner-third']"
-                size="2x"
-                spin
-                fixed-width
-            />
+            <Spinner size="2x" />
         </div>
         <div v-else>
             <div class="d-flex align-items-center mb-3">
@@ -55,6 +50,8 @@ import { mapState } from 'vuex'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
+import Spinner from '@/components/Spinner'
+
 import CreateRecipeButton from '@/components/buttons/CreateRecipeButton'
 
 import Recipe from '@/components/recipe/Card'
@@ -67,6 +64,8 @@ export default {
         loading: false
     }),
     components: {
+        Spinner,
+        
         CreateRecipeButton,
 
         Recipe

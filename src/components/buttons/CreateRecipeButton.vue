@@ -8,6 +8,25 @@
             <font-awesome-icon :icon="['far', 'plus']" /> Create Recipe
         </button>
 
+        <!-- <b-dropdown
+            variant="success"
+            right
+        >
+            <template v-slot:button-content>
+                <font-awesome-icon :icon="['far', 'plus']" /> Create Recipe <font-awesome-icon :icon="['fas', 'caret-down']" />
+            </template>
+            <b-dropdown-item
+                @click.prevent="createRecipe"
+            >
+                Simple
+            </b-dropdown-item>
+            <b-dropdown-item
+                @click.prevent
+            >
+                Advanced
+            </b-dropdown-item>
+        </b-dropdown> -->
+
         <recipe-modal
             v-model="recipe_modal"
             @create="setRecipe"
