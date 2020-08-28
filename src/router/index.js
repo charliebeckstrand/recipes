@@ -7,6 +7,11 @@ Vue.use(VueRouter)
 
 const routes = [
     {
+        path: '/login',
+        name: 'Login',
+        component: Login
+    },
+    {
         path: '/',
         name: 'Home',
         // components: {
@@ -16,11 +21,6 @@ const routes = [
         redirect: '/recipes'
     },
     {
-        path: '/login',
-        name: 'Login',
-        component: Login
-    },
-    {
         path: '/recipes',
         name: 'Recipes',
         components: {
@@ -28,17 +28,28 @@ const routes = [
             navbar: () => import('@/components/Navbar.vue')
         }
     },
-    {
-        path: '/recipes/create',
-        name: 'CreateRecipe',
-        components: {
-            default: () => import('@/views/CreateRecipe.vue'),
-            navbar: () => import('@/components/Navbar.vue')
-        },
-        props: {
-            default: true
-        }
-    },
+    // {
+    //     path: '/recipes/create',
+    //     name: 'CreateRecipe',
+    //     components: {
+    //         default: () => import('@/views/recipes/Create.vue'),
+    //         navbar: () => import('@/components/Navbar.vue')
+    //     },
+    //     props: {
+    //         default: true
+    //     }
+    // },
+    // {
+    //     path: '/recipes/:recipe_id/:recipe_name/edit',
+    //     name: 'EditRecipe',
+    //     components: {
+    //         default: () => import('@/views/recipe/Edit.vue'),
+    //         navbar: () => import('@/components/Navbar.vue')
+    //     },
+    //     props: {
+    //         default: true
+    //     }
+    // },
     {
         path: '/recipes/:recipe_id/:recipe_name',
         name: 'Recipe',
@@ -53,9 +64,19 @@ const routes = [
     // user
     {
         path: '/dashboard',
-        name: 'Dashboard',
+        name: 'UserDashboard',
+        redirect: '/dashboard/my-recipes',
+        children: [
+            {
+                path: '/dashboard/my-recipes',
+                components: {
+                    default: () => import('@/views/user/dashboard/MyRecipes.vue'),
+                    navbar: () => import('@/components/Navbar.vue')
+                },
+            }
+        ],
         components: {
-            default: () => import('@/views/user/Dashboard.vue'),
+            default: () => import('@/views/user/dashboard/Index.vue'),
             navbar: () => import('@/components/Navbar.vue')
         },
         props: {
@@ -64,7 +85,7 @@ const routes = [
     },
     {
         path: '/profile',
-        name: 'Profile',
+        name: 'UserProfile',
         components: {
             default: () => import('@/views/user/Profile.vue'),
             navbar: () => import('@/components/Navbar.vue')

@@ -22,8 +22,15 @@ import ShareRecipeModal from '@/components/modals/ShareRecipeModal'
 
 export default {
     name: 'ShareRecipeIcon',
+    data: () => ({
+        share_recipe_modal: false
+    }),
     components: {
         ShareRecipeModal
+    },
+    props: {
+        recipe_name: String,
+        recipe_id: String
     },
     computed: {
         permalink () {
@@ -40,18 +47,11 @@ export default {
             return permalink
         }
     },
-    props: {
-        recipe_name: String,
-        recipe_id: String
-    },
     methods: {
         shareRecipe () {
             this.share_recipe_modal = true
         }
-    },
-    data: () => ({
-        share_recipe_modal: false
-    })
+    }
 }
 </script>
 

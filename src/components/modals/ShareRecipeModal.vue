@@ -13,7 +13,7 @@
             hide-footer
         >
             <template #modal-header>
-                <h5 class="modal-title">Share Recipe</h5>
+                <h5 class="modal-title font-weight-bold">Share Recipe</h5>
                 <a
                     href="#"
                     class="modal-close"
@@ -83,6 +83,9 @@ import copy from 'copy-html-to-clipboard'
 
 export default {
     name: 'ShareRecipeModal',
+    data: () => ({
+        copying_to_clipboard: false
+    }),
     components: {
 
     },
@@ -124,12 +127,6 @@ export default {
         hidden () {
             this.$emit('hide')
         }
-    },
-    data: () => ({
-        copying_to_clipboard: false
-    }),
-    mounted () {
-
     }
 }
 </script>

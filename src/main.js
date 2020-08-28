@@ -7,6 +7,12 @@ import modules from './modules'
 import router from './router'
 import store from './store'
 
+import lineClamp from 'vue-line-clamp'
+
+Vue.use(lineClamp, {
+  // plugin options
+})
+
 import './assets/css/_custom.scss'
 
 Vue.config.devtools = false

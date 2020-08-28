@@ -1,24 +1,27 @@
 <template>
-    <div id="app">
-        <router-view name="navbar" />
-        <router-view class="container" />
+    <div class="recipe-form">
+
     </div>
 </template>
 
 <script>
 export default {
-    name: 'App',
+    name: 'RecipeForm',
     data: () => ({
 
     }),
     components: {
 
+    },
+    props: {
+        recipe: Object
+    },
+    methods: {
+
     }
-};
+}
 </script>
 
 <style lang="scss" scoped>
-#app {
-    height: 100%;
-}
+@import '@/assets/css/_colors';
 </style>

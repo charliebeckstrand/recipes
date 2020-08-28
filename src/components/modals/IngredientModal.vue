@@ -6,6 +6,7 @@
             no-fade
             :no-close-on-backdrop="has_ingredient"
             :no-close-on-esc="has_ingredient"
+            @show="show"
             @shown="shown"
             @hidden="hidden"
             @hide="hide"
@@ -31,53 +32,72 @@
             </template>
 
             <div class="mb-3">
-                <label for="ingredient" class="form-label">Ingredient</label>
-                <input
-                    id="ingredient"
-                    ref="ingredient"
-                    type="text"
-                    v-model="ingredient.ingredient"
-                    aria-label="Ingredient"
-                    class="form-control"
-                    :class="{'is-invalid': validating && !ingredient.ingredient}"
-                    v-focus
-                >
-                <div class="invalid-feedback">
-                    &bull; Ingredient is required
-                </div>
-            </div>
-            <div class="mb-3">
                 <label for="ingredient" class="form-label">Amount</label>
                 <input
                     ref="amount"
                     type="text"
-                    v-model="ingredient.amount"
+                    v-model="editable_ingredient.amount"
                     aria-label="Amount"
                     class="form-control"
-                    :class="{'is-invalid': validating && !ingredient.amount}"
+                    :class="{'is-invalid': validating && !editable_ingredient.amount}"
                 >
                 <div class="invalid-feedback">
                     &bull; Amount is required
                 </div>
             </div>
-            <div>
+
+            <div class="mb-3">
                 <label for="measurement" class="form-label">Measurement</label>
                 <input
                     ref="measurement"
                     type="text"
-                    v-model="ingredient.measurement"
+                    v-model="editable_ingredient.measurement"
                     aria-label="Measurement"
                     class="form-control"
-                    :class="{'is-invalid': validating && !ingredient.measurement}"
+                    :class="{'is-invalid': validating && !editable_ingredient.measurement}"
                 >
                 <div class="invalid-feedback">
                     &bull; Measurement is required
                 </div>
             </div>
 
+
+            <div class="">
+                <label for="ingredient" class="form-label">Ingredient</label>
+                <input
+                    id="ingredient"
+                    ref="ingredient"
+                    type="text"
+                    v-model="editable_ingredient.ingredient"
+                    aria-label="Ingredient"
+                    class="form-control"
+                    :class="{'is-invalid': validating && !editable_ingredient.ingredient}"
+                    v-focus
+                >
+                <div class="invalid-feedback">
+                    &bull; Ingredient is required
+                </div>
+            </div>
+
             <template #modal-footer>
-                <button type="button" class="btn btn-success" @click="addIngredient">
-                    <font-awesome-icon :icon="['fad', 'plus-square']" fixed-width /> Add Ingredient
+                <button type="button" class="btn btn-light" @click="hide">
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    class="btn"
+                    :class="{
+                        'btn-primary': ingredient,
+                        'btn-success': !ingredient
+                    }"
+                    @click="saveIngredient"
+                >
+                    <div v-if="ingredient">
+                        <font-awesome-icon :icon="['fad', 'check-square']" fixed-width /> Save Changes
+                    </div>
+                    <div v-else>
+                        <font-awesome-icon :icon="['fad', 'plus-square']" fixed-width /> Add Ingredient
+                    </div>
                 </button>
             </template>
         </b-modal>
@@ -86,46 +106,52 @@
 
 <script>
 export default {
-    name: 'AddIngredientModal',
+    name: 'IngredientModal',
+    data: () => ({
+        editable_ingredient: {},
+
+        validating: false
+    }),
     components: {
 
     },
     props: {
-        value: Boolean
+        value: Boolean,
+        ingredient: Object
     },
     computed: {
         has_ingredient () {
             let has_ingredient = false
-            if (_.some(this.ingredient)) {
+            if (_.some(this.editable_ingredient)) {
                 has_ingredient = true
             }
             return has_ingredient
         }
     },
     methods: {
-        addIngredient () {
+        saveIngredient () {
             this.validating = true
 
             if (!this.validated()) {
                 return false
             }
 
-            this.$emit('add', this.ingredient)
+            this.$emit('add', this.editable_ingredient)
         },
         validated () {
             let valid = true
 
-            if (!this.ingredient.ingredient) {
+            if (!this.editable_ingredient.ingredient) {
                 valid = false
                 if (this.$refs.ingredient) {
                     this.$refs.ingredient.focus()
                 }
-            } else if (!this.ingredient.amount) {
+            } else if (!this.editable_ingredient.amount) {
                 valid = false
                 if (this.$refs.amount) {
                     this.$refs.amount.focus()
                 }
-            } else if (!this.ingredient.measurement) {
+            } else if (!this.editable_ingredient.measurement) {
                 valid = false
                 if (this.$refs.measurement) {
                     this.$refs.measurement.focus()
@@ -134,30 +160,29 @@ export default {
 
             return valid
         },
-        // modal event methods
+        show () {
+            if (this.ingredient) {
+                this.editable_ingredient = _.cloneDeep(this.ingredient)
+            }
+        },
         shown () {
-            if (this.$refs.ingredient) {
-                this.$refs.ingredient.focus()
+            if (
+                !this.ingredient &&
+                this.$refs.amount
+            ) {
+                this.$refs.amount.focus()
             }
         },
         hide () {
             this.$emit('hide')
         },
         hidden () {
-            this.ingredient = {}
+            this.editable_ingredient = {}
 
             this.validating = false
 
             this.$emit('hide')
         }
-    },
-    data: () => ({
-        ingredient: {},
-
-        validating: false
-    }),
-    mounted () {
-
     }
 }
 </script>

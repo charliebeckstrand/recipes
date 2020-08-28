@@ -15,14 +15,23 @@
                         Dashboard
                     </h1>
                 </div>
-                <div class="ml-auto">
-                    
-                </div>
             </div>
         </div>
 
+        <b-nav
+            class="mb-3"
+            tabs
+        >
+            <b-nav-item
+                :to="{
+                    path: '/dashboard/my-recipes'
+                }"
+            >
+                My Recipes
+            </b-nav-item>
+          </b-nav>
 
-
+        <router-view />
     </div>
 </template>
 
@@ -30,7 +39,10 @@
 import { mapState } from 'vuex'
 
 export default {
-    name: 'Dashboard',
+    name: 'UserDashboard',
+    data: () => ({
+        
+    }),
     components: {
 
     },
@@ -46,12 +58,6 @@ export default {
 
     },
     methods: {
-
-    },
-    data: () => ({
-
-    }),
-    mounted () {
 
     }
 }

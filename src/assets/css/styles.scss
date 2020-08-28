@@ -106,17 +106,26 @@ a {
     }
 }
 
-.dropdown-toggle::after {
-	display: none;
+.navbar {
+	.dropdown-item.active,
+	.dropdown-item:active {
+		background-color: #f8f9fa;
+		color: inherit;
+	}
 }
 
-.dropdown-item:active {
-	background-color: #f8f9fa;
-	color: inherit;
-}
+.dropdown {
+	.dropdown-item.active,
+	.dropdown-item:active {
+		// background-color: $primary;
+		// color: $white;
+		background-color: #f8f9fa;
+		color: inherit;
+	}
 
-.modal-backdrop {
-	background-color: rgba(0, 0, 0, .5);
+	.dropdown-toggle::after {
+		display: none;
+	}
 }
 
 .vue-content-placeholders + .vue-content-placeholders {
@@ -129,6 +138,11 @@ a {
 	}
 }
 
-.sticky-title {
-	// margin-top: -1rem;
+.v-html {
+	> * {
+		margin: 0;
+	}
+	> * + * {
+		margin-top: 1rem;
+	}
 }

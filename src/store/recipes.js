@@ -1,5 +1,7 @@
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
-import { db } from '@/db'
 
 export default {
     state: {
@@ -11,7 +13,7 @@ export default {
     actions: {
         getRecipes: firestoreAction(({ bindFirestoreRef }) => {
             // return the promise returned by `bindFirestoreRef`
-            return bindFirestoreRef('recipes', db.collection('recipes'))
+            return bindFirestoreRef('recipes', firebase.firestore().collection('recipes'))
         }),
         unbindRecipes: firestoreAction(({ unbindFirestoreRef }) => {
             unbindFirestoreRef('recipes')

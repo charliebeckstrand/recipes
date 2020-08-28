@@ -19,7 +19,7 @@
                             </router-link>
                         </h5>
 
-                        <p class="card-text text-muted my-3">
+                        <!-- <p v-if="recipe.description" class="card-text text-muted my-3">
                             <v-clamp
                                 autoresize
                                 :max-lines="3"
@@ -36,20 +36,17 @@
                                     </button>
                                 </template>
                             </v-clamp>
-                        </p>
+                        </p> -->
+
+                        <div
+                            v-html="recipe.description"
+                            v-line-clamp="3"
+                            class="card-text text-muted my-3 mr-3 v-html"
+                            style="word-break: break-word !important;"
+                        />
+
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
-                                <div v-if="vue_app_environment == 'local'" class="mr-2">
-                                    <a
-                                        href="#"
-                                        class="text-warning"
-                                        :class="{'active': recipe.debugging}"
-                                        title="Debug"
-                                        @click.prevent="debug(recipe)"
-                                    >
-                                        <font-awesome-icon :icon="recipe.debugging ? ['fas', 'bug'] : ['fad', 'bug']" fixed-width />
-                                    </a>
-                                </div>
                                 <div>
                                     <favorite-recipe-icon :recipe_id="recipe.id" />
                                 </div>
@@ -59,17 +56,28 @@
                                         :recipe_name="recipe_name"
                                     />
                                 </div>
-                                <div v-if="currentUser && (recipe.created_by.uid == currentUser.uid)" class="ml-2">
+                                <div v-if="currentUser && (recipe.created_by.uid == currentUser.uid)" class="d-flex align-items-center ml-2">
+                                    <div v-if="vue_app_environment == 'local'" class="mr-2">
+                                        <a
+                                            href="#"
+                                            class="text-warning"
+                                            :class="{'active': recipe.debugging}"
+                                            title="Debug"
+                                            @click.prevent="debug(recipe)"
+                                        >
+                                            <font-awesome-icon :icon="recipe.debugging ? ['fas', 'brackets'] : ['fad', 'brackets']" fixed-width />
+                                        </a>
+                                    </div>
                                     <b-dropdown
                                         variant="link"
                                         toggle-tag="a"
                                         toggle-class="text-secondary p-0"
                                     >
                                         <template v-slot:button-content>
-                                            <font-awesome-icon :icon="['fas', 'ellipsis-v']" fixed-width />
+                                            <font-awesome-icon :icon="['fad', 'cog']" fixed-width />
                                             <font-awesome-icon :icon="['fas', 'caret-down']" fixed-width />
                                         </template>
-                                        <b-dropdown-item>
+                                        <b-dropdown-item @click="editRecipe(recipe)">
                                             <font-awesome-icon :icon="['fad', 'pencil']" class="text-primary" fixed-width /> Edit
                                         </b-dropdown-item>
                                         <b-dropdown-item @click.prevent="deleteRecipe(recipe)">
@@ -79,7 +87,18 @@
                                 </div>
                             </div>
                             <div class="ml-auto">
-
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="mr-2"
+                                        :content="recipe.created_by.displayName"
+                                        v-tippy
+                                    >
+                                        <v-gravatar :email="recipe.created_by.email" width="15" class="rounded-circle" />
+                                    </div>
+                                    <span class="small text-muted">
+                                        {{moment(recipe.created).fromNow()}}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -105,6 +124,13 @@
             </div>
         </div>
 
+        <recipe-modal
+            v-model="recipe_modal"
+            :recipe="recipe"
+            @update="updateRecipe"
+            @hide="recipe_modal = false"
+        />
+
         <image-modal
             v-model="image_modal"
             :image="image"
@@ -118,28 +144,43 @@
 <script>
 import { mapState } from 'vuex'
 
+// import VClamp from 'vue-clamp'
+
 import Prism from 'vue-prismjs'
 import 'prismjs/themes/prism.css'
 
-import VClamp from 'vue-clamp'
+import moment from 'moment'
 
 import firebase from 'firebase/app'
 
 import FavoriteRecipeIcon from '@/components/icons/FavoriteRecipeIcon'
 import ShareRecipeIcon from '@/components/icons/ShareRecipeIcon'
 
+import RecipeModal from '@/components/modals/RecipeModal'
 import ImageModal from '@/components/modals/ImageModal'
 
 // import Tag from '@/components/Tag'
 
 export default {
-    name: 'Recipe',
+    name: 'RecipeCard',
+    data: () => ({
+        image: null,
+
+        env: process.env,
+
+        moment: moment,
+
+        recipe_modal: false,
+        image_modal: false
+    }),
     components: {
-        VClamp,
+        // VClamp,
         Prism,
         // Tag
         FavoriteRecipeIcon,
         ShareRecipeIcon,
+
+        RecipeModal,
         ImageModal
     },
     computed: {
@@ -172,6 +213,30 @@ export default {
             this.image = image
             this.image_modal = true
         },
+        editRecipe () {
+            this.recipe_modal = true
+        },
+        updateRecipe (recipe) {
+            const updated = this.moment().format()
+
+            Object.assign(recipe, {updated})
+
+            firebase
+            .firestore()
+            .collection("recipes")
+            .doc(recipe.id)
+            .set(recipe)
+            .then(() => {
+                this.recipe_modal = false
+
+                this.$set(recipe, 'updating', false)
+            })
+            .catch(error => {
+                if (error) {
+                    console.log(error)
+                }
+            })
+        },
         deleteRecipe (recipe) {
             let message = null
 
@@ -196,15 +261,7 @@ export default {
                 }
             })
         }
-    },
-    data: () => ({
-        image: null,
-
-        env: process.env,
-
-        image_modal: false,
-        share_recipe_modal: false
-    })
+    }
 }
 </script>
 

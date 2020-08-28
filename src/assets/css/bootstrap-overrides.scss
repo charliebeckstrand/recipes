@@ -17,6 +17,18 @@
 .btn-info,
 .btn-primary {
     color: $white;
+    &.disabled,
+    &:disabled {
+        color: $white;
+    }
+}
+
+.btn-warning {
+    color: $white;
+    &:focus,
+    &:hover {
+        color: $white;
+    }
 }
 
 .btn-outline-primary {
@@ -55,6 +67,10 @@
             opacity: 1;
         }
     }
+}
+
+.modal-backdrop {
+	background-color: rgba(0, 0, 0, .5);
 }
 
 @media (max-width: 575px) {

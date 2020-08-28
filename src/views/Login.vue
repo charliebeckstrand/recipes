@@ -62,6 +62,17 @@ import 'firebase/auth'
 
 export default {
     name: 'Login',
+    data: () => ({
+        email: '',
+        password: '',
+
+        invalid_email: false,
+        invalid_password: false,
+
+        logging_in: false,
+
+        error: {}
+    }),
     components: {
 
     },
@@ -94,7 +105,7 @@ export default {
                 else {
                     if (this.currentUser && this.currentUser.uid) {
                         this.$router.push({
-                            name: 'Dashboard'
+                            name: 'UserDashboard'
                         })
                     } else {
                         this.$router.push({
@@ -120,20 +131,6 @@ export default {
                 }
             })
         }
-    },
-    data: () => ({
-        email: '',
-        password: '',
-
-        invalid_email: false,
-        invalid_password: false,
-
-        logging_in: false,
-
-        error: {}
-    }),
-    firestore () {
-
     }
 }
 </script>

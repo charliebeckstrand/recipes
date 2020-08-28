@@ -43,16 +43,23 @@
                                 <b-dropdown-header class="d-lg-block d-none">
                                     {{currentUser.displayName}}
                                 </b-dropdown-header>
+                                <!-- <b-dropdown-item
+                                    :to="{
+                                        name: 'CreateRecipe'
+                                    }"
+                                >
+                                    <font-awesome-icon :icon="['far', 'plus']" fixed-width /> Create Recipe
+                                </b-dropdown-item> -->
                                 <b-dropdown-item
                                     :to="{
-                                        name: 'Dashboard'
+                                        name: 'UserDashboard'
                                     }"
                                 >
                                     <font-awesome-icon :icon="['fad', 'tachometer']" fixed-width /> Dashboard
                                 </b-dropdown-item>
                                 <b-dropdown-item
                                     :to="{
-                                        name: 'Profile'
+                                        name: 'UserProfile'
                                     }"
                                 >
                                     <font-awesome-icon :icon="['fad', 'user']" fixed-width /> Profile
@@ -87,6 +94,9 @@ Array.from(document.querySelectorAll('.dropdown')).forEach(dropdownNode => new D
 
 export default {
     name: 'Navbar',
+    data: () => ({
+
+    }),
     computed: {
         ...mapState({
             currentUser: state => state.user.user
@@ -103,12 +113,6 @@ export default {
                 })
             })
         }
-    },
-    data: () => ({
-
-    }),
-    created () {
-
     }
 }
 </script>

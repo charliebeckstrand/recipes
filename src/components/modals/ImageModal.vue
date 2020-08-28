@@ -70,6 +70,9 @@
 <script>
 export default {
     name: 'ImageModal',
+    data: () => ({
+        active_image: null
+    }),
     components: {
 
     },
@@ -106,10 +109,7 @@ export default {
         hidden () {
             this.$emit('hide')
         }
-    },
-    data: () => ({
-        active_image: null
-    })
+    }
 }
 </script>
 

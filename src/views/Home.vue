@@ -9,6 +9,9 @@ import { mapState } from 'vuex'
 
 export default {
     name: 'Home',
+    data: () => ({
+
+    }),
     components: {
 
     },
@@ -26,9 +29,6 @@ export default {
     methods: {
 
     },
-    data: () => ({
-
-    }),
     mounted () {
 
     }
