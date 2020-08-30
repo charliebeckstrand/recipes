@@ -255,6 +255,7 @@
 
                     <TipTap
                         v-model="editable_recipe.nutrition"
+                        editor_menu="bubble"
                         @input="setContent(editable_recipe, 'nutrition', $event)"
                     />
                 </div>
@@ -275,19 +276,73 @@
                     </div>
 
                     <TipTap
-                        v-model="editable_recipe.notes_html"
-                        @input="setContent(editable_recipe, 'notes_html', $event)"
+                        v-model="editable_recipe.notes"
+                        editor_menu="bubble"
+                        @input="setContent(editable_recipe, 'notes', $event)"
                     />
                 </div>
-
-                <!-- <div class="mb-3">
-                    <button type="button" class="btn btn btn-danger" @click.prevent="addNote">
-                        <font-awesome-icon :icon="['fad', 'plus-square']" fixed-width /> Add note
-                    </button>
-                </div> -->
             </section>
 
-            <div class="mt-4">
+            <section ref="notes" tabindex="-1">
+                <div class="mb-3">
+                    <div
+                        v-sticky="{
+                            zIndex: 10,
+                            stickyTop: 0
+                        }"
+                        class="py-3 bg-white sticky"
+                    >
+                        <h3 class="m-0 font-weight-bold">
+                            Time
+                        </h3>
+                    </div>
+
+                    <TipTap
+                        v-model="editable_recipe.time"
+                        editor_menu="bubble"
+                        @input="setContent(editable_recipe, 'time', $event)"
+                    />
+                </div>
+            </section>
+
+            <section tabindex="-1">
+                <div class="mb-3">
+                    <div
+                        v-sticky="{
+                            zIndex: 10,
+                            stickyTop: 0
+                        }"
+                        class="py-3 bg-white sticky"
+                    >
+                        <h3 class="m-0 font-weight-bold">
+                            Servings
+                        </h3>
+                    </div>
+
+                    <!-- <TipTap
+                        v-model="editable_recipe.servings"
+                        editor_menu="bubble"
+                        @input="setContent(editable_recipe, 'servings', $event)"
+                    /> -->
+                    <input
+                        ref="servings"
+                        type="text"
+                        v-model="editable_recipe.servings"
+                        class="form-control py-3"
+                        :class="{
+                            'is-invalid': validating && !editable_recipe.servings
+                        }"
+                    />
+                    <div
+                        v-if="validating && !editable_recipe.servings"
+                        class="text-danger mt-3"
+                    >
+                        Servings is required
+                    </div>
+                </div>
+            </section>
+
+            <!-- <div class="mt-4">
                 <label class="form-label">Servings</label>
                 <input
                     ref="servings"
@@ -302,17 +357,7 @@
                 >
                     Servings is required
                 </div>
-            </div>
-
-            <div class="mt-4">
-                <label class="form-label">Bake Time</label>
-                <input
-                    ref="totaltime"
-                    type="number"
-                    v-model="editable_recipe.total_time"
-                    class="form-control"
-                >
-            </div>
+            </div> -->
 
             <template #modal-footer>
                 <button
@@ -320,12 +365,7 @@
                     class="btn btn-light"
                     @click="cancelRecipe"
                 >
-                    <div v-if="!editable_recipe.id || editable_recipe.id && recipe_changes">
-                        Cancel
-                    </div>
-                    <div v-else>
-                        Close
-                    </div>
+                    Cancel
                 </button>
                 <button
                     v-if="!editable_recipe.id || editable_recipe.id && recipe_changes"
@@ -607,6 +647,15 @@ export default {
             if (this.recipe) {
                 this.editable_recipe = _.cloneDeep(this.recipe)
                 this.editable_recipe_cache = _.cloneDeep(this.recipe)
+            } else {
+                let html = '<ul><li>Prep: <strong>5 minutes</strong></li><li>Cook: <strong>10 minutes</strong></li><li>Total: <strong>15 minutes</strong></li></ul>'
+
+                this.editable_recipe = {
+                    time: html
+                }
+                this.editable_recipe_cache = {
+                    time: html
+                }
             }
         },
         shown () {
