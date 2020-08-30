@@ -66,20 +66,14 @@ import { mapState } from 'vuex'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
-<<<<<<< HEAD
-// Font Awesome
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faGoogle, faFacebookF } from '@fortawesome/free-brands-svg-icons'
-library.add(faGoogle)
-library.add(faFacebookF)
-=======
 import Spinner from '@/components/Spinner'
->>>>>>> 7c81d3696ae7420e9f5361f49d27d7314048b71e
 
 export default {
     name: 'Login',
     data: () => ({
         error: {},
+
+        login_icons: ["google", "facebook-f"],
 
         email: '',
         password: '',
@@ -144,17 +138,9 @@ export default {
                 .catch(error => {
                     this.logging_in = false
 
-<<<<<<< HEAD
-        error: {},
-
-        login_icons: ["google", "facebook-f"]
-    }),
-    firestore () {
-=======
                     if (error) {
                         this.error = error
                     }
->>>>>>> 7c81d3696ae7420e9f5361f49d27d7314048b71e
 
                     if (error.code == "auth/user-not-found") {
                         this.invalid_email = true
