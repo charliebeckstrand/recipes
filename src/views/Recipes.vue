@@ -15,21 +15,14 @@
                         Recipes
                     </h1>
                 </div>
-                <!-- <div class="ml-auto">
-                    <a href="#" class="h1 m-0 text-secondary" @click.prevent>
-                        <font-awesome-icon :icon="['fad', 'search']" />
-                    </a>
-                </div> -->
+                <div class="ml-auto">
+
+                </div>
             </div>
         </div>
 
-        <div v-if="loading" class="page-loading pb-3">
-            <font-awesome-icon
-                :icon="['fal', 'spinner-third']"
-                size="2x"
-                spin
-                fixed-width
-            />
+        <div v-if="loading" class="pb-3">
+            <Spinner size="2x" />
         </div>
         <div v-else>
             <!-- <div class="mb-3">
@@ -59,7 +52,7 @@
             <div
                 v-for="(recipe, recipeIndex) in recipes"
                 :key="recipeIndex"
-                :class="{'mt-3': recipeIndex > 0}"
+                :class="{'mt-2': recipeIndex > 0}"
             >
                 <Recipe :recipe="recipe" />
             </div>
@@ -78,22 +71,33 @@
                     <li class="page-item"><a class="page-link" href="#">Next</a></li>
                 </ul>
             </nav> -->
-
         </div>
     </div>
 </template>
 
 <script>
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+
 import { mapState } from 'vuex'
-import { db } from '@/db'
 
 import meals from '@/common/meals'
+
+import Spinner from '@/components/Spinner'
 
 import Recipe from '@/components/recipe/Card'
 
 export default {
-    name: 'Home',
+    name: 'Recipes',
+    data: () => ({
+        meals: meals,
+
+        filters: {},
+
+        loading: false
+    }),
     components: {
+        Spinner,
         Recipe
     },
     computed: {
@@ -138,7 +142,7 @@ export default {
         //     })
         //
         //     recipes = recipes.sort((a, b) => {
-        //         return new Date(b.created.date_time) - new Date(a.created.date_time)
+        //         return new Date(b.created.date_time) - new Date(a.created)
         //     })
         //
         //     return recipes
@@ -147,9 +151,10 @@ export default {
     methods: {
         getRecipes () {
             this.$binding(
-                'recipes', db
+                'recipes', firebase
+                .firestore()
                 .collection('recipes')
-                .orderBy('created.date', 'desc')
+                .orderBy('created', 'desc')
             )
             .then((recipes) => {
                 this.recipes = recipes
@@ -163,13 +168,6 @@ export default {
             // })
         }
     },
-    data: () => ({
-        meals: meals,
-
-        filters: {},
-
-        loading: false
-    }),
     created () {
         this.loading = true
 

@@ -19,6 +19,9 @@ import { mapState } from 'vuex'
 
 export default {
     name: 'FavoriteRecipeIcon',
+    data: () => ({
+        share_recipe_modal: false
+    }),
     components: {
 
     },
@@ -54,10 +57,7 @@ export default {
                 this.$store.commit('addFavoriteRecipe', this.recipe_id)
             }
         },
-    },
-    data: () => ({
-        share_recipe_modal: false
-    })
+    }
 }
 </script>
 

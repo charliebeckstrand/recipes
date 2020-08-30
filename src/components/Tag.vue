@@ -14,15 +14,15 @@
 <script>
 export default {
     name: 'Tag',
+    data: () => ({
+
+    }),
     components: {
 
     },
     props: {
         tag: Object
-    },
-    data: () => ({
-
-    })
+    }
 }
 </script>
 

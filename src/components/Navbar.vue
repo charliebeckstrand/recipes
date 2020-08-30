@@ -3,9 +3,7 @@
         <b-navbar toggleable="lg" type="light" variant="light">
             <b-container>
                 <b-navbar-brand
-                    :to="{
-                        name: 'Recipes'
-                    }"
+                    :to="homepage"
                 >
                     <img src="@/assets/logo2.svg" width="40">
                 </b-navbar-brand>
@@ -43,19 +41,26 @@
                                 <b-dropdown-header class="d-lg-block d-none">
                                     {{currentUser.displayName}}
                                 </b-dropdown-header>
-                                <b-dropdown-item
+                                <!-- <b-dropdown-item
                                     :to="{
-                                        name: 'Dashboard'
+                                        name: 'UserDashboard'
                                     }"
                                 >
                                     <font-awesome-icon :icon="['fad', 'tachometer']" fixed-width /> Dashboard
-                                </b-dropdown-item>
+                                </b-dropdown-item> -->
                                 <b-dropdown-item
                                     :to="{
                                         name: 'Profile'
                                     }"
                                 >
                                     <font-awesome-icon :icon="['fad', 'user']" fixed-width /> Profile
+                                </b-dropdown-item>
+                                <b-dropdown-item
+                                    :to="{
+                                        name: 'MyRecipes'
+                                    }"
+                                >
+                                    <font-awesome-icon :icon="['fad', 'utensil-spoon']" fixed-width /> My Recipes
                                 </b-dropdown-item>
                                 <b-dropdown-item @click.prevent="logout">
                                     <font-awesome-icon :icon="['fad', 'sign-out']" fixed-width /> Logout
@@ -81,20 +86,36 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
 
-import { Dropdown } from 'bootstrap'
-
-Array.from(document.querySelectorAll('.dropdown')).forEach(dropdownNode => new Dropdown(dropdownNode))
-
 export default {
     name: 'Navbar',
+    data: () => ({
+
+    }),
     computed: {
         ...mapState({
             currentUser: state => state.user.user
-        })
+        }),
+        homepage () {
+            let homepage = null
+
+            if (this.currentUser.uid) {
+                homepage = {
+                    name: 'MyRecipes'
+                }
+            } else {
+                homepage = {
+                    name: 'Recipes'
+                }
+            }
+
+            return homepage
+        }
     },
     methods: {
         logout () {
-            firebase.auth().signOut()
+            firebase
+            .auth()
+            .signOut()
             .then(() => {
                 this.$store.commit('setUser', {})
 
@@ -103,12 +124,6 @@ export default {
                 })
             })
         }
-    },
-    data: () => ({
-
-    }),
-    created () {
-
     }
 }
 </script>

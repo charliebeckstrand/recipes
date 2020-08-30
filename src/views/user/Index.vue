@@ -1,6 +1,6 @@
 <template>
-    <div class="home">
-
+    <div class="user page">
+        <router-view />
     </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { mapState } from 'vuex'
 
 export default {
-    name: 'Home',
+    name: 'User',
     data: () => ({
 
     }),
@@ -27,9 +27,6 @@ export default {
 
     },
     methods: {
-
-    },
-    mounted () {
 
     }
 }

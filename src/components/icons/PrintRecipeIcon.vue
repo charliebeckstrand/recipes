@@ -8,38 +8,29 @@
         >
             <font-awesome-icon :icon="['fad', 'print']" fixed-width />
         </a>
-
-        <print-recipe-modal
-            v-model="print_recipe_modal"
-            :recipe="recipe"
-            @hide="print_recipe_modal = false"
-        />
     </div>
 </template>
 
 <script>
-import PrintRecipeModal from '@/components/modals/PrintRecipeModal'
-
 export default {
     name: 'PrintRecipeIcon',
+    data: () => ({
+
+    }),
     components: {
-        PrintRecipeModal
-    },
-    computed: {
 
     },
     props: {
         recipe: Object
     },
+    computed: {
+
+    },
     methods: {
         printRecipe () {
-            // this.print_recipe_modal = true
             window.print()
         }
-    },
-    data: () => ({
-        print_recipe_modal: false
-    })
+    }
 }
 </script>
 

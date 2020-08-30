@@ -24,7 +24,10 @@
 import { mapState } from 'vuex'
 
 export default {
-    name: 'Profile',
+    name: 'UserProfile',
+    data: () => ({
+
+    }),
     components: {
 
     },
@@ -40,12 +43,6 @@ export default {
 
     },
     methods: {
-
-    },
-    data: () => ({
-
-    }),
-    mounted () {
 
     }
 }
