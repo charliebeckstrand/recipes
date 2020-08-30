@@ -32,6 +32,30 @@
                         >
                             <font-awesome-icon :icon="['fas', 'underline']" />
                         </button>
+                        <button
+                            type="button"
+                            class="menububble__button"
+                            :class="{ 'active': isActive.heading({ level: 4 }) }"
+                            @click="commands.heading({ level: 4 })"
+                        >
+                            <font-awesome-icon :icon="['fas', 'heading']" />
+                        </button>
+                        <button
+                            type="button"
+                            class="menububble__button"
+                            :class="{ 'active': isActive.bullet_list() }"
+                            @click="commands.bullet_list"
+                        >
+                            <font-awesome-icon :icon="['fas', 'list-ul']" />
+                        </button>
+                        <button
+                            type="button"
+                            class="menububble__button"
+                            :class="{ 'active': isActive.ordered_list() }"
+                            @click="commands.ordered_list"
+                        >
+                            <font-awesome-icon :icon="['fas', 'list-ol']" />
+                        </button>
                     </b-button-group>
                 </div>
             </editor-menu-bubble>

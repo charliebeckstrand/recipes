@@ -7,8 +7,8 @@
             }"
             class="bg-white py-3 sticky-title"
         >
-            <div class="d-flex align-items-center">
-                <div>
+            <div class="d-sm-flex align-items-center">
+                <div class="mb-sm-0 mb-3">
                     <h1
                         class="font-weight-bold mb-0"
                     >
@@ -16,7 +16,7 @@
                     </h1>
                 </div>
                 <div class="ml-auto">
-
+                    <create-recipe-button />
                 </div>
             </div>
         </div>
@@ -25,12 +25,6 @@
             <Spinner size="2x" />
         </div>
         <div v-else>
-            <div class="d-flex align-items-center mb-3">
-                <div class="ml-auto">
-                    <create-recipe-button />
-                </div>
-            </div>
-
             <div
                 v-for="(recipe, recipeIndex) in recipes"
                 :key="recipeIndex"
@@ -65,7 +59,7 @@ export default {
     }),
     components: {
         Spinner,
-        
+
         CreateRecipeButton,
 
         Recipe

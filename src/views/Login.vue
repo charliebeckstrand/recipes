@@ -1,7 +1,7 @@
 <template>
     <div class="login h-100">
         <div class="d-flex h-100">
-            <div class="m-auto" style="min-width: 350px;">
+            <div class="m-auto" style="width: 350px;">
                 <div class="d-flex">
                     <div class="mx-auto mb-3">
                         <router-link :to="{path: '/'}" class="text-dark">

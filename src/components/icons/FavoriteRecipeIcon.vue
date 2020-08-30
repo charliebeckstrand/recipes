@@ -40,7 +40,10 @@ export default {
         favoriteRecipe () {
             if (_.includes(this.favorite_recipes, this.recipe_id)) {
                 this.$swal({
-                    icon: 'warning',
+                    // icon: 'warning',
+                    imageUrl: 'https://image.flaticon.com/icons/svg/2731/2731705.svg',
+                    imageHeight: 100,
+                    icon: 'broken-heart',
                     html: 'Are you sure you want to unfavorite this recipe?',
                     showCancelButton: true,
                     confirmButtonText: 'Unfavorite',
