@@ -49,10 +49,11 @@
                         </span>
                     </button>
                 </form>
-                <div class="mt-3 text-center">
-                  <button type="button" class="btn btn-light border border-dark">
-                    <font-awesome-icon :icon="['fab', 'google']" />
-                  </button>
+
+                <div class="mt-2 d-lg-flex align-items-center">
+                    <button type="button" v-for="(login_icon, index) in login_icons" :key="index" :class="{'mt-lg-0 ml-lg-1': index > 0}" class="text-center btn btn-light btn-outline-dark btn-block">
+                      <font-awesome-icon :icon="['fab', login_icon ]" />
+                    </button>
                 </div>
             </div>
         </div>
@@ -67,8 +68,9 @@ import 'firebase/auth'
 
 // Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
+import { faGoogle, faFacebookF } from '@fortawesome/free-brands-svg-icons'
 library.add(faGoogle)
+library.add(faFacebookF)
 
 export default {
     name: 'Login',
@@ -140,7 +142,9 @@ export default {
 
         logging_in: false,
 
-        error: {}
+        error: {},
+
+        login_icons: ["google", "facebook-f"]
     }),
     firestore () {
 
