@@ -648,7 +648,8 @@ export default {
                 this.editable_recipe = _.cloneDeep(this.recipe)
                 this.editable_recipe_cache = _.cloneDeep(this.recipe)
             } else {
-                let html = '<ul><li>Prep: <strong>5 minutes</strong></li><li>Cook: <strong>10 minutes</strong></li><li>Total: <strong>15 minutes</strong></li></ul>'
+                // let html = '<ul><li>Prep: <strong>5 minutes</strong></li><li>Cook: <strong>10 minutes</strong></li><li>Total: <strong>15 minutes</strong></li></ul>'
+                let html = ''
 
                 this.editable_recipe = {
                     time: html

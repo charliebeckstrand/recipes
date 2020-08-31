@@ -481,6 +481,30 @@ export default {
         color: #000000 !important;
     }
 
+    .ingredients {
+        .ingredient {
+            &.checked {
+                .ingredient-text {
+                    color: #000000 !important;
+                    opacity: 1 !important;
+                    text-decoration: none !important;
+                }
+            }
+        }
+    }
+
+    .instructions {
+        .instruction {
+            &.checked {
+                .instruction-text {
+                    color: #000000 !important;
+                    opacity: 1 !important;
+                    text-decoration: none !important;    
+                }
+            }
+        }
+    }
+
     section {
         padding-bottom: 1rem !important;
 
