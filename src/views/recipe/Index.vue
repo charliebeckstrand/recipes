@@ -324,6 +324,56 @@
                             </div>
                         </b-collapse>
                     </section>
+
+                    <section
+                        v-if="recipe.time"
+                        id="time"
+                        ref="time"
+                    >
+                        <h3
+                            v-sticky="{
+                                zIndex: 10,
+                                stickyTop: recipe_name_height
+                            }"
+                            class="py-3 bg-white font-weight-bold text-muted user-select-none section-title"
+                            v-b-toggle.timeCollapse
+                        >
+                            <font-awesome-icon :icon="['fas', 'caret-right']" class="closed" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-down']" class="open" fixed-width />
+                            Time
+                        </h3>
+
+                        <b-collapse id="timeCollapse" visible>
+                            <div class="time">
+                                <div v-html="recipe.time" class="v-html" />
+                            </div>
+                        </b-collapse>
+                    </section>
+
+                    <section
+                        v-if="recipe.servings"
+                        id="servings"
+                        ref="servings"
+                    >
+                        <h3
+                            v-sticky="{
+                                zIndex: 10,
+                                stickyTop: recipe_name_height
+                            }"
+                            class="py-3 bg-white font-weight-bold text-dark user-select-none section-title"
+                            v-b-toggle.servingsCollapse
+                        >
+                            <font-awesome-icon :icon="['fas', 'caret-right']" class="closed" fixed-width />
+                            <font-awesome-icon :icon="['fas', 'caret-down']" class="open" fixed-width />
+                            Servings
+                        </h3>
+
+                        <b-collapse id="servingsCollapse" visible>
+                            <div class="servings">
+                                <div v-html="recipe.servings" class="v-servings" />
+                            </div>
+                        </b-collapse>
+                    </section>
                 </div>
             </div>
         </div>
@@ -652,5 +702,15 @@ export default {
 .notes {
     padding-left: 1rem;
     border-left: 2px solid $danger;
+}
+
+.time {
+    padding-left: 1rem;
+    border-left: 2px solid $muted;
+}
+
+.servings {
+    padding-left: 1rem;
+    border-left: 2px solid $dark;
 }
 </style>
