@@ -58,8 +58,7 @@
                                         :recipe_name="recipe_name"
                                     />
                                 </div>
-                                <div class="d-flex align-items-center ml-2">
-                                <!-- <div v-if="currentUser && (recipe.created_by.uid == currentUser.uid)" class="d-flex align-items-center ml-2"> -->
+                                <div v-if="currentUser && (recipe.created_by.uid == currentUser.uid)" class="d-flex align-items-center ml-2">
                                     <div v-if="vue_app_environment == 'local'" class="mr-2">
                                         <a
                                             href="#"
