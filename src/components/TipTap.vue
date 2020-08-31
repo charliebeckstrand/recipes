@@ -311,21 +311,6 @@ export default {
     }
 }
 
-.ProseMirror {
-    padding: 1rem;
-	> * {
-		margin: 0;
-	}
-	> * + * {
-		margin-top: 1rem;
-	}
-    li:last-child {
-        p {
-            margin: 0;
-        }
-    }
-}
-
 @media (max-width: 767px) {
     .tiptap {
         .editor-menu-bar {

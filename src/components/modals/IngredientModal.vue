@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="measurement" class="form-label">Measurement</label>
                 <input
                     ref="measurement"
@@ -56,13 +56,8 @@
                     v-model="editable_ingredient.measurement"
                     aria-label="Measurement"
                     class="form-control"
-                    :class="{'is-invalid': validating && !editable_ingredient.measurement}"
                 >
-                <div class="invalid-feedback">
-                    &bull; Measurement is required
-                </div>
-            </div>
-
+            </div> -->
 
             <div class="">
                 <label for="ingredient" class="form-label">Ingredient</label>
@@ -147,11 +142,6 @@ export default {
                 valid = false
                 if (this.$refs.amount) {
                     this.$refs.amount.focus()
-                }
-            } else if (!this.editable_ingredient.measurement) {
-                valid = false
-                if (this.$refs.measurement) {
-                    this.$refs.measurement.focus()
                 }
             } else if (!this.editable_ingredient.ingredient) {
                 valid = false
