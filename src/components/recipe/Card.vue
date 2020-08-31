@@ -58,7 +58,8 @@
                                         :recipe_name="recipe_name"
                                     />
                                 </div>
-                                <div v-if="currentUser && (recipe.created_by.uid == currentUser.uid)" class="d-flex align-items-center ml-2">
+                                <div class="d-flex align-items-center ml-2">
+                                <!-- <div v-if="currentUser && (recipe.created_by.uid == currentUser.uid)" class="d-flex align-items-center ml-2"> -->
                                     <div v-if="vue_app_environment == 'local'" class="mr-2">
                                         <a
                                             href="#"
@@ -244,22 +245,35 @@ export default {
 
             Object.assign(recipe, {updated})
 
-            firebase
-            .firestore()
-            .collection("recipes")
-            .doc(recipe.id)
-            .set(recipe)
-            .then(() => {
-                this.simple_recipe_modal = false
-                this.recipe_modal = false
+            if (
+                !recipe.created_by ||
+                (recipe.created_by && recipe.created_by.uid == this.currentUser.uid)
+            ) {
+                firebase
+                .firestore()
+                .collection("recipes")
+                .doc(recipe.id)
+                .set(recipe)
+                .then(() => {
+                    this.simple_recipe_modal = false
+                    this.recipe_modal = false
 
+                    this.$set(recipe, 'updating', false)
+                })
+                .catch(error => {
+                    if (error) {
+                        console.log(error)
+                    }
+                })
+            } else {
                 this.$set(recipe, 'updating', false)
-            })
-            .catch(error => {
-                if (error) {
-                    console.log(error)
-                }
-            })
+                this.$swal({
+                    title: "Error",
+                    html: "You do not have the necessarly privileges to modify this recipe.",
+                    icon: "error",
+                    confirmButtonColor: '#03A9F4'
+                })
+            }
         },
         deleteRecipe (recipe) {
             let message = null

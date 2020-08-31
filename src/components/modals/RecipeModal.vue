@@ -157,8 +157,7 @@
                         </h3>
                     </div>
 
-                    <div class="pl-3 border-left border-primary">
-
+                    <!-- <div class="pl-3 border-left border-primary">
                         <div v-if="editable_recipe.instructions && editable_recipe.instructions.length" class="instructions">
                             <draggable v-model="editable_recipe.instructions" handle=".drag-handle">
                                 <div
@@ -213,7 +212,22 @@
                         <button type="button" class="btn btn btn-primary" @click.prevent="addInstruction">
                             <font-awesome-icon :icon="['fad', 'plus-square']" fixed-width /> Add Instruction
                         </button>
+                    </div> -->
+
+                    <TipTap
+                        v-model="editable_recipe.instructions"
+                        :class="{
+                            'is-invalid': validating && (!editable_recipe.instructions || editable_recipe.instructions && editable_recipe.instructions == '<p></p>')
+                        }"
+                    />
+                    <div
+                        v-if="validating && validating && (!editable_recipe.instructions || editable_recipe.instructions && editable_recipe.instructions == '<p></p>')"
+                        class="text-danger mt-3"
+                    >
+                        Instructions are required
                     </div>
+
+
                 </div>
             </section>
 
@@ -594,7 +608,7 @@ export default {
                 }
             } else if (
                 !this.editable_recipe.instructions ||
-                (this.editable_recipe.instructions && !this.editable_recipe.instructions.length)
+                this.editable_recipe.instructions && this.editable_recipe.instructions == '<p></p>'
             ) {
                 valid = false
 
@@ -613,7 +627,6 @@ export default {
                 _.forEach(this.editable_recipe.ingredients, ingredient => {
                     if (
                         !ingredient.amount ||
-                        !ingredient.measurement ||
                         !ingredient.ingredient
                     ) {
                         valid = false
@@ -622,19 +635,19 @@ export default {
                 })
             }
 
-            if (
-                this.editable_recipe.instructions &&
-                this.editable_recipe.instructions.length
-            ) {
-                _.forEach(this.editable_recipe.instructions, instruction => {
-                    if (
-                        !instruction.instruction || instruction.instruction && instruction.instruction == '<p></p>'
-                    ) {
-                        valid = false
-                        this.$refs.instruction.focus()
-                    }
-                })
-            }
+            // if (
+            //     this.editable_recipe.instructions &&
+            //     this.editable_recipe.instructions.length
+            // ) {
+            //     _.forEach(this.editable_recipe.instructions, instruction => {
+            //         if (
+            //             !instruction.instruction || instruction.instruction && instruction.instruction == '<p></p>'
+            //         ) {
+            //             valid = false
+            //             this.$refs.instruction.focus()
+            //         }
+            //     })
+            // }
 
             return valid
         },

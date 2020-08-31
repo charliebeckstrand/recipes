@@ -30,13 +30,9 @@
                 </div>
             </div>
 
-            <div
-                v-if="recipe.description"
-                id="description"
-                class="d-flex align-items-center"
-            >
+            <div class="d-flex align-items-center">
                 <div class="flex-grow-1">
-                    <div class="text-muted">
+                    <div id="description" class="text-muted">
                         <div
                             v-html="recipe.description"
                             class="v-html"
@@ -213,7 +209,7 @@
                         </h3>
 
                         <b-collapse id="instructionsCollapse" visible>
-                            <div v-if="recipe.instructions && recipe.instructions.length" class="items instructions">
+                            <!-- <div v-if="recipe.instructions && recipe.instructions.length" class="items instructions">
                                 <div
                                     v-for="(instruction, instructionIndex) in recipe.instructions"
                                     :key="instructionIndex"
@@ -244,12 +240,13 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div> -->
+                            <div v-if="recipe.instructions" class="instructions">
+                                <div
+                                    v-html="recipe.instructions"
+                                    class="v-html"
+                                />
                             </div>
-                            <div
-                                v-if="(!recipe.instructions || recipe.instructions && !recipe.instructions.length) && recipe.instructions_html"
-                                v-html="recipe.instructions_html"
-                                class="v-html"
-                            />
                         </b-collapse>
                     </section>
 
@@ -297,7 +294,7 @@
                         </h3>
 
                         <b-collapse id="nutritionCollapse" visible>
-                            <div class="nutrition">
+                            <div class="nutritions">
                                 <div v-html="recipe.nutrition" class="v-html" />
                             </div>
                         </b-collapse>
@@ -499,7 +496,7 @@ export default {
                 .instruction-text {
                     color: #000000 !important;
                     opacity: 1 !important;
-                    text-decoration: none !important;    
+                    text-decoration: none !important;
                 }
             }
         }
@@ -509,6 +506,7 @@ export default {
         padding-bottom: 1rem !important;
 
         .section-title {
+            margin-bottom: 15px !important;
             padding: 0 !important;
         }
         .collapse > div {
@@ -559,6 +557,7 @@ export default {
 }
 
 .section-title {
+    margin: 0;
     cursor: pointer;
     &.collapsed {
         .closed {
